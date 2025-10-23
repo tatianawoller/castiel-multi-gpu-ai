@@ -21,6 +21,11 @@
 
 /* override colors in sphinx_lesson.css with the schemes here: https://personal.sron.nl/~pault/#sec:qualitative */
 
+/* sidebar logo */
+.wy-side-nav-search, .wy-nav-top {
+  background-color: #96B3C6;
+}
+
 /* instructor-note */
 .rst-content .instructor-note {
     background: #DDDDDD;
