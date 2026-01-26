@@ -10,8 +10,8 @@
 #SBATCH --cpus-per-task=16
 ##SBATCH --reservation=s_tra_castiel2
 
-module load python/3.11.7
-source $WORK/cvanleeuwen/PyTorchDDP/bin/activate
+module load profile/deeplrn
+module load cineca-ai/4.3.0
 
 head_node_ip=$(hostname --ip-address)
 echo "Using head node ip: $head_node_ip"
