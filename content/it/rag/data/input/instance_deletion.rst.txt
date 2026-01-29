@@ -1,0 +1,74 @@
+.. _compute_inst_delete_card:
+
+Instance: delete
+==================
+
+If you would like to delete one of the VMs, you have created, you can follow the steps below or follow the **Deletion 
+tutorial** in :ref:`cloud/tutorials/index_tutorials_and_repos:tutorials for openstack dashboard`. 
+
+.. warning:: 
+   
+   The order of the steps is important to avoid errors during the deletion.
+
+.. tab-set:: 
+   .. tab-item:: Horizon Dashboard
+
+      - In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, select on *"Network â Floating IPs"*, then click on the button *"Disassociate"* on the right side of the dashboard page for the IP associated to your VM. If desired, you can also release the floating IP. 
+
+      .. note:: 
+         Once you release it, there is no guarantee the same IP can be allocated again.
+
+      - Go to *"Compute â Instances"*, and display the drop-down menu of the VM you want to delete and then click the action *"Delete Instance"*
+
+   .. tab-item:: Command Line 
+      
+      - List all the VMs in the tenant
+      
+      .. code-block:: bash
+         
+         openstack server list
+         +----------------+------------------+--------+-------------------------------------------------------------+--------------+---------------+
+         | ID             | Name             | Status | Networks                                                    | Image        | Flavor        |
+         +----------------+------------------+--------+-------------------------------------------------------------+--------------+---------------+
+         | <Server-ID-01> | <Server-01-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-01>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         | <Server-ID-02> | <Server-02-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-02>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         ...
+         | <Server-ID-XX> | <Server-XX-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-XX>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         +--------------------------------------+------+--------+-----------------------------------------+------------------------+---------------+
+
+      - Shut down the VM using its ID from the previous step
+      
+      .. code-block:: bash
+
+         openstack server stop <Server-ID-XX>
+
+      - Find the ID of the Floating IP associated to the VM based using the VM Floating IP Address
+      
+      .. code-block:: bash
+
+         openstack floating ip list --floating-ip-address <Floating-IP-Address>
+         +------------------+-----------------------+--------------------+-----------+-----------------------+--------------+
+         | ID               | Floating IP Address   | Fixed IP Address   | Port      | Floating Network      | Project      |
+         +------------------+-----------------------+--------------------+-----------+-----------------------+--------------+
+         | <Floating-IP-ID> | <Floating-IP-Address> | <Fixed-IP-Address> | <Port-ID> | <Floating-Network-ID> | <Project-ID> |
+         +------------------+-----------------------+--------------------+-----------+-----------------------+--------------+
+
+      - Disassociate the Floating IP
+      
+      .. code-block:: bash
+      
+         openstack floating ip unset <Floating-IP-ID>
+
+      .. note:: 
+         Once you release it, there is no guarantee the same IP can be allocated again.
+
+      - Delete the VM
+      
+      .. code-block:: bash
+         
+         openstack server delete <Server-ID-XX>
+   
+
+If you are deleting the VM because of issues, and you would like to recreate it in a clean environment, 
+it is recommended to remove also the network resources (router, interfaces, etc) that were associated to your instance. 
+For this follow **Deletion tutorial** in :ref:`cloud/tutorials/index_tutorials_and_repos:tutorials for openstack dashboard`. 

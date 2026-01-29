@@ -1,0 +1,7 @@
+Given the following document, generate a single question related to the content of the following paragraph. 
+
+When generating the question use the following format: {'question':'<your_question>'}
+
+<your_question> is a detailed question you create based on the content of the document.
+
+[PARAGRAPH_CONTENT]:

@@ -1,0 +1,68 @@
+.. _compute_ops_card:
+
+Compute operations
+==================
+
+For general information on the compute component, visit the :ref:`cloud/os_overview/os_components/compute:compute` page.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   instance_create
+   instance_manage
+   instance_snap_create
+   instance_download
+   instance_deletion
+   instance_resize
+   instance_rescue
+   image_upload
+   keypair_create
+
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: create**
+      :link: compute_inst_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: manage**
+      :link: compute_inst_manage_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: resize**
+      :link: compute_inst_resize_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: snapshot create**
+      :link: compute_inst_snap_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: download**
+      :link: compute_inst_download_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: delete**
+      :link: compute_inst_delete_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: rescue**
+      :link: compute_inst_rescue_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: image upload**
+      :link: compute_inst_img_upload_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **KeyPair: create**
+      :link: compute_keypair_create_card
+      :link-type: ref
+
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link

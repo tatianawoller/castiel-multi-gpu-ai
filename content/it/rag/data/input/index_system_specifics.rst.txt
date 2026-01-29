@@ -1,0 +1,34 @@
+Cloud Specifics
+================
+
+In the corresponding sub-sections are described the details specific to each HPC Cloud machine in 
+production at CINECA. For the general information on the HPC Cloud infrastructure and service, please refer to :ref:`cloud/general/general_info:introduction to hpc cloud`. 
+
+.. |ico1| image:: /cloud/_img/hpc_icon.png
+   :height: 35px
+   :class: no-scaled-link
+
+.. grid:: 2
+
+    .. grid-item-card:: |ico1| **ADA**
+      :link: ada_card
+      :link-type: ref
+
+    .. grid-item-card:: |ico1| **GAIA**
+      :link: gaia_card
+      :link-type: ref
+
+
+.. toctree::
+  :maxdepth: 2
+  :hidden:
+
+  ada
+
+
+.. toctree::
+  :maxdepth: 2
+  :hidden:
+
+  gaia
+

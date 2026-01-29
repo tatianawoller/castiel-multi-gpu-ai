@@ -1,0 +1,562 @@
+.. _matlab_card:
+
+
+Matlab
+======
+
+The following guide describes how to load, configure and use MATLAB @ CINECA's cluster.
+MATLAB is available on :ref:`hpc/leonardo:Leonardo` and :ref:`hpc/galileo:Galileo100` clusters.
+
+Pre-requisites
+^^^^^^^^^^^^^^
+
+To use MATLAB on CINECA HPC's environment, please check the following pre-requisites:
+
+  1. You and your collaborators have **a valid account** defined on HPC cluster, see :ref:`general/users_account:How to become a User`.
+  2. You have access to a **valid MATLAB license** to be used on CINECA HPC clusters.
+
+Thanks to an agreement with MathWorks, **CINECA provides several MATLAB licenses** through its internal license server that can be used on CINECA clusters.
+Usage of the CINECA MATLAB licenses is allowed **exclusively for Open Science** (non-commercial) activities.
+In case you are interested in using those licenses and you declare us that your activity is devoted to Open Science, please write to superc@cineca.it to be enabled to use CINECA licenses.
+
+For all the other cases, or in case you would like to use your personal/department/university license, we need to connect your license server, where the Flex-LM license is installed, with the CINECA compute nodes of the cluster. Detailed instructions can be found in :ref:`hpc/hpc_software:How to connect your license server`.
+
+Configuration
+^^^^^^^^^^^^^
+
+This section provides the steps to configure MATLAB to submit jobs to a cluster, retrieve results, and debug errors.
+
+It is possible to configure MATLAB in order to submit jobs on CINECA clusters directly from your local MATLAB installation (Remote Jobs submission) or by login nodes of CINECA clusters (on Cluster submission).
+
+Remote Jobs submission
+""""""""""""""""""""""
+
+It is possible to submit MATLAB jobs to the compute nodes of a CINECA cluster directly from your local MATLAB installation.
+
+**Supported versions:** R2022b, R2023a, R2023b, R2024a, R2024b
+
+Please check that your local MATLAB installed version **matches one of the supported versions**.
+Moreover, you need to to have the "**Parallel Computing Toolbox**" installed on your computer.
+To check for it, you can run the following commands on MATLAB:
+
+.. code-block:: matlabsession
+
+        >> license('test','distrib_computing_toolbox')
+        >> ~isempty(ver('parallel'))
+
+if answer is 1 for both, it means that the Parallel toolbox is correctly installed. Otherwise you need to install it.
+
+**Download** the following ZIP file (:download:`cineca.Desktop.zip <../../files/cineca.Desktop.zip>`) (**Last update: 22 October 2024**). It contains a set of scripts (Integration Scripts) needed to configure MATLAB to launch jobs remotely.
+Unzip the file in the location returned by the MATLAB command:
+
+.. code-block:: matlabsession
+
+        >> userpath
+
+For different solutions you can refer to this `MathWorks dedicated User Guide page <https://it.mathworks.com/help/matlab/matlab_env/what-is-the-matlab-search-path.html>`_.
+
+**Only in the case you are going to use your personal/department/university license**, you will also have to modify the following files inside the cluster folder you find in the Integration Scripts: ``communicatingSubmitFcn.m`` and ``independentSubmitFcn.m``
+
+by adding a MLM_LICENSE_FILE line indicating the port and the IP of your license server as in the following:
+
+.. code-block:: bash
+
+        'PARALLEL_SERVER_DEBUG', enableDebug; ...
+        'MLM_LICENSE_FILE', '<port>@<IP>'; ...
+        'MLM_WEB_LICENSE', environmentProperties.UseMathworksHostedLicensing; ...
+
+This step is **not needed** if you are going to use CINECA licenses.
+
+Finally open MATLAB and launch the command
+
+.. code-block:: matlabsession
+
+        >> configCluster
+
+The command will ask you to select the cluster where you would like to submit the jobs and your username.
+
+.. important::
+   You can access only clusters where you have an active budget account.
+
+To manage the local cluster configuration in the top menu select "Parallel", then "Create and Manage Clusters..."
+A window will be opened where you can modify the Additional Properties of your configuration based on your needs (See :ref:`hpc/software/matlab:Configuring Jobs` Section about a description of the Available Properties).
+
+
+On Cluster submission
+"""""""""""""""""""""
+
+Alternatively to Remote submission, you can also launch MATLAB jobs directly from login nodes of CINECA clusters.
+
+Log-in to the cluster and load the MATLAB module:
+
+.. code-block:: bash
+
+        $ module load profile/eng
+        $ module load matlab/<version>
+
+There may be available more than one MATLAB version. You can check for it through :ref:`hpc/hpc_enviroment:The modmap command` section.
+Take care to select the last valid release for your license.
+Configure MATLAB to run parallel jobs. This only needs to be called once per version of MATLAB and once per user.
+
+.. code-block:: bash
+
+        $ configCluster.sh <account-name>
+
+in alternative you can start MATLAB without desktop
+
+.. code-block:: bash
+
+        $ matlab -nodisplay
+
+then launch the command
+
+.. code-block:: matlabsession
+
+        >> configCluster
+
+A new profile will be created (i.e. 'galileo100 R2024b' on Galileo100).
+You can check the list of available profiles:
+
+.. code-block:: matlabsession
+
+        >> [ ALLPROFILES,DEFAULTPROFILE] = parallel.clusterProfiles
+        ALLPROFILES =
+           1x2 cell array
+
+           {'galileo100 R2024b'} {'local'}
+
+        DEFAULTPROFILE=
+
+           'galileo100 R2024b'
+
+Please check that the ``DEFAULTPROFILE`` is not set to 'local'.
+The 'local' profile is not allowed on our cluster, so don't use it.
+If it is set to 'local' you have to set for example
+
+.. code-block:: matlabsession
+        
+        >> DEFAULTPROFILE='galileo100 R2024b'
+
+on Galileo100 and similarly on Leonardo.
+
+Configuring Jobs
+^^^^^^^^^^^^^^^^
+
+Prior to submitting the job, various parameters have to be specified in order to be passed to jobs, such as queue, username, e-mail, etc. 
+
+.. note::
+ Any parameters specified using the below workflow will be persistent between MATLAB sessions if saved at the end of the configuration.
+
+Before specifying any parameters, you will need to obtain a handle to the cluster object.
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+You are now **required** to specify an Account Name, a Queue Name and the Wall Time (visit :ref:`hpc/hpc_intro:Budget and Accounting` to see how to retrieve your Budget Account Name using the saldo command)
+
+.. code-block:: matlabsession
+
+        >> % Specify an Account to use for MATLAB jobs
+        >> c.AdditionalProperties.AccountName = 'account_name';
+
+        >> % Specify a queue to use for MATLAB jobs
+        >> c.AdditionalProperties.Partition = 'partition-name';
+
+        >> % Specify the walltime (e.g. 5 hours)
+        >> c.AdditionalProperties.WallTime = '05:00:00';
+
+On Leonardo cluster there are two partitions: 'boost_usr_prod' to access GPU nodes and 'dcgp_usr_prod' to access CPU nodes. You can find additional info on the :ref:`hpc/leonardo:Leonardo` dedicated pages.
+For Galileo100 cluster the main partition is 'g100_usr_prod'. In :ref:`hpc/galileo:Galileo100` dedicated page you can find other possible Partitions and QOS available allowing for different combinations of nodes, walltime and priority.
+
+You can specify other **additional** (not-mandatory) parameters along with your job.
+
+.. code-block:: matlabsession
+        
+        >> % Specify QoS
+        >> c.AdditionalProperties.QoS = 'name-of-qos';
+
+        >> % Specify processor cores per node.  Default is 32 for Leonardo GPU nodes and 112 on Leonardo CPU nodes; 18 for Marconi and 48 for Galileo100.
+        >> c.AdditionalProperties.ProcsPerNode = 18;
+
+        >> % specify the number of GPUsPerNode. Valid only on Leonardo GPU partition
+        >> c.AdditionalProperties.GPUsPerNode = 1;
+
+        >> % Specify memory to use for MATLAB jobs, per core (default: 4gb)
+        >> c.AdditionalProperties.MemUsage = '6gb';
+
+        >> % Require node exclusivity
+        >> c.AdditionalProperties.RequireExclusiveNode = true;
+
+        >> % Request to use a reservation
+        >> c.AdditionalProperties.Reservation = 'name-of-reservation';
+
+        >> % Specify e-mail address to receive notifications about your job
+        >> c.AdditionalProperties.EmailAddress = âtest@foo.comâ;
+
+        >> % Turn onthe Debug Message.  Default is off (logical boolean true/false).
+        >> c.AdditionalProperties.DebugMessagesTurnedOn = true;
+
+
+To check for the values of the current configuration options, call the AdditionalProperties without semicolon
+
+.. code-block:: matlabsession
+
+        >> % To view current configurations
+        >> c.AdditionalProperties
+
+To clear a value, assign the property an empty value (ââ, [], or false).
+
+.. code-block:: matlabsession
+
+        >> % To clear a configuration that takes a string as input 
+        >> c.AdditionalProperties.EmailAddress = â â;
+
+To save a profile, with your configuration so you will find it in future sessions
+
+.. code-block:: matlabsession
+
+        >> c.saveProfile;
+
+Serial Jobs
+^^^^^^^^^^^
+
+Use the batch command to submit asynchronous jobs to the cluster.  The batch command will return a job object which is used to access the output of the submitted job.  See the MATLAB documentation for more help on batch.
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+Submit job to query where MATLAB is running on the cluster
+
+.. code-block:: matlabsession
+
+        >> j = c.batch(@pwd, 1, {});
+
+Query job for state:  queued | running | finished
+
+.. code-block:: matlabsession
+
+        >> j.State
+
+If state is finished, fetch results
+
+.. code-block:: matlabsession
+
+        >> j.fetchOutputs{:}
+
+or
+
+.. code-block:: matlabsession
+
+        >> fetchOutputs(j)
+
+Display the diary
+
+.. code-block:: matlabsession
+
+        >> diary(j)
+
+Delete the job after results are no longer needed
+
+.. code-block:: matlabsession
+
+        >> j.delete;
+
+To retrieve a list of currently running or completed jobs, call parcluster to retrieve the cluster object. The cluster object stores an array of jobs that were run, are running, or are queued to run. This allows us to fetch the results of completed jobs. Retrieve and view the list of jobs as shown below.
+
+.. code-block:: matlabsession
+
+        >> c = parcluster;
+        >> jobs = c.Jobs;
+
+Once weâve identified the job we want, we can retrieve the results as weâve done previously.
+
+``fetchOutputs`` is used to retrieve function output arguments; if using batch with a script, use load instead.
+Data that has been written to files on the cluster needs be retrieved directly from the file system.
+
+To view results of a previously completed job:
+
+.. code-block:: matlabsession
+
+        >> % Get a handle on job with job array index 2 (2x1)j
+        >> j2 = c.Jobs(2);
+
+        >> % Fetch results for job with ID 2
+        >> j2.fetchOutputs{:}
+
+.. note::
+    You can view a list of your jobs, as well as their IDs, using the above c.Jobs command.
+
+If the job produces an error view the error log file
+
+.. code-block:: matlabsession
+
+        >> c.getDebugLog(j.Tasks(1))
+
+.. note::
+        When submitting independent jobs, with multiple tasks, you will have to specify the task number.
+
+Parallel Jobs
+^^^^^^^^^^^^^
+
+Interactive Jobs
+""""""""""""""""
+
+To run an interactive pool job on the cluster, you can use parpool.
+Valid only on login nodes.
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+Open a pool of 64 workers on the cluster
+
+.. code-block:: matlabsession
+
+        >> pool = c.parpool(64);
+
+Rather than running local on the local machine, the pool can now run across multiple nodes on the cluster.
+
+.. code-block:: matlabsession
+
+        >> % Run a parfor over 1000 iterations
+        >> parfor idx = 1:1000
+                a(idx) = rand();
+           end
+
+Once weâre done with the pool, delete it.
+
+.. code-block:: matlabsession
+
+        >> % Delete the pool
+        >> pool.delete;
+
+Batch Jobs
+""""""""""
+
+Users can also submit parallel workflows remotely from their local MATLAB installation on their PC with batch.
+
+The following example are available at the following directory available after loaded the module
+
+.. code-block:: bash
+
+        CIN_EXAMPLE=/cineca/prod/opt/tools/matlab/CINECA_example
+
+**Parallel_example.m**
+
+Letâs use the following example for a parallel job. 
+
+.. code-block:: matlab
+
+   function t = parallel_example(iter)
+
+   if nargin==0, iter = 16; end
+
+   disp('Start sim')
+
+   t0 = tic;
+   parfor idx = 1:iter
+        A(idx) ) idc;
+        pause(2)
+   end
+   t = toc(t0);
+
+   disp('Sim completed.')
+
+
+We will use the batch command again, but since weâre running a parallel job, weâll also specify a MATLAB Pool.
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+        >> % Submit a batch pool job using 4 workers for 16 iterations
+        >> j = c.batch(@parallel_example, 1, {}, âPoolâ, 4);
+
+
+For more info on the batch commands, please see the `MATLAB on-line guide <https://www.mathworks.com/help/distcomp/batch.html?s_tid=doc_ta>`_.
+
+.. code-block:: matlabsession
+
+        >> % View current job status
+        >> j.State
+
+        >> % Fetch the results after a finished state is retrieved
+        >> j.fetchOutputs{:}
+           
+            ans = 15.5328
+
+        >> % Display the diary
+        >> diary(j)
+
+            The job ran in 15.53 sec. using 4 workers. 
+
+**Note that these jobs will always request N+1 cores for your job**, since one worker is required to manage the batch job and pool of workers.  
+
+For example, a job that needs eight workers will consume nine CPU cores. 
+
+Weâll run the same simulation, but increase the Pool size. This time, to retrieve the results at a later time, weâll keep track of the job ID.
+
+**NOTE:** For some applications, there will be a diminishing return when allocating too many workers, as the overhead may exceed computation time.   
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+        >> % Submit a batch pool job using 8 workers for 16 simulations
+        >> j = c.batch(@parallel_example, 1, {}, âPoolâ, 8);
+
+        >> % Get the job ID
+        >> id = j.ID
+
+           Id = 4
+
+        >> % Clear workspace, as though we quit MATLAB
+        >> clear j
+
+
+Once we have a handle to the cluster, weâll call the ``findJob`` method to search for the job with the specified job ID.  
+
+.. code-block:: matlabsession
+
+        >> % Get a handle to the cluster
+        >> c = parcluster;
+
+        >> % Find the old job
+        >> j = c.findJob(âIDâ, 4);
+
+        >> % Retrieve the state of the job
+        >> j.State
+
+           ans =
+           
+           finished
+
+        >> % Fetch the results
+        >> j.fetchOutputs{:}
+
+           ans = 6.4488
+
+        >> % If necessary, retrieve output/error log file
+        >> c.getDebugLog(j)
+
+The job now runs 6.4488 seconds using 8 workers. Run code with different number of workers to determine the ideal number to use.
+
+
+**hpccLinpack.m**
+
+This example is taken from 
+
+.. code-block:: bash
+
+        $MATLAB_HOME/toolbox/distcomp/examples/benchmark/hpcchallenge/
+
+It is an implementation of the HPCC Global HPL benchmark
+
+.. code-block:: matlabsession
+
+        >> function perf = hpccLinpack( m )
+
+The function input is the size of the real matrix m-by-m to be inverted. The outputs is perf, performance in gigaflops
+
+Start to submit on 1 core, with m=1024:
+
+.. code-block:: matlabsession
+
+        >> j = c.batch(@hpccLinpack, 1, {1024}, 'Pool', 1)
+
+           Data size: 0.007812 GB
+           Performance: 1.576476 GFlops
+
+Repeat on one full node on Marconi
+
+.. code-block:: matlabsession
+
+        >> j = c.batch(@hpccLinpack, 1, {1024}, 'Pool', 35)
+
+           Data size: 0.007812 GB
+           Performance: 0.311111 GFlops
+
+Increase the size of the matrix,
+
+.. code-block:: matlabsession
+
+        >> j = c.batch(@hpccLinpack, 1, {2048}, 'Pool', 35)
+
+           Data size: 0.031250 GB
+           Performance: 2.466961 GFlops
+
+        >> j = c.batch(@hpccLinpack, 1, {4096}, 'Pool', 35)
+
+           Data size: 0.125000 GB
+           Performance: 47.951919 GFlops
+
+        >> j = c.batch(@hpccLinpack, 1, {8192}, 'Pool', 71)
+
+           Data size: 0.500000 GB
+           Performance: 86.003520 GFlops
+
+        ..
+        ..
+
+        >> j = c.batch(@hpccLinpack, 1, {16384}, 'Pool', 35)
+
+           Data size: 2.000000 GB
+           Performance: 356.687648 GFlops
+
+
+Debugging
+^^^^^^^^^
+
+If a serial job produces an error, we can call the getDebugLog method to view the error log file.
+
+.. code-block:: matlabsession
+
+        >> j.Parent.getDebugLog(j.Tasks(1))
+
+When submitting independent jobs, with multiple tasks, you will have to specify the task number. For Pool jobs, do not deference into the job object.
+
+.. code-block:: matlabsession
+
+        >> j.Parent.getDebugLog(j)
+
+The scheduler job ID can be derived by calling schedID
+
+.. code-block:: matlabsession
+
+        >> schedID(j)
+
+           ans =
+
+           25539
+
+To learn More
+^^^^^^^^^^^^^
+
+To learn more about the MATLAB Parallel Computing Toolbox, check out these resources:
+
+   * :download:`Hands-On Wokshop@CINECA <../../files/MATLAB_PCT_handsOnWorkshop.pdf>`
+   * :download:`Exercises Workshop Day 1 <../../files/Matlab_PCT_Workshop.7z>`
+   * :download:`Exercises Workshop Day 2 <../../files/MATLAB_exercise.7z>`
+   * `Parallel Computing Coding Examples <http://www.mathworks.com/products/parallel-computing/code-examples.html>`_
+   * `Parallel Computing Documentation <http://www.mathworks.com/help/distcomp/index.html>`_
+   * `Parallel Computing Overview <http://www.mathworks.com/products/parallel-computing/index.html>`_
+   * `Parallel Computing Tutorials <http://www.mathworks.com/products/parallel-computing/tutorials.html>`_
+   * `Parallel Computing Videos <http://www.mathworks.com/products/parallel-computing/videos.html>`_
+   * `Parallel Computing Webinars <http://www.mathworks.com/products/parallel-computing/webinars.html>`_
+
+Parallel Computing Benchmark and Performance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   * `Benchmarking Parfor Performance Using a Simple Example: Game of Blackjack <https://it.mathworks.com/help/distcomp/examples/simple-benchmarking-of-parfor-using-blackjack.html>`_
+   * `Resource Contention in Task Parallel Problems <https://it.mathworks.com/help/distcomp/examples/resource-contention-in-task-parallel-problems.html>`_
+   * `Benchmarking Distributed Jobs (Task Parallel Applications on the Cluster) <https://it.mathworks.com/help/distcomp/examples/benchmarking-independent-jobs-on-the-cluster.html>`_
+   * `Benchmarking Parallel "\" Operator (A\b) <https://it.mathworks.com/help/distcomp/examples/benchmarking-a-b.html>`_
+   * `Profiling Load Unbalanced Distributed Arrays in Data Parallel Applications <https://it.mathworks.com/help/distcomp/examples/profiling-load-unbalanced-codistributed-arrays.html>`_
+   * `Profiling Explicit Parallel Communication while using Message Passing Functions in MATLAB <https://it.mathworks.com/help/distcomp/examples/profiling-explicit-parallel-communication.html>`_

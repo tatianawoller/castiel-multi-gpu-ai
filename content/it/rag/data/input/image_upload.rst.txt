@@ -1,0 +1,50 @@
+.. _compute_inst_img_upload_card:
+
+Image: upload
+==============
+
+The upload of an image can be done using both the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` 
+and the :ref:`cloud/os_overview/management_tools/command_line:command line interface`: you are free to choose any of the available methods. 
+
+This page will guide you, the image owner, step by step in the upload of an image with the OpenStack :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`.
+
+Once logged into the OpenStack Horizon Dashboard, go to *"Images"* in the left panel and click on *"Create Image"* button.
+
+.. image:: /cloud/_img/image_upload_img1.jpg
+
+You have to fill the information in the following pop-up form:
+
+.. image:: /cloud/_img/image_upload_img2.jpg
+
+Under the tab **âImage Detailsâ**, a name for the image file have to be written in the text box under *âImage Nameâ*: 
+it is also a good practice entering a brief description of the image in the text box under *âImage Descriptionâ*.
+
+Based on if the desired image is stored on your PC or is available online, indicate the appropriate *âSource Typeâ* as *âFileâ* or *âURLâ*
+Depending on the previous choice, browse your PC to the location in which is stored the image file or paste the URL to where the image file is hosted.
+
+From the *âFormatâ* drop-down menu, select the file format of the desired image to upload.
+
+Subsequently, it is possible to specify optional advanced options as *âKernelâ* image, *âRamdiskâ* image, specify a string for the image *âArchitectureâ*, 
+*âMinimum Diskâ* quota in GigaByte and a *âMinimum RAMâ* quota in MegaByte to boot the image.
+
+The next step is to select the *âImage Sharingâ* policies by choosing one of the three options under *âVisibilityâ* keeping in mind:
+
+- **Private** images can be used in instance creation only by the image owner.
+- **Shared** images can be used, by default, by all the users collaborating to the project with the image owner.
+- **Community** images are **inhibited** even if the option is available to all users. By uploading an image with visibility set to "Community" will raise the following error message preventing the beginning of the upload procedure:
+
+.. image:: /cloud/_img/Create_Community_Image_Error.png
+
+Further information on image visibility can be found in :ref:`cloud/os_overview/os_components/compute:images`, 
+while a description of the risks associated in using community images can be found at :ref:`cloud/tenant_adm/security_guidelines:images`.
+
+Subsequently, it is possible to choose if the image is *protected* or not from deleting operations.
+
+Finally, under the tab **âMetadataâ**, it is possible to search the name of specific 
+resources metadata in the *âFilterâ* research field at the top of the *âAvailable Metadataâ* list. 
+Once found, clicking the blue â+â button will move the resource metadata under the *âExisting Metadataâ* list allowing the declaration of its value.
+
+.. image:: ../../_img/image_upload_img3.jpg
+
+To complete de creation of the image, simply create the *âCreate Imageâ*      blue button at the bottom right corner of the pop-up window.
+

@@ -1,0 +1,25 @@
+.. _network_create_card:
+
+Network: create
+=================
+
+- In the Horizon Dashboard go to *"Network â Networks"* tab and select *"Create network"* button. 
+
+.. image:: /cloud/_img/op_network_create_img1.png
+
+- In the pop-up window add a name for your Network and select the *"Create Subnet"* checkbox.
+
+.. image:: /cloud/_img/op_network_create_img2.png
+
+- In the *Subnet tab*, assign a name to the Subnet and provide the Network address and Gateway IP. As an example you can set: 
+
+   - Network Address: 192.168.0.0/24
+   - Gateway IP: 192.168.0.254 (the last address for subnet 192.168.0.0/24)
+
+.. image:: /cloud/_img/op_network_create_img3.png
+
+- In the last step, select *"Enable DHCP"* checkbox. 
+
+.. image:: /cloud/_img/op_network_create_img4.png
+
+- Click the *"Create"* button on the right bottom side of the window. 

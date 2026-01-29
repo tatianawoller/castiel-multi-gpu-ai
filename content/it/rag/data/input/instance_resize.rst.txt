@@ -1,0 +1,90 @@
+.. _compute_inst_resize_card:
+
+Instance: resize
+================
+
+Users are able to resize autonomously their VM, this operation can be done either via :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`
+or via :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+
+.. important:: 
+   Before to perform the resize operation: 
+
+   - The VM must be shut off.  
+   - If there are encrypted **LUKS VOLUMES** attached to the virtual machine, it is mandatory that the user:
+  
+       - Unmount the volumes from the VM
+       - Detach the volumes from the Horizon Dashboard (see :ref:`cloud/operative/storage_ops/volume_create:attach/detach a volume`)
+
+.. note:: 
+    Remember to alert your users of the VM temporary shutdown during the operation, before starting the resize.
+
+.. tab-set::
+
+    .. tab-item:: Resize using the Horizon Dashboard
+
+       - Go to *"Compute â Instances"*, and find the VM you need to resize
+       - From the drop-down menu on the right side, select *"resize instance"*
+  
+         .. note:: 
+        
+          - If you have an **Ephemeral VM**, check the size of root disk of the original VM. Don't resize the VM, if the new flavor has a disk smaller than the current one.
+          - If you have a **VM with a Bootable Disk**, the resize will affect only vCPUs number and RAM. The bootable disk will not be changed by the operation.
+
+       - A menu will popup where you can choose the new desired flavor and click *"resize"*
+       - OpenStack will prepare the operation and then wait for user input to confirm or revert the operation
+       - From the drop-down menu on the right select either *"confirm resize/migration"* if you want to continue, or *"revert resize/migration"* if you want to keep the original flavor.
+       - Confirm the success of the operation. To do that you will need to boot the VM, login, and verify the vCPUs number and Memory size are correct with the following commands:
+
+         .. code-block:: bash
+        
+            cat /proc/cpuinfo
+            free -g
+
+
+    .. tab-item:: Resize using the CLI
+
+        To know how to configure and use the OpenStack CLI, please refer to the :ref:`cloud/os_overview/management_tools/command_line:command line interface` page.
+
+        - Identify the VM ID.
+  
+        .. code-block:: bash
+          
+            openstack server list --all | grep <VM_name>
+            openstack server show < vm_ID > | grep flavor
+
+        - Identify the ID of the new flavor the VM needs.
+
+        .. code-block:: bash
+          
+            openstack flavor list
+
+        .. note:: 
+        
+          - If you have an **Ephemeral VM**, check the size of root disk of the original VM. Don't resize the VM, if the new flavor has a disk smaller than the current one.
+          - If you have a **VM with a Bootable Disk**, the resize will affect only vCPUs number and RAM. The bootable disk will not be changed by the operation.
+
+        - Perform the resize.
+
+        .. code-block:: bash
+        
+            openstack server resize --flavor <new_flavor_ID> --wait <vm_ID>
+
+        - Wait for the operation to *"Complete"*.  
+        - Issue the resize confirmation in a separate command, since the option *--confirm* on the command openstack server resize is deprecated.
+
+        .. code-block:: bash
+
+            openstack server resize confirm <vm_ID>
+
+        - Verify the success of the operation. Since the Dashboard can have visualization bugs, it is best to check via CLI:
+
+        .. code-block:: bash
+        
+            openstack server show < vm_ID > | grep flavor
+
+        - Confirm the success of the operation. To do that you will need to boot the VM, login, and verify the vCPUs number and Memory size are correct with the following commands:
+
+        .. code-block:: bash
+        
+            cat /proc/cpuinfo
+            free -g

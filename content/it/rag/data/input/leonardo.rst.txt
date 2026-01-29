@@ -1,0 +1,397 @@
+.. _leonardo_card:
+
+Leonardo
+========
+
+Leonardo is the *pre-exascale* Tier-0 supercomputer of the EuroHPC Joint Undertaking (JU), hosted by **CINECA** and currently located at the Bologna DAMA-Technopole in Italy.
+This guide provides specific information about the **Leonardo** cluster, including details that differ from the general behavior described in the broader HPC Clusters section.
+
+.. |ico2| image:: img/leonardo_logo.png
+   :height: 55px
+   :class: no-scaled-link
+
+Access to the System
+--------------------
+
+The machine is reachable via ``ssh`` (secure Shell) protocol at hostname point: **login.leonardo.cineca.it**. 
+
+The connection is established, automatically, to one of the available login nodes. It is possible to connect to **Leonardo** using one the specific login hostname points:
+
+ * login01-ext.leonardo.cineca.it
+ * login02-ext.leonardo.cineca.it
+ * login05-ext.leonardo.cineca.it
+ * login07-ext.leonardo.cineca.it
+
+.. warning::
+    
+    **The mandatory access to Leonardo si the two-factor authetication (2FA)**. Get more information at section :ref:`general/access:Access to the Systems`.
+
+System Architecture
+-------------------
+
+The cluster, supplied by EVIDEN ATOS, is based on two new specifically-designed compute blades, which are available throught two distinc Slurm partitios on the Cluster:
+
+* X2135 **GPU** blade based on NVIDIA Ampere A100-64 accelerators - **Booster** partition.
+* X2140 **CPU**-only blade based on Intel Sapphire Rapids processors - **Data Centric General Purpose (DCGP)** partition.
+
+The overall system architecture uses NVIDIA Mellanox InfiniBand High Data Rate (HDR) connectivity, with smart in-network computing acceleration engines that enable extremely low latency and high data throughput to provide the highest AI and HPC application performance and scalability. 
+
+The **Booster** partition entered pre-production in May 2023 and moved to **full production in July 2023**.
+The **DCGP** partition followed, starting pre-production in January 2024 and reaching **full production in February 2024**.
+
+Hardware Details
+^^^^^^^^^^^^^^^^
+
+.. tab-set::
+
+    .. tab-item:: Booster
+
+        .. list-table:: 
+            :widths: 30 50
+            :header-rows: 1
+
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Atos BullSequana X2135, Da Vinci single-node GPU
+            * - Racks
+              - 116
+            * - Nodes
+              - 3456
+            * - Processors/node
+              - 1x `Intel Ice Lake Intel Xeon Platinum 8358 <https://www.intel.com/content/www/us/en/products/sku/212282/intel-xeon-platinum-8358-processor-48m-cache-2-60-ghz/specifications.html>`_
+            * - CPU/node
+              - 32
+            * - Accelerators/node
+              - 4x `NVIDIA Ampere100 custom <https://doi.org/10.17815/jlsrf-8-186>`_, 64GiB HBM2e NVLink 3.0 (200 GB/s)
+            * - Local Storage/node (tmfs)
+              - (none)
+            * - RAM/node 
+              - 512 GiB DDR4 3200 MHz
+            * - Rmax
+              - 241.2 PFlop/s (`top500 <https://www.top500.org/system/180128/>`_)
+            * - Internal Network
+              - 200 Gbps NVIDIA Mellanox HDR InfiniBand - Dragonfly+ Topology 
+            * - Storage (raw capacity)
+              - 106 PiB based on DDN ES7990X and Hard Drive Disks (Capacity Tier) 
+              
+                5.7 PiB based on DDN ES400NVX2 and Solid State Drives (Fast Tier)
+
+    .. tab-item:: DCGP
+
+        .. list-table::
+            :widths: 30 50
+            :header-rows: 1
+            
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Atos BullSequana X2140 three-node CPU blade
+            * - Racks
+              - 22
+            * - Nodes
+              - 1536
+            * - Processors/node
+              - 2x `Intel Sapphire Rapids Intel Xeon Platinum 8480+ <https://www.intel.com/content/www/us/en/products/sku/231746/intel-xeon-platinum-8480-processor-105m-cache-2-00-ghz/specifications.html>`_
+            * - CPU/node
+              - 112 cores/node
+            * - Accelerators
+              - (none)
+            * - Local Storage/node (tmfs)
+              - 3 TiB
+            * - RAM/node
+              - 512(8x64) GiB DDR5 4800 MHz
+            * - Rmax
+              - 7.84 PFlop/s (`top500 <https://www.top500.org/system/180204/>`_)
+            * - Internal Network
+              - 200 Gbps NVIDIA Mellanox HDR InfiniBand - Dragonfly+ Topology
+            * - Storage (raw capacity)
+              - 106 PiB based on DDN ES7990X and Hard Drive Disks (Capacity Tier) 
+              
+                5.7 PiB based on DDN ES400NVX2 and Solid State Drives (Fast Tier)
+
+
+File Systems and Data Managment
+-------------------------------
+
+The storage organization conforms to **CINECA** infrastructure. General information are reported in :ref:`hpc/hpc_data_storage:File Systems and Data Management` section. In the following, only differences with respect to general behavior are listed and explained.
+
+.. dropdown:: **$TMPDIR**
+
+ * on the local SSD disks on login nodes (14 TB of capacity), mounted as ``/scratch_local`` (``TMPDIR=/scratch_local``). This is a shared area with no quota, remove all the files once they are not requested anymore. A cleaning procedure will be enforced in case of improper use of the area.   
+ 
+ * on the local SSD disks on the serial node (``lrd_all_serial``, 14TB of capacity), managed via the Slurm ``job_container/tmpfs plugin``. This plugin provides a *job-specific*, private temporary file system space, with private instances of ``/tmp`` and ``/dev/shm`` in the job's user space (``TMPDIR=/tmp``, visible via the command ``df -h``), removed at the end of the serial job. You can request the resource via sbatch directive or srun option ``--gres=tmpfs:XX`` (for instance: ``--gres=tmpfs:200G``), with a maximum of 1 TB for the serial jobs. If not explicitly requested, the ``/tmp`` has the default dimension of 10 GB.
+ 
+ * on the local SSD disks on DCGP nodes (3 TB  of capacity). As for the serial node, the local ``/tmp`` and ``/dev/shm`` areas are managed via plugin, which at the start of the jobs mounts private instances of ``/tmp`` and ``/dev/shm`` in the job's user space (``TMPDIR=/tmp``, visible via the command ``df -h /tmp``), and unmounts them at the end of the job (all data will be lost). You can request the resource via sbatch directive or srun option ``--gres=tmpfs:XX``, with a maximum of all the available 3 TB for DCGP nodes. As for the serial node, if not explicitly requested, the ``/tmp`` has the default dimension of 10 GB. Please note: for the DCGP jobs the requested amount of ``gres/tmpfs`` resource contributes to the consumed budget, changing the number of accounted equivalent core hours, see the dedicated section on the Accounting.
+ 
+ * on RAM on the diskless booster nodes (with a fixed size of 10 GB, no increase is allowed, and the ``gres/tmpfs`` resource is disabled).
+
+Job Managing and Slurm Partitions 
+---------------------------------
+
+In the following table you can find informations about the Slurm partitions for **Booster** and **DCGP** partitions.  
+
+.. seealso:: 
+  Further information about job submission are reported in the general section :ref:`hpc/hpc_scheduler:Scheduler and Job Submission`. 
+
+.. tab-set::
+
+    .. tab-item:: Booster
+
+        +----------------+--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        | **Partition**  | **QOS**            | **#Cores/#GPU per job** | **Walltime** | **Max Nodes/cores/GPUs/user**   | **Priority** | **Notes**                           |
+        +================+====================+=========================+==============+=================================+==============+=====================================+
+        | lrd_all_serial | normal             | 4 cores                 | 04:00:00     | 1 node / 4 cores                | 40           | No GPUs, Hyperthreading x 2         |
+        |                |                    |                         |              |                                 |              |                                     |
+        | (**default**)  |                    | (8 logical cores)       |              | (30800 MB RAM)                  |              | **Budget Free**                     |
+        +----------------+--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        | boost_usr_prod | normal             | 64 nodes                | 24:00:00     |                                 | 40           |                                     |
+        +                +--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        |                | boost_qos_dbg      | 2 nodes                 | 00:30:00     | 2 nodes / 64 cores / 8 GPUs     | 80           |                                     |
+        +                +--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        |                | boost_qos_bprod    | min = 65 nodes          | 24:00:00     | 256 nodes                       | 60           |                                     |
+        |                |                    |                         |              |                                 |              |                                     |
+        |                |                    | max = 256 nodes         |              |                                 |              |                                     |
+        +                +--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        |                | boost_qos_lprod    | 3 nodes                 | 4-00:00:00   | 3 nodes / 12 GPUs               | 40           |                                     |
+        +----------------+--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        | boost_fua_dbg  | normal             | 2 nodes                 | 00:10:00     | 2 nodes / 64 cores / 8 GPUs     | 40           | Runs on 2 nodes                     |
+        +----------------+--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        | boost_fua_prod | normal             | 16 nodes                | 24:00:00     | 4 running jobs per user account | 40           |                                     |
+        |                |                    |                         |              |                                 |              |                                     |
+        |                |                    |                         |              | 32 nodes / 3584 cores           |              |                                     |
+        +                +--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        |                | boost_qos_fuabprod | min = 17 nodes          | 24:00:00     | 32 nodes / 3584 cores           | 60           | Runs on 49 nodes                    |
+        |                |                    |                         |              |                                 |              |                                     |
+        |                |                    | max = 32 nodes          |              |                                 |              | Min is 17 FULL nodes                |
+        +                +--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+        |                | qos_fualowprio     | 16 nodes                | 08:00:00     |                                 | 0            |                                     |
+        +----------------+--------------------+-------------------------+--------------+---------------------------------+--------------+-------------------------------------+
+
+        .. note::
+
+          The partitions: **boost_fua_dbg, boost_fua_prod** can be exclusively used by Eurofusion users. For more information see the dedicated :ref:`specific_users/specific_users:Eurofusion` section.
+
+
+    .. tab-item:: DCGP
+
+        +----------------+--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        | **Partition**  | **QOS**            | **#Cores/#GPU per job** | **Walltime** | **Max Nodes/cores/GPUs/user**        | **Priority** | **Notes**                           |
+        +================+====================+=========================+==============+======================================+==============+=====================================+
+        | lrd_all_serial | normal             | max = 4 cores           | 04:00:00     | 1 node / 4 cores                     | 40           | Hyperthreading x 2                  |
+        |                |                    |                         |              |                                      |              |                                     |
+        | (**default**)  |                    | (8 logical cores)       |              | (30800 MB RAM)                       |              | **Budget Free**                     |
+        +----------------+--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        | dcgp_usr_prod  | normal             | 16 nodes                | 24:00:00     | 512 nodes per prj. account           | 40           |                                     |
+        +                +--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        |                | dcgp_qos_dbg       | 2 nodes                 | 00:30:00     | 2 nodes / 224 cores per user account | 80           |                                     |
+        |                |                    |                         |              |                                      |              |                                     |
+        |                |                    |                         |              | 512 nodes per prj. account           |              |                                     |
+        +                +--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        |                | dcgp_qos_bprod     | min = 17 nodes          | 24:00:00     | 128 nodes per user account           | 60           | GrpTRES = 1536 nodes                |
+        |                |                    |                         |              |                                      |              |                                     |
+        |                |                    | max = 128 nodes         |              | 512 nodes per prj. account           |              | Min is 17 FULL nodes                |
+        +                +--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        |                | dcgp_qos_lprod     | 3 nodes                 | 4-00:00:00   | 3 nodes / 336 cores per user account | 40           |                                     |
+        |                |                    |                         |              |                                      |              |                                     |
+        |                |                    |                         |              | 512 nodes per prj. account           |              |                                     |
+        +----------------+--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        | dcgp_fua_dbg   | normal             | 2 nodes                 | 00:10:00     | 2 nodes / 224 cores                  | 40           | Runs on 2 nodes                     |
+        +----------------+--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        | dcgp_fua_prod  | normal             | 16 nodes                | 24:00:00     |                                      | 40           |                                     |
+        +                +--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        |                | dcgp_qos_fuabprod  | min = 17 nodes          | 24:00:00     | 64 nodes / 7168 cores                | 60           | Runs on 130 nodes                   |
+        |                |                    |                         |              |                                      |              |                                     |
+        |                |                    | max = 64 nodes          |              |                                      |              | Min is 17 FULL nodes                |
+        +                +--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+        |                | qos_fualowprio     | 16 nodes                | 08:00:00     |                                      | 0            |                                     |
+        +----------------+--------------------+-------------------------+--------------+--------------------------------------+--------------+-------------------------------------+
+
+        .. note::
+
+          The partitions: **dcgp_fua_dbg, dcgp_fua_prod** can be exclusively used by Eurofusion users. For more information see the dedicated :ref:`specific_users/specific_users:Eurofusion` section.
+
+Network Architecture
+--------------------
+
+.. raw:: html
+
+  <p><strong>Leonardo</strong> features a state-of-the-art interconnect system tailored for high-performance computing (HPC). It delivers <em>low latency</em> and <em>high bandwidth</em> by leveraging <strong>NVIDIA Mellanox InfiniBand HDR</strong> (High Data Rate) technology, powered by <a href="https://nvdam.widen.net/s/zmbw7rdjml/infiniband-qm8700-datasheet-us-nvidia-1746790-r12-web">NVIDIA QUANTUM QM8700 Smart Switches</a>, and a <strong><a href="https://ieeexplore.ieee.org/document/7885210">Dragonfly+ topology</a></strong>. Below is an overview of its architecture and key features:</p>
+
+  <ul>
+    <li><strong>Hierarchical Cell Structure:</strong> The system is structured into multiple <em>cells</em>, each comprising a group of interconnected compute nodes.</li>
+
+    <li><strong>Inter-cell Connectivity:</strong> As illustrated in the figure below, cells are connected via an all-to-all topology. Each pair of distinct cells is linked by 18 independent connections, each passing through a dedicated Layer 2 (L2) switch. This design ensures high availability and reduces congestion.</li>
+
+    <li><strong>Intra-cell Topology:</strong> Inside each cell, a non-blocking two-layer fat-tree topology is used, allowing scalable and efficient intra-cell communication.</li>
+
+    <li><strong>System Composition:</strong>
+      <ul>
+        <li>19 cells dedicated to the <em>Booster</em> partition.</li>
+        <li>2 cells for the <em>DCGP</em> (Data-Centric General Purpose) partition.</li>
+        <li>1 hybrid cell with both accelerated (36 Booster nodes) and conventional (288 DCGP nodes) compute resources.</li>
+        <li>1 cell allocated for management, storage, and login services.</li>
+      </ul>
+    </li>
+
+    <li><strong>Adaptive Routing:</strong> The network employs adaptive routing, dynamically optimizing data paths to alleviate congestion and maintain performance under load.</li>
+  </ul>
+  
+.. figure:: img/leo-net-all2all.png
+   :height: 350px
+   :align: center
+   :class: no-scaled-link
+
+.. image:: img/spacer.png
+   :align: center
+   :class: no-scaled-link
+   
+.. dropdown:: Cell Configuration and Intra-cell Connectivity
+   :animate: fade-in-slide-down
+   :chevron: down-up
+
+   .. tab-set::
+
+      .. tab-item:: Booster
+
+        .. raw:: html
+
+          <p>Each Booster cell is composed of:</p>
+          <ul>
+            <li><strong>6 Ã Atos BullSequana XH2000 racks</strong>, each containing:
+              <ul>
+                <li>3 Ã Level 2 (L2) switches</li>
+                <li>3 Ã Level 1 (L1) switches</li>
+                <li>30 compute nodes â each equipped with 4 GPUs, each connected via a dedicated 100 Gbps port</li>
+              </ul>
+            </li>
+          </ul>
+
+          <p><strong>Total per Booster cell:</strong> 18 L2 switches, 18 L1 switches, and 180 compute nodes.</p>
+
+          <h4>Connectivity Overview</h4>
+
+          <p><strong>Level 2 (L2) Switches:</strong></p>
+          <ul>
+            <li><strong>UP:</strong> 22 Ã 200 Gbps ports connecting to L2 switches in other cells</li>
+            <li><strong>DOWN:</strong> 18 Ã 200 Gbps ports connecting to L1 switches within the cell</li>
+            <li><strong>Oversubscription:</strong> 0.8:1</li>
+          </ul>
+
+          <p><strong>Level 1 (L1) Switches:</strong></p>
+          <ul>
+            <li><strong>UP:</strong> 18 Ã 200 Gbps ports connected to all L2 switches in the cell</li>
+            <li><strong>DOWN:</strong> 40 Ã 100 Gbps ports connected to GPUs across 10 compute nodes</li>
+            <li><strong>Oversubscription:</strong> 1.11:1</li>
+          </ul>
+
+        .. figure:: img/leo-net-booster_cell.png
+          :height: 750px
+          :align: center
+      
+      .. tab-item:: DCGP
+        
+        .. raw:: html
+          .. raw:: html
+
+          <p>Each DCGP cell is composed of:</p>
+          <ul>
+            <li><strong>8 Ã Atos BullSequana XH2000 racks</strong>, each containing:
+              <ul>
+                <li>3 or 0 Level 2 (L2) switches</li>
+                <li>2 Ã Level 1 (L1) switches</li>
+                <li>78 compute nodes â each connected via a dedicated 100 Gbps port</li>
+              </ul>
+            </li>
+          </ul>
+
+          <p><strong>Total per DCGP cell:</strong> 18 L2 switches, 16 L1 switches, and 624 compute nodes.</p>
+
+          <h4>Connectivity Overview</h4>
+
+          <p><strong>Level 2 (L2) Switches:</strong></p>
+          <ul>
+            <li><strong>UP:</strong> 22 Ã 200 Gbps ports connecting to L2 switches in other cells</li>
+            <li><strong>DOWN:</strong> 18 Ã 200 Gbps ports connecting to L1 switches within the same cell</li>
+            <li><strong>Oversubscription ratio:</strong> 0.8:1</li>
+          </ul>
+
+          <p><strong>Level 1 (L1) Switches:</strong> (divided into two groups):</p>
+          <ul>
+            <li><strong>9 switches with 40 downlinks:</strong>
+              <ul>
+                <li>UP: 18 Ã 200 Gbps ports connected to all L2 switches in the cell</li>
+                <li>DOWN: 40 Ã 100 Gbps ports connect</strong>ed to compute nodes</li>
+                <li>Oversubscription ratio: 1.11:1</li>
+              </ul>
+            </li>
+            <li><strong>9 switches with 38 downlinks:</strong>
+              <ul>
+                <li>UP: 18 Ã 200 Gbps ports connected to all L2 switches in the cell</li>
+                <li>DOWN: 38 Ã 100 Gbps ports connected to compute nodes</li>
+                <li>Oversubscription ratio: 1.05:1</li>
+              </ul>
+            </li>
+          </ul>
+
+        .. figure:: img/leo-net-dcgp_cell.png
+          :height: 750px
+          :align: center
+
+Advanced Information
+^^^^^^^^^^^^^^^^^^^^
+
+.. dropdown:: Network Topology - Map
+   :animate: fade-in-slide-down
+   :chevron: down-up
+
+    The topology is presented in a table format, where each row corresponds to a compute node. For each node, the table specifies the associated L1 switch and cell, providing a clear overview of the physical and logical network layout within the cluster.
+
+    :download:`Network Topology - Map <../files/ntopology.dat>`
+
+.. dropdown:: Network Topology - Distance Matrix
+   :animate: fade-in-slide-down
+   :chevron: down-up
+
+    The attached compressed CSV file contains the distance matrix of all compute nodes in the cluster. The matrix uses the following metric to represent the network distance between any two nodes:
+
+    * **0** â Same nodes
+    * **1** â Same L1 switch, same cell.
+    * **2** â Different L1 switch, same cell.
+    * **3** â Different L1 switch and different cell.
+    
+    This matrix can be used to analyze communication locality and optimize node selection for distributed workloads.
+
+    :download:`Distance Matrix <../files/ntopology-dst_mtx.tar.bz2>`
+
+.. dropdown:: Switch Naming Format
+   :animate: fade-in-slide-down
+   :chevron: down-up
+
+    .. code-block::
+      
+      isw<RRrrSS>
+
+    where ``<RRrrSS>`` is a 5- or 6-digits number varies based on the location and type of the switch.
+
+    Specifically:
+
+    * ``RR`` = region number (1 or 2 digits)
+    * ``rr`` = rack number (2 digits)
+    * ``SS`` = switch id (2 digits)
+
+    .. note::
+      If ``SS`` is an even number, it refers to an L1 switch; if it is an odd number, it refers to an L2 switch.
+
+Documents
+---------
+
+* Article on Leonardo architecture and the technologies adopted for its GPU-accelerated partition: CINECA Supercomputing Centre, SuperComputing Applications and Innovation Department. (2024). âLEONARDO: A Pan-European Pre-Exascale Supercomputer for HPC and AI applications.â, Journal of large-scale research facilities, 8, A186. https://doi.org/10.17815/jlsrf-8-186
+* Details about new technologies included in the Witley platform with Intel Xeon Icelake contained in the Leonardo pre-exascale system (`link <https://urldefense.com/v3/__https://software.intel.com/content/www/us/en/develop/articles/third-generation-xeon-scalable-family-overview.html__;!!P1tgJ-3e!TrmMus5wzdLQ963vkc3yfy0BlhC1Hu8vOoce4SgltsTbkSSDrX2p1zTXPCIrpPm3$>`_)
+* Additional documents (`link <https://urldefense.com/v3/__https://software.intel.com/content/www/us/en/develop/articles/xeon-performance-tuning-and-solution-guides.html__;!!P1tgJ-3e!TrmMus5wzdLQ963vkc3yfy0BlhC1Hu8vOoce4SgltsTbkSSDrX2p1zTXPKZ5awkS$>`_)
+
+Some tuning guides for dedicated enviroments (ML/DL or HPC Clusters):
+
+* :download:`Tuning Guide <../files/Tuning_guide.pdf>`
+
+* :download:`Deep Learning <../files/Deep_learning.pdf>`

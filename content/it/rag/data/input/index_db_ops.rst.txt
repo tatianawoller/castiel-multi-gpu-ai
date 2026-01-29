@@ -1,0 +1,28 @@
+.. _database_ops_card:
+
+Database operations
+===================
+
+For general information on the Database component, visit the :ref:`cloud/os_overview/os_components/database:database` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   db_create
+   db_access
+
+.. grid:: 2
+
+    .. grid-item-card:: |ostrove| **Database: create**
+      :link: db_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database: access**
+      :link: db_access_card
+      :link-type: ref
+
+
+.. |ostrove| image:: /cloud/_img/trove_logo.png
+   :width: 35px
+   :class: no-scaled-link

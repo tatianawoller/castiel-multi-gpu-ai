@@ -1,0 +1,20 @@
+.. _storage_ops_card:
+
+Storage operations
+==================
+
+For general information on the storage component, visit the :ref:`cloud/os_overview/os_components/storage:storage` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   volume_create
+
+.. card:: |oscinder| **Volume: create**
+      :link: volume_create_card
+      :link-type: ref
+
+.. |oscinder| image:: /cloud/_img/cinder_logo.png
+   :width: 35px
+   :class: no-scaled-link

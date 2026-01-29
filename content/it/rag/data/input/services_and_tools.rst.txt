@@ -1,0 +1,29 @@
+.. _serv_tools_card:
+
+Services and Tools
+==================
+
+High-Performance Computing (HPC) services typically provide advanced computational resources. These tools and services are designed to support research, simulations, data processing, and other high-performance applications.
+
+.. grid:: 3
+
+   .. grid-item-card:: **Interactive Computing**
+      :link: interactive_computing_card
+      :link-type: ref
+
+
+   .. grid-item-card:: **Singularity**
+      :link: singularity_card
+      :link-type: ref
+
+   .. grid-item-card:: **Miniconda**
+      :link: miniconda_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   interactive_computing
+   singularity
+   miniconda

@@ -1,0 +1,417 @@
+.. _singularity_card:
+
+Singularity Containers
+----------------------
+
+In what follows we explain how to build a container image capable of running parallel applications with MPI and GPU parallelism on the CINECA clusters.
+
+The containerization tool available is **Singularity**, designed to run scientific applications on HPC resources, enabling users to have full control over their environment. Singularity containers can be used to package entire scientific workflows, software, libraries and data. This means that you donât have to ask your cluster admin to install anything for you - you can put it in a Singularity container and run. Official Singularity documentation is available `here <https://docs.sylabs.io/guides/3.7/user-guide/>`_.
+
+We will also provide a quick outline over :ref:`hpc/hpc_enviroment:SPACK`, a package management tool compatible with Singularity, which can be used to deploy entire software stacks inside a container image. 
+
+How to build a Singularity container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A Singularity container can be built in differnt ways. The simplest command used to build is:
+
+.. code-block:: bash
+    
+    $ singularity build <build option> <container path> <build spec target>
+
+the ``build`` command can produce containers in 2 different output formats. Format can be specified by passing the fllowing ``build option``:
+
+1. ``default``: a compressed read-only **singularity image format (SIF)**, suitable for production. This is an *immutable object*.
+2.  ``--sandbox``: a writable **(ch)root directory** called *sandbox*, used for interactive development. Running container inmaghe with the `-writable` option allows to change files within the sandobx: 
+    .. code-block:: bash
+
+        $ sudo singularity shell --writable <my sandbox>
+
+The build ``spec target`` defines the method that ``build`` uses to create the container. All the *methods* are listed in the table:
+
+        .. list-table:: 
+            :widths: 30 70
+            :header-rows: 1
+
+            * - **Build method**
+              - **Commands**
+            * - beginning with library to build from the `Container Library <https://cloud.sylabs.io/library>`_
+              - ``sudo singularity build  <container_img> library://path/to/container_img[:tag]``
+
+            * - beginning with docker to build from `Docker Hub <https://hub.docker.com/>`_
+              - ``sudo singularity build  <container_img> docker://path/to/container_img[:tag]``
+
+            * - path to an existing container on your local machine
+              - ``sudo singularity build --sandbox  <my_sandbox> <container_img>``
+
+            * - path to a directory to build from a *sandbox*
+              - ``sudo singularity build  <container_img> <my_sandbox>``
+
+            * - path to a `SingularityCE definition file <https://docs.sylabs.io/guides/3.7/user-guide/definition_files.html#definition-files>`_
+              - ``sudo singularity build  <container_img> <definition_file>``
+
+Since build  can accept an existing container as a target and create a container in any of these two formats, you can convert an existing .sif container image to a sandbox and viceversa.
+
+.. note::
+
+ Notice that, if the build process is started from a Singularity recipe file, it is needed to run singularity build command as root (sudo ...). For more information about the structure of Singularity recipe files have a look at the associated documentation `here <https://docs.sylabs.io/guides/latest/user-guide/definition_files.html>`_.
+
+
+.. figure:: img/change_formats.png
+   :height: 250px
+   :align: center
+
+
+Bindings
+^^^^^^^^
+
+A Singularity container image provides a standalone environment for software handling. However, it might still need files from the host system, as well as write privileges at runtime. As pointed out above, this last operation is indeed available when working with a sandbox, but it is not for an (*immutable*) **SIF** object. To provide for these needs, Singularity grants the possibility to mount files and directories from the host to the container.
+
+* In the default configuration, the directories ``$HOME`` , ``/tmp`` , ``/proc`` , ``/sys`` , ``/dev``, and ``$PWD`` are among the system-defined bind paths
+* The ``SINGULARITY_BIND``  environment variable can be set (in the host) to specify the bindings.  The argument for this option is a comma-delimited string of bind path specifications in the format ``src[:dest[:opts]]`` where src and dest are paths outside and inside of the container respectively; the dest argument is optional, and takes the same values as src if not specified. For example: ``$ export SINGULARITY_BIND=/path/in/host:mount/point/in/container``.
+* Bindings can be specified on the command line when a container instance is started via the ``--bind`` option. The structure is the same as above, eg.  singularity shell ``--bind /path/in/host:/mount/point/in/container <container_img>``.
+
+When running MPI parallel programs in a *Singularity hybrid approach* (see also `here <https://docs.sylabs.io/guides/3.7/user-guide/mpi.html>`_), the necessary MPI libraries from the host are automatically bound above the ones present in the container. Similarly, for GPU parallel programs, the necessary CUDA drivers and libraries from the host are automatically bound and employed inside the container provided the ``--nv``  flag is used when starting a container instance , eg. ``$ singularity exec --nv <container_img> <container_cmd>``.
+
+Enviroment variables
+^^^^^^^^^^^^^^^^^^^^
+
+Environment variables inside the container can be set in a handful of ways, see also `here <https://docs.sylabs.io/guides/3.7/user-guide/environment_and_metadata.html>`_. At build time they should be specified in the %environment section of a Singularity definition file. Most of the variables from the host are then passed to the container except for ``PS1``, ``PAT``H and ``LD_LIBRARY_PATH`` which will ne modified to contain default values; to prevent this behavior, one can use the ``--cleanenv``  option, to start a container instance with a clean environment. Further environment variables can be set, and host variables can be overwritten at runtime in a handful of ways:
+
+* using the ``--env`` flag to directly pass an environment variables, eg: ``$ singularity shell --env MY_VARIABLE="value" my_container.sif``.
+* using the ``--env-file`` flag to directly pass a list of environment variables held in a file, eg: ``singularity shell --env-file my_vars.txt <container img>``.
+* using the ``SINGULARITYENV_prefix`` when defining variables in the host. Eg: setting ``SINGULARITYENV_MYVAR=1`` in the host, will yield the ``MYVAR=1`` in the container.
+
+With respect to special ``path`` variables:
+
+* ``PATH``: additional paths can be prepended/appended to the default ones via the variables ``SINGULARITY_APPEND_PATH / SINGULARITY_PREPEND_PATH``. Alternatively, one can do so via command line as ``$ singularity shell --env APPEND_PATH=/some/path my_container.sif``
+* ``LD_LIBRARY_PATH``: should be handled using the ``SINGULARITYENV_LD_LIBRARY_PATH`` variable. For good practice, the default values of the ``LD_LIBRARY_PATH`` variable inside the container, namely ``LD_LIBRARY_PATH=/.singularity/libs``,  should be included as well.
+
+As a last disclaimer, we point out two additional variables which can be set in the host to manage the building process:
+
+* ``SINGULARITY_CACHEDIR``: pointing to a directory used for caching data from the build process, eg: *Docker layers*, *Cloud library images*, *metadata*.
+* ``SINGULARITY_TMPDIR``: pointing to a directory used for temporary build of the squashfs system.
+
+Using SPACK inside Containers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Spack (`full documentation here <https://spack.readthedocs.io/en/latest/>`_) is a package manager for Linux and macOS, able to download and compile (almost!) automatically the software stack needed for a specific application. It is compatible with the principal container platforms (Docker, Singularity), meaning that it can be installed inside the container and in turn be used to deploy the necessary software stack inside the container image. This can be utterly useful in a HPC cluster environment, both to install applications as a root (inside the container), and to keep a pletora of ready-available software stacks (or even application built with different software stack versions) living in different containers (regardless of the outside environment).
+
+Getting SPACK is an easy and fast three steps process:
+
+* Install the necessary dependencies, eg. on Debian/Ubuntu: ``apt update; apt install build-essential ca-certificate coreutils curl enviroment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip``.
+* Clone the repository: ``git clone -c feature.manyFiles=true https://github.com/spack/spack.git``.
+* Activate SPACK, eg: for *bash/zsh/sh*: ``source /spack/share/spack/setup-env.sh``.
+
+The  very same operations can be put in the ``%post`` section of a Singularity definition file to have an available installation of Spack at the completion of the built. Alternatively, one can bootstrap from an image containing spack only and start from there the built of the container. For example:
+
+.. code-block:: bash
+
+    sudo singularity build --sandbox <container_img> docker://spack/ubunty-jammy
+
+
+Spack Basic Usage
++++++++++++++++++
+
+.. code-block:: bash
+
+    $ spack install openmpi@4.1.5+pmi fabrics=ucx,psm2,verbs schedulers=slurm %gcc@8.5.0
+
+Generally speaking, the deployment of a software stack installed via SPACK is based on the following steps:
+
+1. Build a container image.
+2. Get SPACK in your container.
+3. Install the software stack you need.
+
+In practice, and if foresight of building an *immutable* SIF container image for compiling and running an application, one can proceed as follow:
+
+1. Get ``sandbox`` container image hodling an installation of SPACK and open a **shell** with ``sudo`` and writable privileges (``sudo singularity shell --writable <my_sandbox>``).
+2. Write a ``spack.yaml`` file for a SPACK environment listing all the packages and compilers your application would need (more detaile `here <https://spack.readthedocs.io/en/latest/environments.html>`_).
+3. Execute ``spack concretize`` and ``spack install``, if the installation goes through and you are application can compile and run you are set to go:
+    a. either transform your sandobox ``.sif`` file fixing the changes to a conteiner image.
+    b. or, for a clean build, copy the ``spacl.yaml`` file in the conteiner in the specific ``%`` in a ``*.sif`` file fixing the changes to a conteiner imagefile section, activate SPACK and execute ``spack concretize`` and ``spack install``.
+
+Following, a minimal example of a Singularity definition file: we bootstrap from a docker container holding a clean installation of ubuntu:22.04, we copy a ready made ``spack.yaml`` file in the container, get SPACK therein and use it to install the software stack as delineated in the ``spack.yaml`` file.
+
+.. code-block:: bash
+
+    Bootstrap: docker
+    From: ubuntu:22.04
+ 
+ 
+    %files
+    /some/example/spack/file/spack.yaml         /spacking/spack.yaml
+ 
+    %post
+    ### We install and activate Spack
+    apt-get update
+    apt install -y apt install build-essential ca-certificates coreutils curl environment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip 
+    git clone -c feature.manyFiles=true https://github.com/spack/spack.git 
+    source /spack/share/spack/setup-env.sh
+ 
+    ### We pretentiously deploy a software stack in a Spack environment
+    spack env activate -d /spacking/
+    spack concretize
+    spack install
+ 
+    %environment
+    ### Custom evironment variables should be set here
+    export VARIABLE=MEATBALLVALUE
+
+
+
+Parallel MPI Container
+^^^^^^^^^^^^^^^^^^^^^^
+
+The MPI implementation used in the CINECA clusters is OpenMPI (as opposed to MPICH). Singularity offers the possibility to run parallel applications compiled and installed in a container using the host MPI installation, as well as the bare metal capabilities of the host such as the Infiniband computer networking communication standard. This is the so called Singularity hybrid approach where the OpenMPI installed in the container and the one on the host work in tandem to instantiate and run the job, see also the `documentation <https://docs.sylabs.io/guides/3.3/user-guide/mpi.html>`_.
+
+The only caveat is that the two installations (container and host) of OpenMPI have to be compatible to a certain degree. The (default) installation specifics for each cluster are here listed:
+
+.. list-table:: 
+    :widths: 30 30 30 30 30
+    :header-rows: 1
+
+    * - 
+      - **Openmpi version**
+      - **pmi(?)**
+      - **specifics**
+      - **more specifics**
+    * - Leonardo
+      - 4.1.6
+      - pmix 
+      - ``--with ucx --with-slurm --with-cuda`` (only Booster partition)
+      - ``export PMIX_MCA_gds=hash`` to suppres PMIX WARNING when using srun
+    * - Galileo100
+      - 4.1.1
+      - pmi2 
+      - ``--with-pmi --with ucx --with-slurm``
+      - 
+
+.. note::
+
+     Even if the host and container hold different versions of OpenMPI, the application might still run in parallel, but at a reduced speed, as it might not be able to exploit the full capabilities of the host bare metal installation.
+
+    A suite of container images holding compatible OpenMPI versions for the CINECA clusters are available at the `NVIDIA catalog <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/nvhpc/tags>`_, on which we dwell in the next section.
+
+GPU Container
+^^^^^^^^^^^^^
+
+To run GPU applications on accelerated clusters on first has to check his container image holds a compatible version of CUDA. The specifics are listed in the following table:
+
+.. list-table:: 
+     :widths: 30 30 30 30
+     :header-rows: 1
+     
+     * - 
+       - **Driver Version**
+       - **CUDA Version**
+       - **GPU Model**
+     * - Leonardo
+       - 530.30.20
+       - 12.1
+       - NVIDIA A100 SXM6 64 GB HBM2
+     * - Galileo100
+       - 470.42.01
+       - 11.4
+       - NVIDIA V100 PCIe3 32 GB
+
+while the `CUDA compatibility <https://docs.nvidia.com/deploy/cuda-compatibility/>`_ table is:
+
+.. list-table:: 
+    :widths: 50 50 
+    :header-rows: 1
+
+    * - **CUDA Version**
+      - **Required Drivers**
+    * - CUDA 12.x
+      - from 525.60.13
+    * - CUDA 11.x
+      - from 450.80.02
+
+One can surely install a working version of CUDA on his own, for example via Spack. However, a simple and effective way to obtain a container image provided with a CUDA installation is to bootstrap from an NVIDIA HPC SDK docker container, which already comes equipped with CUDA, OpenMPI and the NVHPC compilers. Such containers are available at the `NVIDIA catalog <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/nvhpc/tags>`_. Their tag follows a simple structure, ``$NVHPC_VERSION-$BUILD_TYPE-cuda$CUDA_VERSION-$OS``,  where:
+
+1. ``$BUILD_TYPE``: can either take the value devel or runtime. The first ones are usually heavier and employed to compile and install applications. The second ones are lightweight containers for deployment, stripped of all the compilers and applications not needed at runtime execution.
+2. ``$CUDA_VERSION``: an either take a specific value (e.g. ) or be a ``multi``.  The multi flavors hold up to three different CUDA version, and as such are much heavier. However, they can be useful to deploy the same base container on HPC with different CUDA specifics or to try out the performance of the various versions.
+
+In the following we provide a minimal Singularity definition file following the above principles, namely: bootstrap from a develop NVIDIA HPC SDK container, install the needed applications, copy the necessary binaries and files for runtime, pass to a lightweight container. This technique is called multistage build, more information available `here <https://docs.sylabs.io/guides/3.7/user-guide/definition_files.html#multi-stage-builds>`_.
+
+.. code-block:: bash
+
+    Bootstrap: docker
+    From: nvcr.io/nvidia/nvhpc:23.1-devel-cuda_multi-ubuntu22.04
+    Stage: build
+ 
+ 
+    %files
+    ### Notice the asterisk when copying directories
+    /directory/with/needed/files/in/host/*      /destination/directory/in/container
+    /our/application/CMakeLists.txt             /opt/app/CMakeLists.txt
+    /some/example/spack/file/spack.yaml         /spacking/spack.yaml
+ 
+    %post
+    ### We install and activate Spack
+    apt-get update
+    apt install -y build-essential ca-certificates coreutils curl environment-modules gfortran git gpg lsb-release python3 python3-distutils python3-venv unzip zip 
+    git clone -c feature.manyFiles=true https://github.com/spack/spack.git 
+    . /spack/share/spack/setup-env.sh
+ 
+    ### We pretentiously deploy a software stack in a Spack environment
+    spack env activate -d /spacking/
+    spack concretize
+    spack install
+ 
+    ### Make and install our application
+    cd /opt/app && mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX=/opt/app_binaries ..
+    make -j
+    make install
+ 
+ 
+    ###########################################################################################
+    ### We now only need to copy the necessary binaries and libraries for runtime execution ###
+    ###########################################################################################
+ 
+ 
+    Bootstrap: docker
+    From: nvcr.io/nvidia/nvhpc:23.1-runtime-cuda11.8-ubuntu22.04
+    Stage: runtime
+ 
+    %files from build
+    /spacking/*                                     /spacking/
+    /opt/app_binaries/*                             /opt/app_binaries/
+
+
+
+Running containerized parallel applications
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As explained in the previous section as well as in the `documentation <https://docs.sylabs.io/guides/3.3/user-guide/mpi.html>`_, if the MPI library installed in the container is compatible with that of the host system, Singularity will take care by itself of binding the necessary libraries to allow a parallel containerized application to run exploiting the cluster infrastructure. 
+In practical terms, this means that one just need to launch it as:
+
+.. code-block:: bash
+
+    mpirun -np $nnodes singularity exec <container_img> <container_cmd>
+
+In comparison, the following code snippet will launch the application using *MPI inside the container*, thus effectively running on a *single node*:
+
+.. code-block:: bash
+
+    singularity exec <container_img> mpirun -np $nnodes <container_cmd>
+
+Regarding launching containerized applications needing GPU support, again Singularity is capable of binding the necessary libraries on its own, 
+provided a compatible software version in the container and host has been deployed; full documentation is available `here <https://docs.sylabs.io/guides/3.7/user-guide/gpu.html>`_. 
+To achieve this, one just need to add the --nv flag on the command line, namely:
+
+.. code-block:: bash
+
+    mpirun -np $nnodes singularity exec --nv <container_img> <container_cmd>
+
+.. note::
+
+    Notice that the ``-nv`` flag is psecifaclly used for NVIDIA GPUs, for AMD GPUs one can similarly use the flag ``-rocm``.
+
+.. tab-set::
+
+    .. tab-item:: Leonardo
+
+        **Necessary modules and Slurm job script example**
+
+        On Leonardo, Singularity PRO version 3.11 is availabe on the login nodes and on the partitions. The necessary MPI, Singularity and CUDA modules are the following:
+
+            * ``module load openmpi/4.1.6--nvhpc--23.11``
+            * ``module load cuda/12.1``
+
+        .. note::
+
+            The ``module load autoload singularity/3.8.0--bind--openmpi--4.1.1`` command automatically loads the ``zlib/1.2.13--gcc-11.3.0`` module as well.
+
+        The following code snippet is an example of a Slurm job script for running MPI parallel containerized applications on the LEONARDO cluster with GPU support. In order to equally and fully exploit the **32 cores** and **4 GPUs** of the ``boost_usr_prod``  partition, one needs to set ``--ntasks-per-node=4``, ``--cpu-per-task=8`` and ``--grees=gpu:4``. 
+        As a redundant but necessary measure, we also set the number of threads to eight manually via ``export OMP_NUM_THREADS=8``.
+
+        .. code-block:: bash
+
+            #!/bin/bash
+ 
+            #SBATCH --nodes=6
+            #SBATCH --tasks-per-node=4
+            #SBATCH --cpu-per-task=8
+            #SBATCH --gres=gpu:4
+            #SBATCH --mem=30GB
+            #SBATCH --time=00:10:00
+            #SBATCH --out=slurm.%j.out
+            #SBATCH --err=slurm.%j.err
+            #SBATCH --account=<Account_name>
+            #SBATCH --partition=boost_usr_prod
+            export OMP_NUM_THREADS=8
+  
+            module purge
+            module load openmpi/4.1.6--nvhpc--23.11
+            module load cuda/12.1
+ 
+            mpirun -np 6 singularity exec --nv <container_img> <container_cmd>
+
+        As explained above, provided the container and host OpenMPI share a compatible pmi, 
+        the application can be launched via the srun command after having allocated the necessary resources. For example:
+
+        .. code-block:: bash
+
+            salloc -t 03:00:00 --nodes=6 --ntasks-per-node=4 --ntasks=24 --gres=gpu:4 -p boost_usr_prod -A <Account_name>
+            <load the necessary modules and/or export necessary variables>
+            export OMP_NUM_THREADS=8
+            srun --nodes=6 --ntasks-per-node=4 --ntasks=24 singularity exec --nv <container_img> <container_cmd>
+
+        
+
+    .. tab-item:: Galileo100
+
+        On Galileo100, Singularity version 3.8.0 is available on the login nodes and on the partitions. 
+        Beware that, for the Galileo00 cluster, nodes with GPU are available only under 
+        a reservation (send an email to superc@cineca.it) and through the interactive computing service; moreover, there one 
+        can at most request one node with **2 GPUs** so no internode communication will actually be performed. 
+        The necessary MPI, Singularity and CUDA modules are the following:
+
+            * ``module load profile/advanced`` (profile with additional modules)
+            * ``module load autoload singularity/3.8.0--bind--openmpi--4.1.1``
+            * ``module load cuda/11.5.0``
+
+        .. note::
+            
+            The ``module load autoload singularity/3.8.0--bind--openmpi--4.1.1`` command automatically loads the following modules:
+
+            * ``singularity/3.8.0--bindâopenmpiâ4.1.1``
+            * ``zlib/1.2.11--gccâ10.2.0``
+            * ``openmpi/4.1.1--gcc--10.2.0-cudaâ11.1.0``
+
+        The following code snippet is an example of a Slurm job script for running MPI parallel containerized applications on the GALILEO100 cluster. 
+        Notice that the ``--cpus-per-task`` option has been set to **48** to fully exploit the CPUs in the ``g100_usr_prod`` partition.
+
+        .. code-block:: bash
+
+            #!/bin/bash
+ 
+            #SBATCH --nodes=6
+            #SBATCH --tasks-per-node=1
+            #SBATCH --cpu-per-task=48
+            #SBATCH --mem=30GB
+            #SBATCH --time=00:10:00
+            #SBATCH --out=slurm.%j.out
+            #SBATCH --err=slurm.%j.err
+            #SBATCH --account=<Account_name>
+            #SBATCH --partition=g100_usr_prod
+  
+            module purge
+            module load profile/advanced
+            module load autoload singularity/3.8.0--bind--openmpi--4.1.1
+            module load cuda/11.5.0
+ 
+            mpirun -np 6 singularity exec <container_img> <container_cmd>
+
+
+
+
+
+
+
+
+
+

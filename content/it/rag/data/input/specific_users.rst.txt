@@ -1,0 +1,107 @@
+.. _spec_users_card:
+
+EUROfusion
+==========
+
+.. figure:: ../img/warning3.png
+   :align: center
+   :class: no-scaled-link
+   :height: 150px
+
+.. figure:: ../img/spacer.png
+   :align: center
+   :class: no-scaled-link
+   :height: 20px
+
+.. |ico1| image:: img/EUROfusion.png
+   :height: 35px
+   :class: no-scaled-link
+
+The |ico1| community has access to the following CINECA HPC systems:
+
+ * Leonardo
+
+    - Booster partition
+    - DCGP partition
+
+ * Pitagora
+
+.. important::
+   The general environment defined on our clusters is the same for all the users, so EUROfusion users are invited to refer to the general documentation.
+   Essential links below.
+
+For general information regarding the access to the HPC clusters:
+
+* :ref:`general/getting_started:Getting Started`
+* :ref:`general/users_account:Users and Accounts`
+* :ref:`general/access:Access to the Systems`
+
+For general information regarding the environment on the HPC clusters:
+
+* :ref:`hpc/hpc_intro:Introduction HPC Resources`
+* :ref:`hpc/hpc_data_storage:File Systems and Data Management`
+* :ref:`hpc/hpc_scheduler:Scheduler and Job Submission`
+* :ref:`hpc/hpc_enviroment:Environment and Customization`
+
+For specific information regarding the HPC clusters used by the EUROfusion community:
+
+* :ref:`hpc/leonardo:Leonardo`
+* :ref:`hpc/pitagora:Pitagora`
+
+
+Dedicated tutorials
+-------------------
+
+.. |tutorial| image:: /specific_users/img/tutorial_icon.png
+   :width: 35px
+   :class: no-scaled-link
+
+A presentation of each supercomputer, and of the access method via two-factor authentication (2FA), have been dedicated to the EUROfusion community. You can find the slides, including a report of the final Q&A session, and the recording at the following links (you should log in through the button :bdg-black-line:`Access as a guest`).
+
+.. card:: |tutorial| Leonardo Booster: *Introduction to Leonardo supercomputer for Eurofusion*
+
+   June 6th, 2023
+
+   `Leonardo Booster webinar page <https://learn.cineca.it/course/view.php?id=1461>`_ with slides and recording.
+
+   :download:`Leonardo Booster slides <../files/Leonardo_Booster_EF.pdf>`
+
+.. card:: |tutorial| Leonardo DCGP: *Introduction to Leonardo DCGP for Eurofusion*
+   
+   February 18th, 2025
+   
+   `Leonardo DCGP webinar page <https://learn.cineca.it/course/view.php?id=2025>`_ with slides and recording.
+
+   :download:`Leonardo DCGP slides <../files/Leonardo_DCGP_EF.pdf>`
+
+.. card:: |tutorial| 2FA: *Introduction to two-factor authentication (2FA) on CINECA HPC clusters*
+   
+   June 7th, 2023
+   
+   :download:`2FA slides <../files/2FA_EF.pdf>`
+
+
+SLURM Partitions
+----------------
+
+On :ref:`hpc/leonardo:Leonardo` and :ref:`hpc/pitagora:Pitagora` *Job Managing and SLURM Partitions* sections, you can find the description of SLURM partitions and QOS to submit your jobs. Notice that EUROfusion users have dedicated partitions and QOS: you are allowed to use the **"_fua_"** partitions and the related QOS, besides the **"_all_serial"** partition which is shared among all users.
+
+
+Low-priority jobs
+^^^^^^^^^^^^^^^^^
+
+1) **If all the budget assigned to your Project Account has been consumed**, you can keep running on Leonardo boost_fua_prod and dcgp_fua_prod partitions at low priority by requesting in your submission script the **qos_fualowprio** QOS:
+
+.. code-block:: bash
+
+  #SBATCH --account=<YOUR Project Account>
+  #SBATCH --qos=qos_fualowprio
+
+The QOS is *automatically* added to your Project Account upon budget exhaustion.
+
+2) You can also request to run low priority jobs, **without having consumed all the budget of yout active Project Account**, by association to the **FUAL8_LOWPRIO** account on Booster and **FUA38_LOWPRIO_0** account on DCGP (write a mail to superc@cineca.it). You always need to specify also the **qos_fualowprio** QOS in your submission script.
+
+.. code-block:: bash
+  
+   #SBATCH --account=<LOWPRIO Project Account>
+   #SBATCH --qos=qos_fualowprio

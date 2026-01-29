@@ -1,0 +1,66 @@
+.. _volume_create_card:
+
+Volume: create and attach
+=========================
+
+Create a volume
+---------------
+
+- From the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, go to the *"Volumes â Volumes"* section and select *"Create Volume"*
+
+  .. image:: /cloud/_img/op_volume_create_img1.png
+  
+- In the pop-up window, specify
+
+  **Volume Name**: a name for the volume.
+
+  **Description**: Optionally, provide a brief description for the volume.
+
+  **Volume Source**: Select one of the following options:
+  
+   - No source, empty volume: Creates an empty volume. An empty volume does not contain a file system or a partition table.
+   - Image: If you choose this option, a new field for Use image as a source displays. You can select the image from the list.
+
+  **Type**:
+   - __DEFAULT __ is a general cinder volume
+   - LUKS is for encrypted volumes (see Storing sensitive data for more details). 
+  
+  **Size (GiB)**: The size of the volume in gibibytes (GiB).
+
+  .. image:: /cloud/_img/op_volume_create_img2.png
+
+- Finally, click on *"Create Volume"* button.
+
+Attach/Detach a volume
+----------------------
+
+- To attach a volume to an instance, go to the *"Volumes â Volumes"* page and select the volume you would like to attach and then the action *"Manage Attachments"*
+
+  .. image:: /cloud/_img/op_volume_create_img3.png
+
+- Select the instance you would like the volume to be attached to: 
+
+  .. image:: /cloud/_img/op_volume_create_img4.png
+
+- Click *"Attach volume"*. 
+
+
+At this point, you can view the status of a volume in the *"Volumes â Volumes"* tab of the Horizon Dashboard. 
+
+The volume can be is either in status *"Available"* or *"In-Use"*. The same *"Manage Attachments"* operation can be used to detach a volume from an instance. 
+
+When the volume is attached, in order to use for storing data you need to log in to the instance to partition, format and mount it. 
+
+Known issues
+------------
+
+There is a restriction imposed by libvirt which allows a maximum of 28 virtual PCI interfaces used for attaching block devices: 2 of these virtual PCIs are used for server needs (mainly boot device) which leaves 26 virtual PCI interfaces available for block device attaching. For this reason, it is possible to attach maximum 26 volumes to an instance created with the default Ubuntu images provided by CINECA. 
+
+If you need to attach more than 26 volumes to an instance, you can:
+
+- download the Ubuntu image from the Ubuntu website (`<https://cloud-images.ubuntu.com>`_)
+- upload it to the HPC Cloud via the Horizon dashboard
+- edit its metadata from the Horizon interface setting the properties **"hw_scsi_model = virtio-scsi"** and the **"hw_disk_bus = scsi"** in the image metadata.
+- use the new image for creating your instance.
+
+It is possible to find a more detailed guide for the aforementioned operation inside the :ref:`cloud/operative/compute_ops/image_upload:image: upload` page.

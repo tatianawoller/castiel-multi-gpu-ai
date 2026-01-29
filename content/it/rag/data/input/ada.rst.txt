@@ -1,0 +1,187 @@
+.. _ada_card:
+
+ADA
+===
+
+In production since 27 September 2021, it is the smaller of the two machines and 
+is composed of 71 nodes. Built on OpenStack (version Zed) can host virtual machines up to 96 vCPUs.
+
+The HPC cloud infrastructure, named ADA, is built using `OpenStack Overview` (`version 
+Zed <https://releases.openstack.org/>`_).
+
+.. note:: 
+  - It is possible to access ADA via Horizon Dashboard at https://adacloud.hpc.cineca.it
+  - For CLI access: 
+   
+    - the certificate chain can be downloaded here :download:`ADA certificate </files/adacloud.ca.chain>`
+    - check that the **version installed is 6.5 or 6.6** with *"openstack --version"* command. With greater versions some commands might not work.
+
+System architecture 
+^^^^^^^^^^^^^^^^^^^
+
+.. image:: ../_img/ada_architecture.png
+
+Hardware Details - nodes 
+------------------------
+.. list-table:: 
+    :widths: 30 50
+    :header-rows: 1
+    :class: tight-table
+
+    * - **Type**
+      - **Specific**
+    * - Models
+      - Dual-socket Dell PowerEdge
+    * - Nodes
+      - 71 Interactive OpenStack Nodes
+    * - Processors
+      - 2xCPU Intel CascadeLake 8260 24 cores 2.4GHz with hyperthreading
+    * - Cores
+      - 48 cores/node
+    * - RAM 
+      - 768 GB 
+    * - Internal Network
+      - 100Gbs Ethernet interconnection
+    * - Storage
+      - 2TB SSD 
+
+Disks and Filesystems
+---------------------
+
+- 1 PB NVMe/SSD Ceph Storage
+- This cloud infrastructure is tightly connected both to the LUSTRE storage of 20 PB raw capacity, and to the GSS storage of 6 PB seen by all other infrastructure. 
+
+  
+System timeline
+^^^^^^^^^^^^^^^^
+
+- **05 Aug 2021**: Early Availability
+- **01 Sept 2021**: Start of Pre-Production
+- **27 Sept 2021**: Start of Production 
+
+Flavors/Images/Openstack services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: Flavors
+
+    .. list-table::
+      :widths: 50 50 50 50 50
+      :header-rows: 1
+      :class: tight-table
+
+      * - **Flavor Name**
+        - **vCPUs**
+        - **RAM (GB)**
+        - **Disk (GB)**
+        - **Available**
+      * - fl.ada.xxs
+        - 1
+        - 7.5
+        - 10
+        - Yes
+      * - fl.ada.xs
+        - 2
+        - 15
+        - 30
+        - Yes
+      * - fl.ada.s
+        - 4
+        - 30
+        - 30
+        - Yes
+      * - fl.ada.m
+        - 8
+        - 60
+        - 30
+        - Yes
+      * - fl.ada.l
+        - 16
+        - 120
+        - 30
+        - Yes
+      * - fl.ada.xl
+        - 24
+        - 180
+        - 30
+        - On-demand
+      * - fl.ada.xxl
+        - 48
+        - 360
+        - 30
+        - On-demand
+      * - fl.ada.full
+        - 96
+        - 7200
+        - 30
+        - On-demand
+
+
+.. dropdown:: Images
+
+    .. list-table::
+      :widths: 50 50 50 50
+      :header-rows: 1
+      :class: tight-table
+
+      * - **Image Name**
+        - **Information**
+        - **Default User**
+        - **Default Access**
+      * - CentOS-7-x86_64-GenericCloud-2009
+        - CentOS-7-x86_64-GenericCloud-2009.qcow2, last modified 2020-11-12 `Source <http://cloud.centos.org/centos/7/images/>`_
+        - centos
+        - SSH keypair
+      * - CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64
+        - CentOS-8-GenericCloud-8.4.2105-20210603.0.x86_64, last modified 2021-06-03 `Source <https://cloud.centos.org/centos/8/>`_
+        - centos
+        - SSH keypair
+      * - CentOS-Stream-GenericCloud-8-20220913	
+        - CentOS-Stream-GenericCloud-8-20220913.x86_64, last modified 2022-09-13 `Source <https://cloud.centos.org/centos/8-stream/>`_
+        - centos	
+        - SSH keypair
+      * - Ubuntu 18.04 LTS (Bionic Beaver)
+        - Ubuntu server 18.04 (Bionic Beaver) LTS for cloud `Source <https://cloud-images.ubuntu.com/>`_
+        - ubuntu
+        - SSH keypair
+      * - Ubuntu Server 20.04 LTS (Focal Fossa)
+        - focal-server-cloudimg-amd64.img, last modified 2021-07-20 `Source <https://cloud-images.ubuntu.com/>`_
+        - ubuntu
+        - SSH keypair
+      * - Ubuntu Server 21.04 (Hirsute Hippo)
+        - hirsute-server-cloudimg-amd64.img, last modified 2021-07-20 `Source <https://cloud-images.ubuntu.com/>`_
+        - ubuntu
+        - SSH keypair
+      * - Ubuntu Server 22.04 LTS (Jammy Jellyfish)
+        - jammy-server-cloudimg-amd64.img, last modified 2022-09-02 `Source <https://cloud-images.ubuntu.com/>`_
+        - ubuntu
+        - SSH keypair
+      * - Ubuntu Server 24.04 LTS (Noble Numbat)	
+        - noble-server-cloudimg-amd64.img, last modified 2025-03-13 `Source <https://cloud-images.ubuntu.com/noble/>`_
+        - ubuntu
+        - SSH keypair
+      * - Rocky Linux 8.9 
+        - File description: https://wiki.rockylinux.org/rocky/image/#about-cloud-images `Source <https://dl.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-GenericCloud-Base-8.9-20231119.0.x86_64.qcow2>`_
+        - rocky
+        - SSH keypair
+      * - Rocky Linux 9.3
+        - File description: https://wiki.rockylinux.org/rocky/image/#about-cloud-images `Source <https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base-9.3-20231113.0.x86_64.qcow2>`_
+        - rocky
+        - SSH keypair
+      * - Rocky Linux 9.4	
+        - File description: https://wiki.rockylinux.org/rocky/image/#about-cloud-images `Source <https://dl.rockylinux.org/pub/rocky/9/images/x86_64/>`_
+        - rocky	
+        - SSH keypair
+
+
+.. dropdown:: OpenStack Services
+
+    In addition to the core OpenStack Components :ref:`cloud/os_overview/index_openstack_overview:openstack overview`, on ADA we have 
+
+    - Barbican, for secure storage, provisioning and management 
+    - Manila, for shared filesystem management
+    - Octavia, for load balancers deployment
+    - Trove, for database management
+   
+   In ADA, the following :ref:`cloud/os_overview/os_components/shares:shares` types are available: 
+
+   - generic_type (NFS protocol)
+   - cephfs_type (CEPHFS protocol)

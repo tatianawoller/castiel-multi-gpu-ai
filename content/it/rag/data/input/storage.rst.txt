@@ -1,0 +1,32 @@
+.. _storage_card:
+
+Storage
+=======
+
+This component, based on the `OpenStack Cinder Service <https://docs.openstack.org/cinder/latest/>`_, allows the management of the 
+storage space in cloud projects. 
+
+Storage in CINECA HPC Cloud machines is based on Ceph platform. Ceph provides reliable 
+distributed and scalable storage without a single point of failure.
+
+Within OpenStack, it is possible to create different block storage devices, that can 
+be used by instances (virtual machines) to store data persistently.
+
+Volumes
+-------
+
+A volume is a block storage device that can be attached to instances. It provides 
+persistent storage for data.
+
+Snapshots
+---------
+
+A snapshot is a point-in-time copy of a volume. It can be used to create new volumes 
+or restore existing volumes. Snapshots use the Copy On Write (COW) technique to create 
+lightweight snapshots of volumes.
+
+Backups
+-------
+
+A volume backup is a copy of a volume that can be used to restore data in case of 
+data loss or corruption (**NOT IN FULL PRODUCTION**).

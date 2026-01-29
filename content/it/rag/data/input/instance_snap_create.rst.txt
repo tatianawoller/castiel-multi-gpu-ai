@@ -1,0 +1,144 @@
+.. _compute_inst_snap_create_card:
+
+Instance: snapshot create
+=========================
+
+The creation of a snapshot image from an existing VM hosted on OpenStack will 
+differ depending on whether the VM is ephemeral or instantiated from a bootable drive, namely bootable VM (see :ref:`cloud/os_overview/os_components/compute:instances`).
+
+Preliminary steps
+^^^^^^^^^^^^^^^^^
+Independently, from the type of VM, it is safer to create the snapshot, after the VM has been shut down. 
+In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`:
+
+- Shutdown the VM
+- Detach any secondary volume attached on the VM (remember the volume */dev/vda* is the bootable volume from which the VM is loaded).
+
+Ephemeral VM
+^^^^^^^^^^^^^
+
+If the VM is loaded from an image, there is no bootable volume */dev/vda*.
+
+.. tab-set::
+
+   .. tab-item:: Horizon dashboard
+
+      - In the Horizon Dashboard, go to *Compute â Instances*
+      - Click on *"Create snapshot"* action for the instance to snapshot 
+      
+      .. image:: /cloud/_img/op_snap_create_1.jpg
+
+      - From the pop-up dialog, give a unique *âSnapshot Nameâ* for the image snapshot file, then click on the *âCreate Snapshotâ*.
+
+      .. image:: /cloud/_img/op_snap_create_2.jpg
+
+      - The procedure will bring you to the *"Compute â Images"* section, where the snapshot image will appear after the generation process indicated by the transition of the image *âStatusâ* from *âQueuedâ* to *âActiveâ*, passing from *âSavingâ*. 
+      - At the end the snapshot should appear with size different from zero.
+
+      .. image:: /cloud/_img/op_snap_create_3.jpg
+
+   .. tab-item:: Command Line Interface
+
+      - Configure your CLI following the steps in :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+      - Obtain the complete tabular list of all the servers available on the tenant 
+
+       .. code-block:: bash
+        
+                openstack server list 
+                +----------------+------------------+--------+-----+------------------+ 
+                | ID             | Name             | Status | ... | Flavor           | 
+                +----------------+------------------+--------+-----+------------------+ 
+                | <Server-ID-01> | <Server-Name-01> | ACTIVE |     | <Flavor-Name-01> | 
+                | <Server-ID-02> | <Server-Name-02> | ACTIVE |     | <Flavor-Name-02> | 
+                | <Server-ID-03> | <Server-Name-03> | ACTIVE |     | <Flavor-Name-03> | 
+                ... 
+                | <Server-ID>    | <Server-Name>    | ACTIVE |     | <Flavor-Name>    | 
+                +----------------+------------------+--------+-----+------------------+
+
+      - Use the ID corresponding to the server name from which is desired to generate a snapshot image to run the command   
+
+       .. code-block:: bash
+        
+                openstack server image create --name <snapshot-name> --wait <Server-ID>     
+
+      - Even if the CLI does not show a progress bar for the snapshotting procedure, the shell will hang until the snapshot image *âStatusâ* will become *âActiveâ*. 
+      - At the completion of the creation, you can check if the snapshot has been correctly created and in active state with the command
+
+       .. code-block:: bash
+        
+                openstack image list --name <snapshot-name>
+                +---------------+------------------+--------+
+                | ID            | Name             | Status |
+                +---------------+------------------+--------+
+                | <Image-ID>    | <snapshot-name>  | active |
+                +---------------+------------------+--------+
+
+Bootable VM
+^^^^^^^^^^^^^
+If the VM is loaded from a bootable volume, there is a volume attached as */dev/vda*.
+
+.. important::
+   For bootable VM, the snapshotting procedure can be done only if the **bootable volume is not set to be deleted** once the attached VM will be deleted. 
+
+Before starting the creation of the VM snapshot, 
+
+- save the ID of the bootable volume from which your VM has been created (<volume-ID>)
+- delete the VM instance to snapshot following the instructions in :ref:`cloud/operative/compute_ops/instance_deletion:instance: delete`.
+
+
+.. tab-set::
+
+   .. tab-item:: Horizon dashboard
+
+      - Navigate to *"Volumes â Volumes"*
+      - On the row corresponding to the volume attached to the previously deleted instance, click on the action *âUpload to Imageâ*. 
+
+         .. image:: /cloud/_img/op_snap_create_5.jpg
+
+      - From the pop-up dialog, give a unique *âSnapshot Nameâ* for the image snapshot file, then click on *âUploadâ*. 
+
+         .. image:: /cloud/_img/op_snap_create_6.jpg
+
+      - The procedure will close the pop-up window and the status of the volume will change to *âuploadingâ*.
+        
+         .. image:: /cloud/_img/op_snap_create_7.jpg
+
+      - Once the status of the volume will become once again *âAvailableâ*, a snapshot image of the volume will appear in the *âCompute â Imagesâ* section with a size different from zero.  
+
+   .. tab-item:: Command Line Interface
+
+      - Configure your CLI following the steps in :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+      - Use the bootable <volume-ID>, saved before, to upload a snapshot image 
+
+        .. code-block:: bash
+        
+               openstack image create --volume <volume-ID> <snapshot-name>
+               +---------------------+--------------------------------------+
+               | Field               | Value                                |
+               +---------------------+--------------------------------------+
+               | container_format    | bare                                 |
+               | disk_format         | raw                                  |
+               | display_description |                                      |
+               | id                  | <Volume-ID>                          |
+               | image_id            | <Snapshot-Image-ID>                  |
+               | image_name          | <snapshot-name>                      |
+               | protected           | False                                |
+               | size                | <Volume-size>                        |
+               | status              | uploading                            |
+               | updated_at          | <Creation-date>                      |
+               | visibility          | shared                               |
+               | volume_type         | __DEFAULT__                          |
+               +---------------------+--------------------------------------+
+
+      - The creation will be completed, once the status of the image will become *âAvailableâ*, you can check this with 
+  
+       .. code-block:: bash
+        
+                openstack image list --name <snapshot-name>
+                +---------------+------------------+--------+
+                | ID            | Name             | Status |
+                +---------------+------------------+--------+
+                | <Image-ID>    | <snapshot-name>  | active |
+                +---------------+------------------+--------+
+               
+       

@@ -1,0 +1,3122 @@
+doc,seed,chunk_size_tok,start_index,end_index,question,answer
+generic_share_create.rst.txt,42,644,0,2429,"What specific details must a user include in the email sent to superc@cineca.it to request access to the Manila service, and what steps are required to create and configure a GENERIC_TYPE share on two VMs within a local network?",".. _shares_generic_create_card:
+
+Create and use a GENERIC_TYPE share
+===================================
+
+The following sections describe the steps needed to create a share and mount it on two VMs attached to a local network. 
+Note that the user needs to configure the VMs in a way that allows logging in via ssh. 
+
+Request to be enabled to the service
+------------------------------------
+
+The user willing to make use of the Manila service needs to send an email to superc@cineca.it, communicating 
+
+- how many shares are needed.
+- their dimensions (GB).
+- the tenant's name.
+
+Once the tenant is enabled to the service by the User Support Team, all users of the tenant will be able to use the service. 
+
+Create share network
+--------------------
+
+As a first step, in the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` you need to create the share network 
+by clicking on *""Create Share Network""* in *""Share â Share Networks""* and set the value for the following attributes:
+
+- Share network name.
+- network: choose the desired network, in our example example_share_guide_net.
+- subnet: choose the desired subnet, in our example example_share_guide_subnet.
+- Click on the *""save""* button.
+
+.. image:: /cloud/_img/op_share_generic_img1.png
+
+Create the share
+----------------
+
+Create the share by clicking on *""Create Share""* in *""Share â Shares""* and setting the following information:
+
+- share name
+- share protocol  == ""NFS""
+- size (on the right side is visualized information about the actual available and used space within the tenant)
+- Type == ""generic_type""
+- Leave blank the option ""Make visible for all projects"" because it is not enabled 
+- In the end, click on the *""create""* button.
+
+.. image:: /cloud/_img/op_share_generic_img2.png
+
+
+Set the access rule(s) on the share just created. 
+
+- On the OpenStack dashboard click on *""Share â Shares""* 
+- select the share just created
+- in the menu on the right select *""Manage Rules"".*
+
+.. image:: /cloud/_img/op_share_generic_img3.png
+
+Click on *""Add rule""* and set:
+
+- access type: Choose ""ip"", the rest of options displayed are not available for NFS share's protocol.
+- access level: read-write or read-only (depending on your needs)
+- access to: write the IP with permission to access the share. Only one entry is allowed per rule, therefore, you will have to include a rule for the fixed-IP of each VM. 
+- Finally, click on the ""add"" button."
+database.rst.txt,42,220,0,1019,"How does the Trove component of OpenStack facilitate the management of database instances in a cloud environment, and what specific administrative tasks does it automate for users and database administrators?",".. _database_card:
+
+Database
+========
+
+`Trove <https://docs.openstack.org/trove/latest/>`_ is a database as a service (DBaaS) component of OpenStack. It is a pluggable 
+service that supports multiple database engines.
+
+Database as a service (DBaaS) is a cloud computing managed service offering that 
+provides access to a database without requiring the setup of physical hardware, the 
+installation of software or the need to configure the database. 
+
+The Database service provides scalable and reliable cloud provisioning functionality for both 
+relational and non-relational database engines. Users can quickly and easily use 
+database features without the burden of handling complex administrative tasks. Cloud 
+users and database administrators can provision and manage multiple database instances 
+as needed.
+
+The Database service provides resource isolation at high-performance levels, and 
+automates complex administrative tasks such as deployment, configuration, patching, 
+backups, restorations, and monitoring."
+hpc_software.rst.txt,42,344,3453,4697,"What specific steps must be taken to authorize the use of a license on CINECA's cluster, and what additional requirement is there for using an academic license?","../files/License_request.odt>`) in which the holder declares to have a valid license and relieves CINECA of future responsibilities for the usage of that license on CINECA's cluster.
+  *  We will provide the IPs of CINECA'S cluster so that the license server administrators can open their firewall to them.
+
+When the aforementioned steps have been completed, your usernames and account(s) will be authorized to use your license running your jobs on CINECA infrastructure.
+In case you would like to use an academic license, you will also have to indicate us a representative (not necessarily the license holder but with his/her approval) to be contacted by CINECA HPC User Support to allow future requests to use the same license.
+
+
+Advanced Software Specific details
+----------------------------------
+
+.. |ico1| image:: img/matlab.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. |ico2| image:: img/qe_logo.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. grid:: 2
+
+   .. grid-item-card:: |ico1| **Matlab**
+      :link: matlab_card
+      :link-type: ref
+
+
+   .. grid-item-card:: |ico2| **QuantumESPRESSO**
+      :link: quantum_espresso_card
+      :link-type: ref
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   software/matlab
+   software/qe"
+gaia.rst.txt,42,471,0,1611,"What are the specific models of Nvidia GPUs that are integrated into the GPU nodes of the GAIA HPC cloud infrastructure, and how many of each type are there?",".. _gaia_card:
+
+GAIA
+====
+
+**PAGE UNDER CONSTRUCTION**
+
+Now under configuration, it is composed of 420 general purpose nodes and 
+80 GPU nodes, also built on OpenStack (version to be defined). It is not only 
+the biggest of the two infrastructures, but also the only accelerated one, 
+mounting Nvidia GPUs models: A30, L40s and H100NVL. 
+
+The HPC cloud infrastructure, named GAIA, is built using `OpenStack Overview` (version to be confirmed).
+
+.. note:: 
+  - It is possible to access GAIA via Horizon Dashboard at **TO BE ADDED**
+  - For CLI access, the certificate chain can be downloaded here **TO BE ADDED**
+
+System architecture
+^^^^^^^^^^^^^^^^^^^
+
+.. image:: ../_img/gaia_architecture.png
+
+**CPU nodes**
+
+- 420 Interactive OpenStack Nodes
+- Each node consist of:
+  
+  - 2x CPU Intel Xeon Sierra Forrest 144 cores 2.2GHz 
+  - 1 TiB of DDR5 6400 MT/s 
+
+**GPU nodes**
+
+- 80 Interactive OpenStack Nodes
+- Each node consist of:
+  
+  - 2x CPU Intel Xeon Emerald Rapids Platinum 8592+ 64 cores 1.9GHz
+  - 1 TiB of DDR5 4800 MT/s  
+- some equipped with one or more of: 
+  
+  - GPU Nvidia A30 
+  - GPU Nvidia L40s  
+  - GPU Nvidia H100 NVL 
+
+**Storage**
+  - 2 PB IOPS-optimized/SSD Ceph Storage
+  - 8 PB Capacity-optimized/HDD Ceph Storage
+
+
+System timeline
+^^^^^^^^^^^^^^^
+       
+- to be announced: Early Availability
+- to be announced: Start of Pre-Production
+- to be announced: Start of Production 
+
+
+Flavors/Images/Openstack services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: Flavors
+
+    TO BE ANNOUNCED
+
+
+.. dropdown:: Images
+
+    TO BE ANNOUNCED
+
+
+.. dropdown:: OpenStack Services
+
+    TO BE ANNOUNCED"
+miniconda.rst.txt,42,737,0,3062,"What are the recommended steps to clean up previous Anaconda configurations from the home directory before installing Miniconda, and why is this cleanup necessary?",".. _miniconda_card:
+
+Miniconda 
+=========
+
+Miniconda is a minimal installer for Conda, a popular package manager for Python and other languages. Unlike the full Anaconda distribution, which includes hundreds of preinstalled packages and tools, Miniconda provides only the Conda package manager and Python. This lightweight installer allows users to create customized environments by installing only the packages they need.
+
+Miniconda is ideal for:
+
+- Users who want a smaller installation footprint.
+- Environments where storage space or bandwidth is limited.
+- Developers and researchers who prefer full control over package versions and dependencies.
+
+With Miniconda, users can:
+
+- Create and manage isolated environments with different Python versions.
+- Install packages from multiple channels such as conda-forge or bioconda.
+- Ensure reproducibility and compatibility across systems.
+
+
+How to Install Miniconda
+------------------------
+
+.. important:: **Cleaning Up Anaconda3 previous Configuration from the Home Directory**
+
+        Sometimes, previous Anaconda installations may interfere with the correct installation of Miniconda.  
+        For this reason, it is recommended to perform the following cleanup steps before proceeding with the installation:
+
+            - **Delete the Conda configuration file**::
+
+                rm -f $HOME/.condarc
+
+            - **Delete the Conda data directory**::
+
+                rm -rf $HOME/.conda
+
+            - **Remove Anaconda initialization from your shell configuration file**:
+
+                Open your ``$HOME/.bashrc`` and remove all lines related to Anaconda3. These lines are usually located at the end of the file and enclosed between the following markers:
+
+                .. code-block:: bash
+                
+                  # >>> conda initialize >>>
+                  ...
+                  # <<< conda initialize <<<
+
+             You can safely delete this entire block.
+
+
+To `install Miniconda3 <https://docs.anaconda.com/miniconda/install/#quick-command-line-install>`_, you have to download the installation script by running:
+
+.. code-block:: bash
+
+   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh 
+
+Execute the downloaded script with:
+
+.. code-block:: bash
+
+   bash $HOME/Miniconda3-latest-Linux-x86_64.sh
+
+During the installation, reply **""yes""** or **""ENTER""** to all prompts.
+
+At the end of the installation, reload the bash session to apply the modifications introduced by the installer:
+
+.. code-block:: bash
+
+   exec bash
+
+This command will start a new bash session in which the ``(base)`` Conda environment will be automatically activated.
+
+
+Configure Channels
+^^^^^^^^^^^^^^^^^^
+
+Conda channels are configured at multiple levels:
+
+- Global configuration: ``~/.condarc``
+- Environment-specific configuration: ``<env_path>/conda-meta/.condarc``
+
+To configure Conda to work correctly:
+
+- Disable automatic activation of the base environment:
+
+  .. code-block:: bash
+
+     conda config --set auto_activate_base false
+
+- Reload the bash session again:"
+secgroups_create.rst.txt,42,333,0,1162,"What are the steps to create a security group with specific ingress rules, and what are the common default rules available for selection when configuring these ingress rules?",".. _secgroups_create_card:
+
+Security groups: create
+=========================
+
+Security groups are a set of IP filter rules that are applied to an instance. 
+These rules specify which type of traffic is allowed to reach the instance 
+(see section :ref:`cloud/os_overview/os_components/network:security groups` for more information). 
+
+- Go to the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`
+- Go to *""Network â Security Groups""* and click on *""create security group""*
+- Give a name to the security group and click on *""create security group""*
+- The security group is created **by default with NO ingress rules**
+
+.. image:: /cloud/_img/op_network_secgroups_img1.png
+
+- Select *""Add rule""* to specify the ingress rules.
+- A list of pre-defined rules is available for you to choose from (but you can create your own rule if you prefer). Common default rules are: 
+
+  - SSH (port 22)
+  - ICMP (allow to ""ping"" a server)
+  - HTTP (port 80)
+  - HTTPS (port 443)
+
+.. image:: /cloud/_img/op_network_secgroups_img2.png
+
+- In the CIDR field, you can limit the range of IPs which are allowed to the rule. 
+
+**NOTE**: 0.0.0.0/0 means all internet"
+index_storage_ops.rst.txt,42,137,0,433,What specific steps or details are provided in the 'volume_create_card' reference for creating a volume in the storage operations component?,".. _storage_ops_card:
+
+Storage operations
+==================
+
+For general information on the storage component, visit the :ref:`cloud/os_overview/os_components/storage:storage` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   volume_create
+
+.. card:: |oscinder| **Volume: create**
+      :link: volume_create_card
+      :link-type: ref
+
+.. |oscinder| image:: /cloud/_img/cinder_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+interactive_computing.rst.txt,42,703,1922,4924,"How does the system handle the allocation of CPU cores and GPUs for interactive computing sessions, and what precautions should users take regarding GPU usage?",".. list-table:: Form
+    :widths: 20 80
+    :header-rows: 1
+    :class: tight-table
+ 
+    * - Field
+      - How to fill
+ 
+    * - **Slurm reservation**
+      - you can leave it to ""None"" unless you are assigned to some specific reservation;
+ 
+    * - **Slurm account**
+      - the active account you want to be billed for the session; please note that during the pre-production phase, the accounting is inactive.
+ 
+    * - **Number of cores**
+      - the number of cores requested for the interactive computing session; please note that cores are assigned in over-subscription, which means that in the unlucky scenario in which all the cores of the system are allocated, the user may share the same core with other users (currently maximum five users on the same CPU);
+ 
+    * - **Memory**
+      - the amount of RAM memory requested for the session;
+ 
+    * - **GPU configuration**
+      - the number of GPUs which the user requests; differently from CPUs, they are not shared among users and are assigned exclusively; the number of GPUs is limited, thus please be careful to release the resources you requested when you finish your work (see the session ""Logout vs Session shutdown"" here below) to let the other users to use them. You can check the availability of resources, in particular GPU ones, by looking at the table at the bottom of the page, wherein each row is displayed the number of nodes with no free GPUs, the ones with a single free GPU and the ones with both the GPUs available;
+ 
+    * - **Time**
+      - the wall time of your interactive session; during this time, you can close and reopen your browser tab/windows with no issues: the session will stay active, and you can re-attach it simply by accessing to the Interactive Computing web url once again;
+ 
+    * - **ICE4HPC Backend environment**
+      - the suite of tools you expect to find during the session execution; see ""`Tools and functionalities`_"" section for details;
+ 
+    * - **User interface**
+      - only the JupyterLab interface is available so far, so please ignore this menu for now;
+
+Once you have filled out the form with your preferred parameters, click the :bdg-black-line:`Start` button at the bottom. This action will redirect you to the JupyterLab interface, which runs on the cluster's compute nodes where the user can select the tool or functionality among the available.
+
+
+Tools and functionalities
+^^^^^^^^^^^^^^^^^^^^^^^^^
+The tools you will see in the JupyterLab interface are ""packed"" in releases: each tool in each release is pinned at the same version to guarantee compatibility. It is possible to choose the release in the initial form displayed after the login phase: in the drop-down menu, they are labelled with a release date, thus the more the date is recent, the more the tool versions are updated, so as a rule of thumb, you might want to test the most recent release with your code.
+
+Currently, the following services are up and running on the interface displayed after your session starts:"
+security_guidelines.rst.txt,42,471,8474,10340,What specific security measures are recommended for databases hosted in a virtual machine (VM) to ensure they are not vulnerable to unauthorized access or data breaches?,"...), like `snap <https://en.wikipedia.org/wiki/Snap_(software)>`_ or `flatpak <https://en.wikipedia.org/wiki/Flatpak>`_.
+
+Security for databases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have databases in your VM please make sure that these:
+
+- are not open to the whole internet (0.0.0.0/0)
+- are password protected
+- information is transferred via a secure connection. 
+
+Keep logs of your applications
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Use the best practices for logging:
+
+- Make sure that the services are logging to a secure location, that is as tamper-proof as possible.
+- Keep the logs for a reasonably long amount of time.
+- Consider logging to a remote server as well.
+
+Images
+-------
+The main reason behind the **prohibition of uploading community images**, to be used for instances creation, is the fact that 
+they are visible and can be uploaded by any user on the cloud platform. 
+CINECA HPC Cloud infrastructure administrators have thus no control on community image content.
+
+The use of a community image implies an acceptance of the risk that the image owner has uploaded, unconsciously or not, 
+an image containing malicious software or vulnerability like **backdoors**, **keyloggers**, **viruses** or **malware**.
+
+Even if, the use of community images is not a guarantee of vulnerability, keeping in mind the aforementioned risks, 
+the CINECA HPC Cloud infrastructure administrators have chosen to inhibit the possibility to upload images with such visibility.
+
+More information
+----------------
+
+If you are interested to learn more about security in cloud application, we advise to read the material provided by `NeCTAR <https://support.ehelp.edu.au/support/solutions/folders/6000203455>`_. 
+
+
+
+
+**Acknowledgements**:
+CINECA Team would like to acknowledge the following source of information for this page: https://docs.csc.fi/cloud/pouta/security/"
+fip_association.rst.txt,42,481,0,1745,"What steps are involved in allocating a floating IP to a project and subsequently associating it with a running instance in the Horizon dashboard, and what should users be aware of if they de-allocate and then re-allocate a floating IP?",".. _fip_associate_card:
+
+Floating IP: allocate and associate
+=======================================
+
+Allocate a floating IP
+----------------------
+
+The allocation will reserve and return a floating IP from the available pool for the project.  
+
+To allocate a floating IP to a project, in the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` 
+
+- click on *""Network â Floating IPs""* 
+- then click on the button *""Allocate IP to Project""* on the right side of the dashboard page. 
+- Once allocated, a floating IP can be associated with running instances.
+
+.. image:: /cloud/_img/op_fip_allocation_img1.png
+
+.. image:: /cloud/_img/op_fip_allocation_img2.png  
+
+
+At any moment, floating IPs can be de-allocated from a project using the available action for the floating IP.
+
+.. important:: 
+
+    It should be noted that if you de-allocate a floating IP from a project and then allocate one again, 
+    the floating IP will not be same as before, as the floating IP is automatically select by the system from the available pool. 
+
+
+Associate a floating IP to an instance
+--------------------------------------
+
+With the association of the floating IP to an instance, the instance becomes reachable from the external network.
+
+- Click on *""Associate""* action on the right of the page *""Network â Floating IPs""*. 
+- In the popup, select your virtual machine by the menu in *""Port to be associated""*.
+
+.. image:: /cloud/_img/op_fip_assocation_img1.png
+
+.. image:: /cloud/_img/op_fip_assocation_img2.png    
+
+
+The inverse action, *âDissociate Floating IPâ*, is available from the *""Compute â Instances""* page.
+
+At any moment, floating IPs can be de-associated from an instance using the available action for the floating IP."
+index_network_ops.rst.txt,42,240,0,745,"What are the three specific network operations that are detailed in the provided documentation, and where can one find more information about each of these operations?",".. _network_ops_card:
+
+Network operations
+==================
+
+For general information on the Network component, visit the :ref:`cloud/os_overview/os_components/network:network` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   network_create
+   secgroups_create
+   fip_association 
+
+.. grid:: 3
+
+    .. grid-item-card:: |osneutron| **Network: create**
+      :link: network_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **floating IP: association**
+      :link: fip_associate_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Security groups: create**
+      :link: secgroups_create_card
+      :link-type: ref
+
+.. |osneutron| image:: /cloud/_img/neutron_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+index_shares_ops.rst.txt,42,193,0,582,"What are the two types of shares mentioned in the 'Shares operations' section, and where can one find detailed instructions for creating each type?",".. _shares_ops_card:
+
+Shares operations
+=================
+
+For general information on the Shares component, visit the :ref:`cloud/os_overview/os_components/shares:shares` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   cephfs_share_create
+   generic_share_create
+
+.. card:: |osmanila| **CEPHFS shares: create**
+      :link: shares_cephfs_create_card
+      :link-type: ref
+
+.. card:: |osmanila| **Generic shares: create**
+      :link: shares_generic_create_card
+      :link-type: ref
+
+.. |osmanila| image:: /cloud/_img/manila_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+network.rst.txt,42,367,0,1534,"How does the OpenStack Neutron service facilitate communication between virtual machines within a project network and the external network, and what are the essential components required for this communication to occur?",".. _network_card:
+
+Network
+=======
+
+`OpenStack Neutron service <https://docs.openstack.org/neutron/latest/>`_ is a core component of the OpenStack 
+cloud computing platform, which provides ""networking as a service"" between interface 
+devices managed by other OpenStack components such as Nova (compute) and Cinder 
+(block storage) services. Neutron allows users to create and manage various networking services 
+like VLANs, SDNs (Software Defined Networks), and other complex network topologies.
+
+.. image:: ../../_img/openstack_network_topology.png
+
+Project networks are isolated and private. These networks are not accessible from 
+outside the OpenStack environment unless routed through an external network. The 
+**external network** is the public-facing network that allows VMs within the tenant 
+networks to access the internet.
+
+To operate, a network will need at least a **subnet** and a **router**. A subnet is 
+a range of IP addresses in your project's network, while a router is the virtual 
+device that forwards traffic between your project and the external network.
+
+Once the project has a network, it is possible to link to it virtual machines and other 
+resources in order to connect them between each other and to the external network.
+
+Subnets
+-------
+
+A subnet is a range of IP addresses in your project's network. You can create subnets 
+to group instances according to security and operational needs. When you create a 
+subnet, you specify the CIDR block for the subnet, which is a subset of the network 
+CIDR block."
+db_access.rst.txt,42,663,0,2847,What specific command would you use in the OpenStack CLI to list the available versions of the MySQL datastore on the CINECA HPC Cloud?,".. _db_access_card:
+
+Database: access
+================
+
+Accessing the Database instance
+-------------------------------
+To access the database instance, the typical SQL command (depending on the datastore you chose for your database instance) can be used.
+In the below example of a MySQL database instance, it is shown how to access the database. After you successfully install the MySQL client, use the following commands to access the database:
+
+.. code-block:: bash
+
+    $ mysql -h <ip-address-of-db-instance> -u<user-name> -p<password>
+    
+    ------------------------------------------------------------------------------------
+    
+    mysql: [Warning] Using a password on the command line interface can be insecure.
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    Your MySQL connection id is 16
+    Server version: 5.7.29 MySQL Community Server (GPL)
+    
+    Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+    
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+    
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+    
+    mysql>
+
+
+Once you accessed the database, a mysql prompt will be available. You can check the list of databases using the following command:
+
+.. code-block:: bash
+
+    mysql> show databases;
+    
+    --------------
+    show databases
+    --------------
+    
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | information_schema |
+    | test               |
+    +--------------------+
+    2 rows in set (0,02 sec)
+
+
+How to list the available datastore and their version using OpenStack CLI
+-------------------------------------------------------------------------
+A datastore is a database engine that is supported by Trove and it is used to create the database instance. 
+On CINECA HPC Cloud the following datastores namely MySQL, MariaDB, PostgreSQL are available.
+
+- You can check the available datastores with the command ``openstack datastore list``. The ID and Name of the datastores supported will be shown.
+
+.. code-block:: bash
+
+    $ openstack datastore list  # shows all datastores available in Cloud infrastructure
+    
+    +--------------------------------------+------------+
+    | ID                                   | Name       |
+    +--------------------------------------+------------+
+    | b2103dff-9331-4be2-8193-170f2a509e16 | mariadb    |
+    | ed541d5a-d260-4b6b-ac80-74ac38167d70 | mysql      |
+    | e8d12fef-3c54-4e83-818c-4a89a104780d | postgresql |
+    +--------------------------------------+------------+
+
+
+- With the command ``openstack datastore version list <name of the datastore>``, you can check the list of datastores with their version. Below we show an example for mysql datastore."
+network_create.rst.txt,42,272,0,827,"What are the specific steps and details required to create a new network and subnet with DHCP enabled in the Horizon Dashboard, including the example network address and gateway IP provided?",".. _network_create_card:
+
+Network: create
+=================
+
+- In the Horizon Dashboard go to *""Network â Networks""* tab and select *""Create network""* button. 
+
+.. image:: /cloud/_img/op_network_create_img1.png
+
+- In the pop-up window add a name for your Network and select the *""Create Subnet""* checkbox.
+
+.. image:: /cloud/_img/op_network_create_img2.png
+
+- In the *Subnet tab*, assign a name to the Subnet and provide the Network address and Gateway IP. As an example you can set: 
+
+   - Network Address: 192.168.0.0/24
+   - Gateway IP: 192.168.0.254 (the last address for subnet 192.168.0.0/24)
+
+.. image:: /cloud/_img/op_network_create_img3.png
+
+- In the last step, select *""Enable DHCP""* checkbox. 
+
+.. image:: /cloud/_img/op_network_create_img4.png
+
+- Click the *""Create""* button on the right bottom side of the window."
+compute.rst.txt,42,405,0,1685,What are the key differences between ephemeral and bootable virtual machines in terms of root volume management and resource usage?,".. _compute_card:
+
+Compute
+=======
+
+This component, based on the `OpenStack Nova Service <https://docs.openstack.org/nova/latest/>`_, allows the management of the 
+computing resources. 
+
+
+Instances
+---------
+
+An instance (or virtual machine) is a software-based emulation of a physical computer. 
+It runs an operating system and applications, just like a physical computer. With 
+instances, users can run applications and workloads in the cloud. Instances can be 
+created from an image, or from a snapshot.
+
+In the corresponding part of the OpenStack Horizon dashboard *""Compute â Instances""*, 
+you can:
+
+- visualize the quota of the selected project and its usage in the *""Overview""* page
+- access the list of instances
+- create a new instance
+- perform operations (**Actions**) on the selected instance, like attaching/de-attaching volumes, 
+  suspend or shut off, creation of snapshots
+
+Virtual machines can be of two types:
+
+.. grid:: 2
+
+  .. grid-item-card:: 
+
+    **Ephemeral** Virtual Machines are booted from an OpenStack image. 
+    
+    These images have fixed 
+    root volume dimension, dictated from the used flavor.
+    
+    Creating an ephemeral virtual machine is more lightweight for tenant resources, since the root volume won't be accounted 
+    on the tenant storage quota.
+
+  .. grid-item-card:: 
+
+    **Bootable** Virtual Machines are created using a pre-existing volume as root volume. 
+
+    Users can choose freely the size of the root volume of the virtual machine.
+    Creating a virtual machine from a bootable volume has two main advantages:
+
+    - customizable root volume size
+    - the data of the root volume won't be deleted when deleting the instance"
+access.rst.txt,42,719,8099,10906,"What steps must a Windows user follow to configure the smallstep client and activate the ssh-agent, and what specific commands are involved in each step?",".. figure:: img/ca_linux.png
+
+      * **Step 4**
+
+        Once the certificate is created, a webpage will automatically open in your default browser.
+        You will need to **sign in** using your cluster credentials (username and password). Afterwards, you will be prompted to enter a temporary code generated by your OTP application to complete the process.
+
+        .. figure:: img/otp.png
+
+        Once authenticated, you will see a **Success message** on your browser, meaning that the certificate has been generated and it is available on your PC.
+
+        .. figure:: img/success_ca.png
+
+        .. note:: 
+          the certificate is valid for **12 hours** !!!  If you reboot your PC, the certificate is lost and you need to download a new one (repeating step 3 step ssh login ... ) !
+
+Windows users have multiple options:
+
+.. dropdown:: Windows Powershell
+   :animate: fade-in-slide-down
+   :color: light
+
+   * **Step 1** 
+      * Open the ``Powershell``. Windows O.S will show the standard prompt
+
+      .. figure:: img/powershell_1.png
+
+   * **Step 2** - Download and install `scoop`
+      * From the ``Powershell`` prompt type the command:
+
+      .. code-block:: shell
+         
+         iwr -useb get.scoop.sh | iex 
+
+   * **Step 3** - Test 'scoop'
+
+      .. code-block:: shell
+
+         scoop help            
+
+   * **Step 4** - Install ``git`` support for `scoop`
+
+      .. code-block:: shell
+
+         scoop install git
+
+   * **Step 5** - Install and verify `smallstep`
+
+      .. code-block:: shell
+
+         scoop bucket add smallstep https://github.com/smallstep/scoop-bucket.git
+ 
+         scoop install smallstep/step
+
+          step
+
+   * **Step 6** - Configure `smallstep` client
+      * Initialize `smallstep` client with the command:
+
+      .. code-block:: shell
+
+         step ca bootstrap --ca-url=https://sshproxy.hpc.cineca.it --fingerprint 2ae1543202304d3f434bdc1a2c92eff2cd2b02110206ef06317e70c1c1735ecd
+
+      A successful configuration will show the message:
+
+      .. code-block:: shell
+
+         The authority configuration has been saved in C:\Users\m.rossi\.step\config\default.json.
+
+         PS C:\Users\m.rossi> Get-Service --Name ssh-agent
+
+   * **Step 7** - Activation of the ``ssh-agent``
+      * On the O.S. Windows 11, the ``ssh-agent`` is active by default. You can verify the activation status with the command:
+
+      .. code-block:: shell
+
+         Get-Service -Name ssh-agent
+
+      The output on ``Powershell`` should be:
+
+      .. code-block:: shell
+
+         Status   Name           Display Name
+         ------   ----           -------------
+         Running  ssh-agent      OpenSSH Authentication Agent 
+
+      * If the service is not in ``running status``, it can be activated with:
+
+      .. code-block:: shell
+
+         Start-Service -Name ssh-agent"
+index_operative_manual.rst.txt,42,609,0,1792,"What are the six categories of operations detailed in the Operative Manual, and which specific component does each category correspond to?","Operative Manual
+================
+
+This section collects all the operative guidelines on how to perform the most common operations. 
+
+The operations are grouped whenever possible according to the respective Components.
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   compute_ops/index_compute_ops
+   storage_ops/index_storage_ops
+   network_ops/index_network_ops
+   shares_ops/index_shares_ops
+   db_ops/index_db_ops
+   lb_ops/index_lb_ops
+
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Compute operations**
+      :link: compute_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |oscinder| **Storage operations**
+      :link: storage_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Network operations**
+      :link: network_ops_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osmanila| **Shares operations**
+      :link: shares_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database operations**
+      :link: database_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |osoctavia| **Load Balancer operations**
+      :link: load_balancer_ops_card
+      :link-type: ref
+
+
+
+.. |oslogo| image:: /cloud/_img/openstack_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osneutron| image:: /cloud/_img/neutron_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |oscinder| image:: /cloud/_img/cinder_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osmanila| image:: /cloud/_img/manila_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |ostrove| image:: /cloud/_img/trove_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osoctavia| image:: /cloud/_img/octavia_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+index_system_specifics.rst.txt,42,207,0,671,"What are the specific details provided for each HPC Cloud machine in production at CINECA, and where can one find general information about the HPC Cloud infrastructure and service?","Cloud Specifics
+================
+
+In the corresponding sub-sections are described the details specific to each HPC Cloud machine in 
+production at CINECA. For the general information on the HPC Cloud infrastructure and service, please refer to :ref:`cloud/general/general_info:introduction to hpc cloud`. 
+
+.. |ico1| image:: /cloud/_img/hpc_icon.png
+   :height: 35px
+   :class: no-scaled-link
+
+.. grid:: 2
+
+    .. grid-item-card:: |ico1| **ADA**
+      :link: ada_card
+      :link-type: ref
+
+    .. grid-item-card:: |ico1| **GAIA**
+      :link: gaia_card
+      :link-type: ref
+
+
+.. toctree::
+  :maxdepth: 2
+  :hidden:
+
+  ada
+
+
+.. toctree::
+  :maxdepth: 2
+  :hidden:
+
+  gaia"
+services_and_tools.rst.txt,42,179,0,685,"What are the three specific tools mentioned in the 'Services and Tools' section that support high-performance computing services for research, simulations, and data processing?",".. _serv_tools_card:
+
+Services and Tools
+==================
+
+High-Performance Computing (HPC) services typically provide advanced computational resources. These tools and services are designed to support research, simulations, data processing, and other high-performance applications.
+
+.. grid:: 3
+
+   .. grid-item-card:: **Interactive Computing**
+      :link: interactive_computing_card
+      :link-type: ref
+
+
+   .. grid-item-card:: **Singularity**
+      :link: singularity_card
+      :link-type: ref
+
+   .. grid-item-card:: **Miniconda**
+      :link: miniconda_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   interactive_computing
+   singularity
+   miniconda"
+CINECA.rst.txt,42,75,0,194,What does the HTTP status code '404 Not Found' indicate about the requested URL in the context of the provided HTML document?,"<!DOCTYPE HTML PUBLIC ""-//IETF//DTD HTML 2.0//EN"">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+</body></html>"
+hpc_enviroment.rst.txt,42,640,28505,30832,"How can you specify and install a package in Spack with particular versions, compilers, dependencies, and build variants, and why is it important to check the default spec before installation?",".. code-block:: bash
+    
+        $ spack find -l +<variant>
+        e.g. $ spack find -l +cuda
+    
+    or which depends on a specific package (e.g openmpi) or a generic virtual package (e.g. mpi)
+    
+    .. code-block:: bash
+    
+        $ spack find -l ^<package_name>
+        e.g. $ spack find -l ^openmpi
+        e.g. $ spack find -l ^mpi
+    
+    or installed with a specific compiler
+    
+    .. code-block:: bash
+    
+        $ spack find %<compiler>
+    
+.. dropdown:: Add a new compiler to Spack compilers
+   :name: add_compiler
+   :animate: fade-in-slide-down
+   :color: light
+
+    The list of all the compilers already installed and ready to be used can be seen with
+    
+    .. code-block:: bash
+    
+        $ spack compilers
+    
+    To add a compiler to the ones known to Spack:
+    
+    .. code-block:: bash
+    
+        $ module load <compiler>
+        $ spack compiler add
+        $ module unload <compiler>
+
+.. dropdown:: Variants and dependencies
+   :name: Variants_and_dependencies
+   :animate: fade-in-slide-down
+   :color: light
+
+   If the package of your interest is listed by ``spack list``, you can inspect its build *variants* via
+   
+   .. code-block:: bash
+   
+       $ spack info <package_name>
+   
+   You can activate (``+``) or deactivate (``-``) variants via
+   
+   .. code-block:: bash
+   
+       $ spack spec -Il <package_name> +variant_1 -variant_2 variant_3=value
+       $ spack install <package_name> +variant_1 -variant_2 variant_3=value
+   
+   and also for a dependency
+   
+   .. code-block:: bash
+   
+       $ spack spec -Il <package_name> ^""<dependency_package_name> +variant_1 -variant_2 variant_3=value""
+       $ spack install <package_name> ^""<dependency_package_name> +variant_1 -variant_2 variant_3=value""
+
+.. _Spec_command:
+
+Spec and install commands
++++++++++++++++++++++++++
+
+In order to install a package with the Spack module, you have to select for it a version (``@``), a compiler (``%``), the dependencies (``^``) and the building variants (``+``/``-``). The combination of all these parameters is the *spec* with which the package will be installed.
+
+If you donât select any combination during the installation, a default *spec* is selected. Before installing a package, it is strongly recommended to check the default *spec* with which the package would be installed:"
+db_create.rst.txt,42,698,0,2832,"What are the steps and specific details required to create a new database instance using the Horizon dashboard, including the necessary configurations for the Details, Networking, Database access, Initialize Databases, and Advanced tabs?",".. _db_create_card:
+
+Database: create
+================
+
+.. tab-set:: 
+
+   .. tab-item:: Using Horizon dashboard
+
+        - Click on *""Database â Instances â Launch Instance""* 
+
+         .. image:: /cloud/_img/op_db_create_img1.png
+
+        - Fill in the fields described below for the different tabs
+
+        .. dropdown:: Details tab
+        
+            - **Availability Zone**: nova
+            - **Instance Name**: <the name you prefer>
+            - **Volume Size**: <size in GB for the volume that will contain the databases>. By default the maximum allowed is 10 GB. 
+            - **Volume Type**: choose between ""__DEFAULT__"" or ""LUKS"". The second one is for encrypted volumes. 
+            - **Datastore**: choose among the available datastores. They are listed in the drop-down menu showing also the available versions.
+            - **Flavor**: it is the dimension of the VM that will have the database volume attached. Insert fl.ada.xxs, since you will not be allowed by design to login into this VM.
+            - **Locality**: None
+
+                .. image:: /cloud/_img/op_db_create_img2.png
+
+        .. dropdown:: Networking tab
+
+            - **Selected networks**: <network_name>, choose one among the available network in the project. 
+            - Make sure to create the network before creating the database instance (see :ref:`cloud/operative/network_ops/network_create:network: create`).
+
+                .. image:: /cloud/_img/op_db_create_img3.png
+
+        .. dropdown:: Database access tab
+
+            - **Is public**: Check this box if you want to allow access to the database instance from the public network; otherwise leave blank.
+            - **Allowed CIDRs**: <xx.xx.xx.xx./y>. Specify the allowed IP or IP-ranges from which to access the database service.
+
+                .. image:: /cloud/_img/op_db_create_img4.png
+
+        .. dropdown:: Initialize Databases tab
+
+            - **Initial Databases**: <the name you want, for the first databases that will be created>. Note that additional databases can be created later. 
+            - **Initial Admin Users**: <the username for the admin database user> 
+            - **Password**: <the password for the database admin user> 
+            - **Allowed Hosts**: optional value, to further restrict for this specific database the allowed Host or IP addresses able to connect to the database.
+          
+                .. image:: /cloud/_img/op_db_create_img5.png
+
+        .. dropdown:: Advanced tab 
+            
+            - **Configuration Group and Source from Initial State**: Fill these two fields only if you want to create the database using a previous backup, or as a replica  of an other database instance. 
+            - **Replica Count**: fill in this field only if you want to have multiple replicas of this database instance."
+hpc_intro.rst.txt,42,661,0,3284,"How can users retrieve detailed information about their Project Account, including the available budget and usage details, using the `saldo` command, and what specific options are available for clusters with independent partitions?",".. _hpc_card:
+
+Introduction HPC Resources
+==========================
+
+This section provides a broader context for HPC Resources and the essential characteristics of HPC infrastructure.
+
+It introduces to CINECA Clusters and HPC services with specific focus on managment of resources by users together with the budgeting and accounting rules in place at CINECA for HPC projects.
+
+
+Budget and Accounting
+---------------------
+
+The ``saldo`` command allows you to quickly retrieve information about your Project Account, including the available budget, and details of the User Account.
+More information about the usage of the tool can be gained just executing the command without any option.
+ 
+.. tab-set::
+
+   .. tab-item:: User Account Balance
+   
+      ``saldo -b <User Account>`` lists the budget of all Project Accounts associated with a username.
+
+         * A single **User Account** can be associated to a multiple **Project Accounts**.
+         * For clusters with independent partitions, specify the partition using:
+            * ``saldo -b`` (default: , on Leonardo give you back the report for Booster partition)
+            * ``saldo -b --dcgp`` (to get a report for the DCGP partition on Leonardo, the flag ``--dcgp`` is mandatory)
+      
+      A typical example of ``saldo`` usage is reported in the following:
+
+      .. code-block:: bash
+
+	     saldo -b <User Account>
+         
+        -----------------------------------------------------------------------------------------------------------------------------------
+        account          start         end         total        localCluster   totConsumed     totConsumed     monthTotal     monthConsumed
+                                               (local h)   Consumed(local h)     (local h)               %      (local h)         (local h)
+        -----------------------------------------------------------------------------------------------------------------------------------
+        Proj_A        20110323    20300323         50000               25000      55027726            50.0            600               600
+        Proj_B        20220427    20301231        100000               10000         27086            10.0            731               731
+        Proj_C        20230524    20300323          6500                   0             0             0.0              0                 0
+
+   
+      **Description of columns:**
+         * **Account:** Refers to the Project Account (approved grants).
+         * **Start Date:** Start of the grant period.
+         * **End Date:** End of the grant period.
+         * **Total Hours (local):** Total CPU hours allocated to the grant on the local cluster.
+         * **Consumed (local):** Total CPU hours used from the allocation on the local cluster.
+         * **Total Consumed (%):** Percentage of the total hours consumed.
+         * **Month Total:** Allocated hours for the current month.
+         * **Month Consumed:** Hours consumed in the current month.
+
+   .. tab-item:: Project Account Balance
+
+      ``saldo -a <Project Account>`` lists the the usage of the **Project Account** for each associated **User Accunt**. The report specifies the date, consumed hours for each **User Account**, and the number of jobs submitted by the user on that day."
+instance_deletion.rst.txt,42,658,0,2438,"What are the specific steps to delete a VM using the Horizon Dashboard, and why is the order of these steps important?",".. _compute_inst_delete_card:
+
+Instance: delete
+==================
+
+If you would like to delete one of the VMs, you have created, you can follow the steps below or follow the **Deletion 
+tutorial** in :ref:`cloud/tutorials/index_tutorials_and_repos:tutorials for openstack dashboard`. 
+
+.. warning:: 
+   
+   The order of the steps is important to avoid errors during the deletion.
+
+.. tab-set:: 
+   .. tab-item:: Horizon Dashboard
+
+      - In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, select on *""Network â Floating IPs""*, then click on the button *""Disassociate""* on the right side of the dashboard page for the IP associated to your VM. If desired, you can also release the floating IP. 
+
+      .. note:: 
+         Once you release it, there is no guarantee the same IP can be allocated again.
+
+      - Go to *""Compute â Instances""*, and display the drop-down menu of the VM you want to delete and then click the action *""Delete Instance""*
+
+   .. tab-item:: Command Line 
+      
+      - List all the VMs in the tenant
+      
+      .. code-block:: bash
+         
+         openstack server list
+         +----------------+------------------+--------+-------------------------------------------------------------+--------------+---------------+
+         | ID             | Name             | Status | Networks                                                    | Image        | Flavor        |
+         +----------------+------------------+--------+-------------------------------------------------------------+--------------+---------------+
+         | <Server-ID-01> | <Server-01-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-01>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         | <Server-ID-02> | <Server-02-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-02>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         ...
+         | <Server-ID-XX> | <Server-XX-Name> | ACTIVE | <Network-Name>=<Floating-IP-Address-XX>,<Fixed-IP-Address> ... | <Image-Name> | <Flavor-Name> |
+         +--------------------------------------+------+--------+-----------------------------------------+------------------------+---------------+
+
+      - Shut down the VM using its ID from the previous step
+      
+      .. code-block:: bash
+
+         openstack server stop <Server-ID-XX>
+
+      - Find the ID of the Floating IP associated to the VM based using the VM Floating IP Address"
+hpc_clusters.rst.txt,42,200,0,642,"What are the specific HPC systems highlighted at CINECA, and how do they deviate from the general behavior described in the earlier sections of the document?","Cluster Specifics
+=================
+
+In this section, we highlight the specific features of the HPC systems at CINECA, focusing on deviations from the general behavior described earlier.
+
+.. |ico1| image:: img/hpc_icon.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. grid:: 3
+
+   .. grid-item-card:: |ico1| **Leonardo**
+      :link: leonardo_card
+      :link-type: ref
+
+
+   .. grid-item-card:: |ico1| **Galileo100**
+      :link: galileo_card
+      :link-type: ref
+
+   .. grid-item-card:: |ico1| **Pitagora**
+      :link: pitagora_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+      
+   leonardo
+   galileo
+   pitagora"
+volume_create.rst.txt,42,403,0,1419,"What are the steps to create a new volume in the Horizon dashboard, and what options are available for specifying the volume's source and type?",".. _volume_create_card:
+
+Volume: create and attach
+=========================
+
+Create a volume
+---------------
+
+- From the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, go to the *""Volumes â Volumes""* section and select *""Create Volume""*
+
+  .. image:: /cloud/_img/op_volume_create_img1.png
+  
+- In the pop-up window, specify
+
+  **Volume Name**: a name for the volume.
+
+  **Description**: Optionally, provide a brief description for the volume.
+
+  **Volume Source**: Select one of the following options:
+  
+   - No source, empty volume: Creates an empty volume. An empty volume does not contain a file system or a partition table.
+   - Image: If you choose this option, a new field for Use image as a source displays. You can select the image from the list.
+
+  **Type**:
+   - __DEFAULT __ is a general cinder volume
+   - LUKS is for encrypted volumes (see Storing sensitive data for more details). 
+  
+  **Size (GiB)**: The size of the volume in gibibytes (GiB).
+
+  .. image:: /cloud/_img/op_volume_create_img2.png
+
+- Finally, click on *""Create Volume""* button.
+
+Attach/Detach a volume
+----------------------
+
+- To attach a volume to an instance, go to the *""Volumes â Volumes""* page and select the volume you would like to attach and then the action *""Manage Attachments""*
+
+  .. image:: /cloud/_img/op_volume_create_img3.png
+
+- Select the instance you would like the volume to be attached to:"
+cephfs_share_create.rst.txt,42,727,0,2734,"What specific details must a user include in their email to superc@cineca.it to request the creation of a CEPHFS_TYPE share, and what steps are involved in setting up and mounting this share on virtual machines?",".. _shares_cephfs_create_card:
+
+Create and use a CEPHFS_TYPE share
+==================================
+
+Request to be enabled to the service
+------------------------------------
+
+A user that would like to make use of the Manila service needs to send an email to superc@cineca.it, communicating how many shares are needed and for each share:
+
+- its dimensions (GB)
+- the instance name of the virtual machines (VMs) that will share that filesystem
+- the tenant's name.
+
+Once enabled by the User Support Team, the user needs to create the share and mount it in a special network interface on the VMs attached to a dedicated storage network.
+
+As an example, in what follows, we will create a share in common between VM_alice and VM_bob belonging to the same tenant.
+
+Create the share
+----------------
+
+- Create the share by clicking in the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` on *""Create Share""* in *""Share â Shares* 
+- In the interface set:
+  
+  - share name
+  - share protocol  == ""CephFS"" (other cases not allowed)
+  - size (on the right side is visualized information about the actual available and used space within the tenant)
+  - Type == ""cephfs_type""
+  - Leave blank the option ""Make visible for all projects"" because it is not enabled
+  - In the end, click on the ""save"" button.
+
+ .. image:: /cloud/_img/op_share_cephfs_img1.png
+
+- Set the access rule on the share just created. Click on *""Share â Shares""*, then select the share just created and in the menu on the right select *""Manage Rules""*.
+
+ .. image:: /cloud/_img/op_share_cephfs_img2.png
+
+- Click on *""Add rule""* and set:
+
+  - access type: cephx 
+  - access level: read-write or read-only (depending on your needs)
+  - access to: write the name of the client (in our example ""charlie"")
+
+ .. image:: /cloud/_img/op_share_cephfs_img3.png
+
+- By clicking on the *""add""* button the dashboard will show the *""access key""* and *""access to""* keys that must be used to mount the share on the virtual machines. 
+
+Mount the share on the VMs
+--------------------------
+
+You are now ready to mount the share on VMs. In the following example, we will consider two VM with Ubuntu 20.04 OS.
+**Please refer to the network guide of the operating system of your VM to be sure about the operations to be done.** 
+
+- Login in the first VM, configure the network interface attached to the storage network
+
+  - ``ip a`` command lists all the network interfaces. Find the new interface, attached to the storage network, and refer to the mac-address of the interface to be sure. 
+
+     .. image:: /cloud/_img/op_share_cephfs_img4.png
+
+  - Create a new file in the /etc/netplan directory to configure such new interface (in our example *""ens7""*), and enable it"
+instance_create.rst.txt,42,696,0,2614,"What are the mandatory prerequisites that must be fulfilled before creating a virtual machine using the OpenStack Horizon Dashboard, and how can each of these prerequisites be created?",".. _compute_inst_create_card:
+
+Instance: create
+================
+
+The creation of a virtual machine can be done using the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, 
+using the :ref:`cloud/os_overview/management_tools/command_line:command line interface` 
+or with customized Ansible and Terraform scripts to automate the process (:ref:`cloud/os_overview/management_tools/infrastructure_as_code:declarative and procedural approaches to iac`). 
+You are free to choose any of these methods. However, there are a few mandatory steps that must be followed before creating a virtual machine. 
+
+This page will guide you step by step in the creation of a virtual machine with the **Openstack Horizon Dashboard**. 
+
+.. important:: 
+
+  **Prerequisites**: In order to create and boot a virtual machine, you need have already created the following resources
+  
+  - A tenant network â :ref:`cloud/operative/network_ops/network_create:network: create`
+  - A security group â :ref:`cloud/operative/network_ops/secgroups_create:security groups: create` 
+  - A key-pair (it is possible to create a new key-pair during instance creation or upload a preexisting pair) â :ref:`cloud/operative/compute_ops/keypair_create:key pair: create`
+
+
+Virtual machine creation
+------------------------
+Once you have completed the above steps, you can proceed to create a Virtual Instance.  
+Go to *""Compute â Instances""* and click on *""Launch Instance""*.
+
+A pop-up window will appear and you have to fill in the required information in the different tabs. 
+
+.. image:: ../../_img/op_instace_create_img1.png
+
+.. dropdown:: Details
+   :animate: fade-in-slide-down
+   :color: light
+
+   Under the tab *""Details""*, you need to insert the instance name and how many copies of this virtual machine you want to create (*""count""* field).
+
+.. dropdown:: Source 
+   :animate: fade-in-slide-down
+   :color: light
+    
+   Under the tab *""Source""*, you specify if you want to boot your virtual machine form an image/image snapshot or from a volume/volume snapshot. 
+   When booting from an image, you are able to decide if you want the virtual machine to be created as ""ephemeral"" 
+   or you want to create a root ""bootable volume"" contextually to the virtual machine creation (see :ref:`cloud/os_overview/os_components/compute:compute` 
+   for more information on bootable and ephemeral instances).
+
+   In this section, you also need to choose from the available list which image you would like to use to build your instance.  
+   To select the one to be use simply click on the up arrow from the list of available resources."
+getting_started.rst.txt,42,671,0,2563,"What are the steps required to gain initial access to CINECA HPC resources, and what specific actions are needed at each step?",".. _get_str_card:
+
+Getting Started
+===============
+
+**Welcome to CINECA HPC !!!**
+
+Here you will find in few simple steps the instructions to get your first access to CINECA HPC resources.
+
+**Let's start !!!**
+
+.. card:: 1. Create your personal **User account** on `UserDB <https://userdb.hpc.cineca.it>`_ portal.
+    
+    * Visit the :ref:`general/users_account:How to become a User` section for detailed information. 
+    * Please, consider that, once completed, the registration alone does not grant the access to the HPC resources. 
+  
+
+.. card:: 2. Get associated to a valid **Project Account**.
+    
+    * Visit the :ref:`general/users_account:Project Accounts` section to find all the ways you can be granted a **Project Account** on our HPC resources.
+    * If you are the *Principal Investigator (PI)* of a project, please write to superc@cineca.it to be associated.
+    * If you are a collaborator, please ask to the PI of the Project Account to be associated.
+    * Visit the :ref:`general/users_account:PI and Collaborators` section for more information.
+
+
+.. card:: 3. Submit a request to get access to CINECA HPC resources
+    
+    * by clicking on Submit button in HPC Access page on UserDB (:ref:`general/users_account:Submit a request to have a **User Account**`)
+    * Once enabled, we will provide you with a HPC username and a link to configure the 2FA (password + OTP token)
+
+
+.. card:: 4. Configure your 2FA
+    
+    * click on the link arrived via email and configure your HPC password and OTP token as described here :ref:`general/access:Access to the Systems`
+
+
+.. card:: 5. Select the **Infrastracture**
+    
+    * According to resources assigned to your **Project Account**, choose the :bdg-primary:`HPC`, or :bdg-secondary:`Cloud` infrastructure. 
+
+  .. dropdown:: HPC Infrastructure
+   :animate: fade-in-slide-down
+   :color: primary
+
+    .. card:: 6. Configure the **smallstep client**
+
+       The smallstep client is needed to get the temporary 2FA certificate to access the cluster (:ref:`general/access:How to configure *smallstep* client`)
+
+    .. card:: 7. **Connect to the Cluster**
+
+       Open a new shell/terminal and use the following commands to connect:
+
+       .. code-block:: bash
+
+         $ step ssh login <your email> --provisioner cineca-hpc
+         $ ssh <username>@login.<cluster>.cineca.it
+
+
+       Visit the page :ref:`general/access:Access to the Systems` to find instructions about other possible ways to connect
+
+
+    .. important::
+
+       You can login only to clusters where you have active budgets on it."
+faq.rst.txt,42,671,0,2754,What steps should you follow if you receive the error message 'WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!' even after modifying the known_hosts file?,".. _faq_card:
+
+FAQ
+===
+
+This is a page collecting answers to requests arrived to the HPC Helpdesk. Please check the page before sending a specific request.
+
+General
+-------
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+     .. card:: I still didnât receive the username and the link for the 2FA configuration?
+
+        You have to do the complete registration on the UserDB page and to be associated with a project (PI has to add you). 
+        Once you have inserted all the necessary information and you are associated with a project a new access button will appear, 
+        just click on it and you will receive in two mails the username and the link for the 2FA configuration.
+
+     .. card:: I have finished my budget but my project is still active, how can I do?
+
+        Non-expired projects with exhausted budgets may be allowed to keep using the computational resources at the cost of minimal priority. Ask superc@cineca.it 
+        to motivate your request and, in case of a positive evaluation, you will be enabled to use the qos_lowprio QOS.
+
+     .. card:: Information about my project on CINECA clusters (end data, total end monthly amount of hours, the usage?)
+
+        You can list all the Accounts attached to your username on the current cluster, together with the ""budget"" and the consumed resources, with the command:
+
+        ``> saldo -b``
+
+        Find more information in :ref:`hpc/hpc_data_storage:Data Occupancy Monitoring Tools` section.
+
+Access and Login
+----------------
+
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+    .. card:: My new password isn't accepted, with error ""Could not execute the password modify extended operation for DN""
+
+        The error message can be difficult to interpret, but it means that the new password you have chosen does not respect our password policies. 
+        Please check the :ref:`general/users_account:Users and Accounts` and choose your new password accordingly.
+
+    .. card:: I receive the error message ""WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"" when trying to login
+
+        The problem may happen because we have reinstalled the login node changing the fingerprint. 
+        We should have informed you through an HPC-news. If this is the case you can remove the old fingerprint from your known_hosts file with the command
+
+        ``ssh-keygen -f ""~/.ssh/known_hosts"" -R ""login.<cluster_name>.cineca.it""``
+
+    .. card:: I keep receiving the error message ""WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"" even if I modify known_host file
+
+        Please, follow the procedure described below to solve the problem.
+
+        .. tab-set::
+
+            .. tab-item:: Linux/MacOS"
+index_openstack_overview.rst.txt,42,706,0,2337,"How does OpenStack facilitate the management of cloud computing resources in CINECA, and what are the primary tools and components involved in this process?","OpenStack Overview
+==================
+
+What is OpenStack?
+------------------
+
+In CINECA, we use OpenStack to virtualize and manage cloud computing resources. `OpenStack <https://www.openstack.org/>`_
+is an open-source cloud operating system that controls and manages the compute resources 
+of a cloud data center.  
+
+.. image:: ../_img/openstack_software-overview-diagram-new.png
+  :align: center
+
+
+Management Tools
+----------------
+
+To manage the resources assigned to a project, the users can 
+interact with OpenStack using in-house tools like Horizon Web Dashboard and the 
+Command Line Interface (CLI) or using Infrastructure as a Code tools. 
+
+.. grid:: 3
+  
+  .. grid-item-card:: |oslogo| **Horizon Dashboard**
+    :link: dashboard_card
+    :link-type: ref
+
+  .. grid-item-card:: |oslogo| **Command Line**
+    :link: command_line_card
+    :link-type: ref
+
+  .. grid-item-card:: |oslogo| **Infrastructure as code**
+    :link: infrastructure_as_code_card
+    :link-type: ref
+
+
+.. toctree:: 
+   :maxdepth: 1
+   :hidden:
+   
+   management_tools/dashboard
+   management_tools/command_line
+   management_tools/infrastructure_as_code
+
+
+
+Components
+----------
+
+OpenStack is a flexible tool that has a modular structure: it is split up in different 
+components that can be installed and activated independently to address every user's need.
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Compute**
+      :link: compute_card
+      :link-type: ref
+
+    .. grid-item-card:: |oscinder| **Storage**
+      :link: storage_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Network**
+      :link: network_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osmanila| **Shares**
+      :link: shares_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database**
+      :link: database_card
+      :link-type: ref
+
+    .. grid-item-card:: |osoctavia| **Load Balancer**
+      :link: load_balancers_card
+      :link-type: ref
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   os_components/compute
+   os_components/storage
+   os_components/network
+   os_components/shares
+   os_components/database
+   os_components/load_balancers
+
+
+
+.. |oslogo| image:: /cloud/_img/openstack_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+budget_accounting.rst.txt,42,401,0,1614,"How can users monitor the usage of their assigned virtual resources in the CINECA HPC cloud environment, and what specific tools or dashboards are available for this purpose?",".. _budget_accounting_card:
+
+Budget and accounting
+======================
+
+Following the :ref:`cloud/general/cineca_cloud_model:cineca hpc cloud model`, the users manage autonomously the Cloud projects (tenants), one or more, to which they are associated.
+
+To access Cloud resources, you need to get a CINECA HPC account. 
+For detailed instructions on creating an account, please refer to the :ref:`general/users_account:How to become a User` section.
+
+Each tenant is then composed by a pool of virtual resources (project quota/budget) which are defined in terms of:
+
+- Number of vCPUs
+- GB of RAM
+- GB of storage
+- Number of public IP addresses (floating IPs)
+
+On request, you can be also granted
+
+- Number of GPUs
+- Additional storage for shares
+
+Upon accessing the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` with HPC credentials, within the assigned tenants, 
+you can autonomously create and manage all components of the virtual infrastructure 
+(VMs, Networks, Security Policies, Load Balancer Policies, and so on) in compliance with 
+the Access Policies accepted at the time of registration on UserDB (see the :ref:`cloud/operative/index_operative_manual:operative manual` for specific operations details).
+
+When resource consuming operations, such as virtual machine creation, are performed, 
+the request is validated against the maximum quota permitted for the current project. 
+
+The users can also autonomously monitor the usage of the assigned resources in the OpenStack Horizon Dashboard, 
+see :ref:`cloud/operative/compute_ops/instance_manage:instance: manage and monitor` page."
+instance_resize.rst.txt,42,659,0,2588,What specific steps must be taken to ensure that encrypted LUKS volumes do not cause issues during the VM resize operation via the Horizon Dashboard?,".. _compute_inst_resize_card:
+
+Instance: resize
+================
+
+Users are able to resize autonomously their VM, this operation can be done either via :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`
+or via :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+
+.. important:: 
+   Before to perform the resize operation: 
+
+   - The VM must be shut off.  
+   - If there are encrypted **LUKS VOLUMES** attached to the virtual machine, it is mandatory that the user:
+  
+       - Unmount the volumes from the VM
+       - Detach the volumes from the Horizon Dashboard (see :ref:`cloud/operative/storage_ops/volume_create:attach/detach a volume`)
+
+.. note:: 
+    Remember to alert your users of the VM temporary shutdown during the operation, before starting the resize.
+
+.. tab-set::
+
+    .. tab-item:: Resize using the Horizon Dashboard
+
+       - Go to *""Compute â Instances""*, and find the VM you need to resize
+       - From the drop-down menu on the right side, select *""resize instance""*
+  
+         .. note:: 
+        
+          - If you have an **Ephemeral VM**, check the size of root disk of the original VM. Don't resize the VM, if the new flavor has a disk smaller than the current one.
+          - If you have a **VM with a Bootable Disk**, the resize will affect only vCPUs number and RAM. The bootable disk will not be changed by the operation.
+
+       - A menu will popup where you can choose the new desired flavor and click *""resize""*
+       - OpenStack will prepare the operation and then wait for user input to confirm or revert the operation
+       - From the drop-down menu on the right select either *""confirm resize/migration""* if you want to continue, or *""revert resize/migration""* if you want to keep the original flavor.
+       - Confirm the success of the operation. To do that you will need to boot the VM, login, and verify the vCPUs number and Memory size are correct with the following commands:
+
+         .. code-block:: bash
+        
+            cat /proc/cpuinfo
+            free -g
+
+
+    .. tab-item:: Resize using the CLI
+
+        To know how to configure and use the OpenStack CLI, please refer to the :ref:`cloud/os_overview/management_tools/command_line:command line interface` page.
+
+        - Identify the VM ID.
+  
+        .. code-block:: bash
+          
+            openstack server list --all | grep <VM_name>
+            openstack server show < vm_ID > | grep flavor
+
+        - Identify the ID of the new flavor the VM needs.
+
+        .. code-block:: bash
+          
+            openstack flavor list"
+load_balancers.rst.txt,42,399,0,1726,"How does the Octavia service in OpenStack facilitate the deployment of load balancing solutions, and what are the key components involved in directing and managing network or application traffic to multiple server endpoints?",".. _load_balancers_card:
+
+Load Balancer
+=============
+
+`OpenStack Octavia service <https://docs.openstack.org/octavia/latest/reference/introduction.html>`_ 
+enables the deployment of load balancing solutions in 
+OpenStack projects. 
+
+A **load balancer** functions as a traffic intermediary, directing network or application 
+traffic to multiple server endpoints. It helps manage capacity during high traffic 
+periods and enhances the reliability of applications. The main components of a load 
+balancer are the following: 
+
+- **Listener**: The listener is a component that defines how incoming traffic is 
+  received. It listens for connection requests on a specific port and protocol 
+  (e.g., HTTP, HTTPS), and directs this traffic to the appropriate backend pool
+- **Pool**: The pool is a collection of backend servers (also known as members) 
+  that receive and process the incoming traffic distributed by the load balancer. 
+  The pool determines the load balancing algorithm and health check policies to manage 
+  traffic distribution effectively
+- **Members**: Members are the individual servers within a pool that handle the 
+  actual processing of the traffic. Each member represents a single endpoint (server) 
+  that performs the required tasks or services requested by the client.
+
+A load balancer determines which server to send a request to based on a desired 
+algorithms (e.g., Round Robin, Least Connections, Random). The choice among the load 
+balancing algorithms depends on the requirements of the specific use case.
+
+.. note:: 
+
+  The Octavia service is available but it is not enabled by default to all HPC Cloud 
+  projects. If you want to use it please ask access sending an email to 
+  superc@cineca.it."
+shares.rst.txt,42,182,0,728,"What type of shared filesystem does the CINECA HPC Cloud infrastructure recommend for users who need a shared filesystem, and what are the two types of shares that can be created within this infrastructure?",".. _shares_card:
+
+Shares
+======
+
+The `OpenStack Manila service <https://docs.openstack.org/manila/latest/>`_ allows the creation of a filesystem that can be shared 
+among virtual machines in the same tenant (intra-tenant) or in different tenants (extra-tenant).
+This setup is particularly useful for applications that require consistent and 
+simultaneous access to data across different instances.
+
+In CINECA HPC Cloud infrastructure, it is possible to create shares of the following types:
+
+- Generic type (NFS protocol)
+- Cephfs type (CEPHFS protocol)
+
+We suggest the users that need a shared filesystem to use the **generic type**.
+
+.. note:: 
+  
+  **Only intra-tenant** shares are allowed on CINECA HPC Cloud infrastructures."
+hpc_cineca-ai-hpyc.rst.txt,42,699,0,2689,"How can you create a personal virtual environment to install additional Python packages while using the Cineca-hpyc module, and what are the recommended practices for managing this environment?","Cineca-hpyc and Cineca-ai modules
+=================================
+
+Cineca-hpyc and Cineca-ai are collection of python and artifitial intelligence packages, respectively, optimized for Cineca's clusters.
+
+.. _cineca-hpyc_card:
+
+The cineca-hpyc module
+----------------------
+
+CINECA-HPyC is a collection of Python scientific packages optimized for CINECA HPC clusters. List of principal packages includes:
+
+        * numpy           
+        * scipy        
+        * pandas          
+        * numexpr    
+        * mpi4py         
+        * Cython         
+        * pythran       
+        * joblib       
+        * matplotlib     
+        * IPython        
+        * notebook 
+
+To see the complete list of all the python packages available and check their versions:
+
+.. code-block:: bash
+
+   $ module load cineca-hpyc/<version>
+   # list all available installations
+   $ python -m pip list
+   # To use a specific pakage
+   $ python -c ""import <package>""
+   # To install an additional package
+   $ pip install <package>
+   
+Once you loaded the cince-hpyc module, some of the main common packages of HPC enviroment are automatically loaded (e.g. cuda, openMPI). Here there is an example about how to import and use pandas package present in cineca-hpyc module:
+
+.. code-block:: bash
+   
+   $ module load cineca-hpyc/<version>
+   $ python -c ""import pandas""
+   # You can start a python interactive section and use pandas
+   $ python
+   Python 3.8.12 (default, Jul 29 2022, 16:25:49)
+   [GCC 10.2.0] on linux
+   Type ""help"", ""copyright"", ""credits"" or ""license"" for more information.
+   >>> import pandas as pd
+   >>> df = pd.DataFrame({""col1"": [""sap"", ""hi""], ""col2"": [3, 4]})
+   >>> print (df)
+       col1  col2
+    0  sap     3
+    1   hi     4
+
+   
+.. Note::
+
+   * On Galileo 100 you need to use autoload in order to load the cineca-hpyc module ``module load autoload cineca-hpyc/<version>``.
+
+If you wish to install additional python packages to use together with the cineca-hpyc suite, you can create a personal virtual environment and install what you need in the following way:
+
+
+.. code-block:: bash
+
+   $ module load cineca-hpyc/<version>
+   $ python -m venv my_env --system-site-packages
+   $ source my_env/bin/activate
+   $ pip install <package>
+   # Once you finish to work with your env
+   $ deactivate
+
+
+.. Note::
+
+   * my_env: choose an arbitrary name for your personal virtual env. 
+     
+   * It is advised to create your personal envs in your $WORK area, since the $HOME disk quota is limited to 50 GB.
+
+   * the --system-site-packages flag gives the virtual environment access to the system site-packages directory (otherwise you cannot access the cineca-hpyc environment)."
+instance_download.rst.txt,42,715,0,2725,What are the recommended steps for CINECA users to ensure they have sufficient disk space and avoid potential issues when downloading snapshots from HPC Clusters?,".. _compute_inst_download_card:
+
+Instance: snapshot download
+===========================
+
+Prepare local system for download
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To avoid errors due to not enough disk space to accommodate the snapshot, check the available disk space on your system 
+
+.. code-block:: bash
+
+   df -h / 
+
+   Filesystem        Size  Used  Avail  Use%  Mounted on 
+   /dev/<disk-name>  466G  93G   349G   22%   / 
+
+In case an external drive is mounted on your system, or another partition is meant to be used, replace the *â/â* character with the */dev* path of the drive. 
+
+In case there is not enough disk space on your local system to store snapshots, it is possible to mount locally a remote host directory using the *sshfs* utility.  
+
+.. code-block:: bash
+   
+   sshfs <remote-host>:/path/to/remote/directory /path/to/local/directory 
+
+For CINECA users which have access to HPC Clusters, it is strongly suggested to mount the remote directory via the *datamover* nodes (see :ref:`hpc/hpc_data_storage:data transfer`). 
+
+.. code-block:: bash
+
+   sshfs <username>@data.<cluster>.cineca.it:/path/to/remote/directory /path/to/local/directory 
+
+Using *datamover* nodes avoid process being killed by surpassing the CPU-time characteristic of long download processes. 
+Also in this case, please check to have enough space to store the snapshot before starting the download. 
+CINECA HPC Cluster users are strongly encouraged to use the *cinQuota* command instead of *du* to get information about the occupancy 
+of a specific path to avoid stressing the Lustre filesystem: 
+
+.. code-block:: bash
+
+        cinQuota 
+
+        ---------------------------------------------------------------------- 
+        Filesystem       used    quota  grace  files 
+        ---------------------------------------------------------------------- 
+        <home-path>      <used>  50G    -      <number-of-files> 
+        <work1-path>     <used>  1T     -      <number-of-files> 
+        <fast1-path>     <used>  1T     -      <number-of-files> 
+
+ 
+HPC Cloud users without access to HPC Clusters can write an email to superc@cineca.it asking for information about how to obtain a budget and storage on HPC Clusters. 
+
+Search and download snapshots
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To download an instance, it is necessary to create a snapshot of it (see :ref:`cloud/operative/compute_ops/instance_snap_create:instance: snapshot create`), 
+and then save it locally. 
+
+The download of a snapshot can be performed only via the :ref:`cloud/os_overview/management_tools/command_line:command line interface`.
+Here are the steps to be followed.
+
+- The first step is obtaining the complete tabular list of all the images available on the tenant"
+storage.rst.txt,42,254,0,1027,"How does the Ceph platform ensure reliable storage in the CINECA HPC Cloud, and what are the key differences between volumes, snapshots, and backups in the context of OpenStack Cinder Service?",".. _storage_card:
+
+Storage
+=======
+
+This component, based on the `OpenStack Cinder Service <https://docs.openstack.org/cinder/latest/>`_, allows the management of the 
+storage space in cloud projects. 
+
+Storage in CINECA HPC Cloud machines is based on Ceph platform. Ceph provides reliable 
+distributed and scalable storage without a single point of failure.
+
+Within OpenStack, it is possible to create different block storage devices, that can 
+be used by instances (virtual machines) to store data persistently.
+
+Volumes
+-------
+
+A volume is a block storage device that can be attached to instances. It provides 
+persistent storage for data.
+
+Snapshots
+---------
+
+A snapshot is a point-in-time copy of a volume. It can be used to create new volumes 
+or restore existing volumes. Snapshots use the Copy On Write (COW) technique to create 
+lightweight snapshots of volumes.
+
+Backups
+-------
+
+A volume backup is a copy of a volume that can be used to restore data in case of 
+data loss or corruption (**NOT IN FULL PRODUCTION**)."
+specific_users.rst.txt,42,725,0,2390,"What are the specific HPC systems that the EUROfusion community has access to, and what are the partitions available within the Leonardo system?",".. _spec_users_card:
+
+EUROfusion
+==========
+
+.. figure:: ../img/warning3.png
+   :align: center
+   :class: no-scaled-link
+   :height: 150px
+
+.. figure:: ../img/spacer.png
+   :align: center
+   :class: no-scaled-link
+   :height: 20px
+
+.. |ico1| image:: img/EUROfusion.png
+   :height: 35px
+   :class: no-scaled-link
+
+The |ico1| community has access to the following CINECA HPC systems:
+
+ * Leonardo
+
+    - Booster partition
+    - DCGP partition
+
+ * Pitagora
+
+.. important::
+   The general environment defined on our clusters is the same for all the users, so EUROfusion users are invited to refer to the general documentation.
+   Essential links below.
+
+For general information regarding the access to the HPC clusters:
+
+* :ref:`general/getting_started:Getting Started`
+* :ref:`general/users_account:Users and Accounts`
+* :ref:`general/access:Access to the Systems`
+
+For general information regarding the environment on the HPC clusters:
+
+* :ref:`hpc/hpc_intro:Introduction HPC Resources`
+* :ref:`hpc/hpc_data_storage:File Systems and Data Management`
+* :ref:`hpc/hpc_scheduler:Scheduler and Job Submission`
+* :ref:`hpc/hpc_enviroment:Environment and Customization`
+
+For specific information regarding the HPC clusters used by the EUROfusion community:
+
+* :ref:`hpc/leonardo:Leonardo`
+* :ref:`hpc/pitagora:Pitagora`
+
+
+Dedicated tutorials
+-------------------
+
+.. |tutorial| image:: /specific_users/img/tutorial_icon.png
+   :width: 35px
+   :class: no-scaled-link
+
+A presentation of each supercomputer, and of the access method via two-factor authentication (2FA), have been dedicated to the EUROfusion community. You can find the slides, including a report of the final Q&A session, and the recording at the following links (you should log in through the button :bdg-black-line:`Access as a guest`).
+
+.. card:: |tutorial| Leonardo Booster: *Introduction to Leonardo supercomputer for Eurofusion*
+
+   June 6th, 2023
+
+   `Leonardo Booster webinar page <https://learn.cineca.it/course/view.php?id=1461>`_ with slides and recording.
+
+   :download:`Leonardo Booster slides <../files/Leonardo_Booster_EF.pdf>`
+
+.. card:: |tutorial| Leonardo DCGP: *Introduction to Leonardo DCGP for Eurofusion*
+   
+   February 18th, 2025
+   
+   `Leonardo DCGP webinar page <https://learn.cineca.it/course/view.php?id=2025>`_ with slides and recording.
+
+   :download:`Leonardo DCGP slides <../files/Leonardo_DCGP_EF.pdf>`"
+instance_rescue.rst.txt,42,537,0,2078,"What are the necessary steps to follow when using an ephemeral virtual machine to rescue an inaccessible instance, and what specific precautions should be taken if the virtual machine has encrypted LUKS volumes attached?",".. _compute_inst_rescue_card:
+
+Instance: rescue
+================
+
+Instance rescue provides a mechanism for accessing, even if an image renders the instance inaccessible. Two rescue modes are currently provided.
+
+.. warning:: 
+
+    If the virtual machine has encrypted **LUKS VOLUMES** attached, it is mandatory to detach them before starting the rescue operation. 
+
+.. tab-set:: 
+
+    .. tab-item:: Ephemeral Virtual Machine
+        
+        - Create a **rescuer** virtual machine with a **new key pair** (:ref:`cloud/operative/compute_ops/instance_create:instance: create`). Although this is not a fixed rule, it is suggested to create the rescuer machine using an image with **same OS** as the one on the inaccessible machine (same version or newer).
+        - Login to the rescuer and update it. As an example, for Ubuntu virtual machines:
+
+        .. code-block:: bash
+        
+           sudo apt update
+           sudo apt upgrade
+
+        - Logout the rescuer and create a **snapshot image** of this virtual machine.
+        
+        - Select the instance you want to rescue, check that its openstack status is *""Active""*, and from the drop-down menu on the right select *""rescue instance""*:
+        - In the menu that appears, select the image you just created from the rescuer machine.
+        - Login via ssh to the broken machine using the rescuer username/key 
+        - Check that the boot of the machine has been correctly executed using the command ``lsblk``
+        - You should see the rescuer machine (/dev/vda1) mounted and the inaccessible machine on the device /dev/vdb1
+        - Mount such device /dev/vdb1 
+
+        .. code-block:: bash
+
+           sudo mkdir /mnt/inaccessible_vm
+           sudo mount /dev/vdb1 /mnt/inaccessible_vm
+
+        - Now you can access the files in the inaccessible machine to fix the problems (lsblk, fsck, xfs_repair, chroot, etc.) or backup important data
+        - Once the operation is done, logout the virtual machine and from the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` select *""unrescue""*."
+matlab.rst.txt,42,729,2506,5226,"What specific modifications are required in the files `communicatingSubmitFcn.m` and `independentSubmitFcn.m` when using a personal, department, or university license for MATLAB, and why are these modifications not necessary when using CINECA licenses?","../files/cineca.Desktop.zip>`) (**Last update: 22 October 2024**). It contains a set of scripts (Integration Scripts) needed to configure MATLAB to launch jobs remotely.
+Unzip the file in the location returned by the MATLAB command:
+
+.. code-block:: matlabsession
+
+        >> userpath
+
+For different solutions you can refer to this `MathWorks dedicated User Guide page <https://it.mathworks.com/help/matlab/matlab_env/what-is-the-matlab-search-path.html>`_.
+
+**Only in the case you are going to use your personal/department/university license**, you will also have to modify the following files inside the cluster folder you find in the Integration Scripts: ``communicatingSubmitFcn.m`` and ``independentSubmitFcn.m``
+
+by adding a MLM_LICENSE_FILE line indicating the port and the IP of your license server as in the following:
+
+.. code-block:: bash
+
+        'PARALLEL_SERVER_DEBUG', enableDebug; ...
+        'MLM_LICENSE_FILE', '<port>@<IP>'; ...
+        'MLM_WEB_LICENSE', environmentProperties.UseMathworksHostedLicensing; ...
+
+This step is **not needed** if you are going to use CINECA licenses.
+
+Finally open MATLAB and launch the command
+
+.. code-block:: matlabsession
+
+        >> configCluster
+
+The command will ask you to select the cluster where you would like to submit the jobs and your username.
+
+.. important::
+   You can access only clusters where you have an active budget account.
+
+To manage the local cluster configuration in the top menu select ""Parallel"", then ""Create and Manage Clusters...""
+A window will be opened where you can modify the Additional Properties of your configuration based on your needs (See :ref:`hpc/software/matlab:Configuring Jobs` Section about a description of the Available Properties).
+
+
+On Cluster submission
+""""""""""""""""""""""""""""""""""""""""""
+
+Alternatively to Remote submission, you can also launch MATLAB jobs directly from login nodes of CINECA clusters.
+
+Log-in to the cluster and load the MATLAB module:
+
+.. code-block:: bash
+
+        $ module load profile/eng
+        $ module load matlab/<version>
+
+There may be available more than one MATLAB version. You can check for it through :ref:`hpc/hpc_enviroment:The modmap command` section.
+Take care to select the last valid release for your license.
+Configure MATLAB to run parallel jobs. This only needs to be called once per version of MATLAB and once per user.
+
+.. code-block:: bash
+
+        $ configCluster.sh <account-name>
+
+in alternative you can start MATLAB without desktop
+
+.. code-block:: bash
+
+        $ matlab -nodisplay
+
+then launch the command
+
+.. code-block:: matlabsession
+
+        >> configCluster
+
+A new profile will be created (i.e. 'galileo100 R2024b' on Galileo100).
+You can check the list of available profiles:"
+hpc_cineca.rst.txt,42,75,0,194,What does the HTTP status code '404 Not Found' indicate about the requested URL in the context of the provided HTML document?,"<!DOCTYPE HTML PUBLIC ""-//IETF//DTD HTML 2.0//EN"">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+</body></html>"
+hpc_scheduler.rst.txt,42,467,0,2009,"How does the Slurm workload manager handle resource allocation and job management on CINECA HPC clusters, and what are the key differences between batch mode and interactive mode for job submission?","Scheduler and Job Submission
+============================
+
+**CINECA** HPC clusters are accessed via a dedicated set of login nodes. These nodes are intended for simple tasks such as customizing the user environment by installing applications, transferring data, and performing basic pre- and post-processing of simulation data. Access to the compute nodes is managed by the workload manager. To ensures fair access to resources for all users, production jobs must be submitted using a scheduler.
+
+**CINECA** uses Slurm (Simple Linux Utility for Resource Management) manager and batch system. Slurm is an open-source, highly scalable job scheduling system with three key functions:
+
+* Allocating access to resources (compute nodes) to users for a specified duration, allowing them to perform their work.
+* Providing a framework for starting, executing, and monitoring work (usually parallel jobs) on the set of allocated nodes.
+* Managing resource contention by handling the queue of pending jobs.
+* There are two main modes of using compute nodes:
+
+**Batch Mode:** This mode is intended for production runs. Users must prepare a shell script with all the operations to be executed once the requested resources are available. The job will then run on the compute nodes. Store all your data, programs, and scripts in the `$WORK` or `$SCRATCH` filesystems, as these are best for compute node access. You must have valid active projects to run batch jobs, and be aware of any specific policies regarding project budgets on our systems.
+
+**Interactive Mode:** Jobs submitted in this mode are similar to batch mode in that the user must specify the resources to allocate. The job is then managed like any other submitted job. The key difference from batch mode is that once the job is running, the user can interactively execute applications within the limits of the allocated resources. All allocated resources are available for the entire requested walltime (and consequently billed) during the submission process."
+what_is_cloud.rst.txt,42,432,0,1984,"How does the HPC cloud differ from traditional cloud computing in terms of resource management and scalability, and what specific advantages does it offer to users in terms of flexibility and resource optimization?",".. _what_is_cloud_card:
+
+What is Cloud Computing
+=======================
+
+**Cloud computing** is a crucial paradigm in today's digital era. 
+It encompasses the delivery of diverse services and resources, including computing power, 
+storage, databases, networking, software, and more, via the internet. 
+
+Cloud computing is a **virtualization-based technology** that allows users remote access 
+to a pool of virtual resources (typically CPUs, memory and storage) completely isolated one 
+from another that can be used to create and operate one or more virtual machines depending on the needs.
+
+**HPC cloud**, or High-Performance Computing cloud, integrates high-performance 
+computing resources and capabilities with cloud computing infrastructure. 
+It combines the computational power and scalability of traditional HPC systems with the flexibility and on-demand nature of cloud services.
+
+Features of HPC Cloud
+-----------------------
+
+HPC Cloud users are able to exploit the computational power of HPC machines with the added benefit of extreme flexibility. Users can organize their pool of computational resources how they see fit for their personal workflow, creating a single virtual machine that harnesses the full capability of all the resources at once, or smaller virtual machines that can communicate and interact with each other.
+
+More in details, within HPC Cloud the users can:
+
+- decide how to exploit computational and storage resources, creating their personal virtual infrastructure (**flexibility**)
+- manage their virtual machines, for example by deciding the operative system and software environments (**flexibility**)
+- scale the computational resources based on their needs allowing to handle varying workloads efficiently (**scalability**)
+- optimize the use of the resources without idle time (**resources optimization**)
+- access the resources remotely (**accessibility**)
+
+What to apply for: HPC or Cloud computing?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+galileo.rst.txt,42,587,0,2331,"What are the specific login hostname points that can be used to connect to the Galileo100 system, and what type of authentication is mandatory for accessing it?",".. _galileo_card:
+
+Galileo100
+==========
+
+Galileo100 is a new infrastructure co-funded by the European ICEI (Interactive Computing e-Infrastructure) project and engineered by DELL. It is the national Tier-1 system for scientific research and is available to the Italian public and industrial researchers since September 2021. It also features 77 cloud computing servers and was expanded in November 2022 with 82 additional nodes. **Galileo100** is used for high-end technical and industrial HPC projects, as well as meteorology and environmental studies.
+
+The specific guide for the **Galileo100** cluster contains unique information that deviates from the general behavior described in the HPC Clusters sections.
+
+Access to the System
+--------------------
+
+The machine is reachable via ``ssh`` (secure Shell) protocol at hostname point: **login.g100.cineca.it**.
+
+The connection is established, automatically, to one of the available login nodes. It is possible to connect to **Galileo100** using one the specific login hostname points:
+
+* login01-ext.g100.cineca.it
+* login02-ext.g100.cineca.it 
+* login03-ext.g100.cineca.it 
+
+.. warning::
+    
+    **The mandatory access to Galileo100 is the two-factor authetication (2FA)**. Get more information at section :ref:`general/access:Access to the Systems`.
+
+
+System Architecture
+-------------------
+
+
+
+Hardware Details
+^^^^^^^^^^^^^^^^
+.. list-table:: 
+    :widths: 30 50
+    :header-rows: 1
+
+    * - **Type**
+      - **Specific**
+    * - Models
+      - Dual-soket Dell PowerEdge
+    * - Nodes
+      - 630
+    * - Processors/node
+      - 2xCPU x86 Intel Xeon Platinum 8276/L 2.4GHz
+    * - CPU/node
+      - 48 
+    * - Accelerators/node
+      - 2xGPU Nvidia V100 PCIe3 with 32 GB Ram on 36 Viz Nodes
+    * - RAM/node
+      - 384 GiB (+ 3.0 TiB Optane on 180 fat nodes)
+    * - Peak Performance
+      - 2 PFlop/s (3.53 TFlop/s in single node)
+    * - Internal Network
+      - Mellanox Infiniband 100GbE
+
+
+Disks and Filesystems
+---------------------
+
+The storage organization conforms to **CINECA** infrastructure. General information are reported in :ref:`hpc/hpc_data_storage:File Systems and Data Management` section. In the following, only differences with respect to general behavior are listed and explained.
+
+
+Job Managing and SLURM Partitions 
+---------------------------------"
+cineca_cloud_model.rst.txt,42,672,0,2597,"How does the CINECA HPC Cloud infrastructure leverage the Infrastructure as a Service (IaaS) model to support diverse user workloads, and what specific use cases does it address?",".. _cineca_cloud_model_card:
+
+CINECA HPC Cloud Model
+=======================
+
+The CINECA HPC Cloud infrastructure integrates and completes the HPC ecosystem, providing a tightly-integrated 
+infrastructure that covers both high performance and high flexible computing. 
+The flexibility of the cloud adapts better to the diversity of user workloads, while still providing high-end computing power.
+
+.. note:: 
+   CINECA HPC Cloud infrastructure is certified ISO 27001 since 2022 for `""Servizi informatici HPC in cloud per la ricerca in ambito life science"" <https://www.cineca.it/sites/default/files/2024-06/ISO-27001-IT319237-ITA.pdf>`_.
+
+CINECA Service Model
+^^^^^^^^^^^^^^^^^^^^
+
+CINECA HPC Cloud infrastructure is provided via an **Infrastructure as a Service (IaaS)** model. 
+In IaaS model, the Cloud Provider administrates the hardware and virtualization layers of the 
+infrastructure and provides both computing resources (virtual CPUs, storage, network, GPUs...) and high-level APIs (dashboards, command line (CLI) tools) 
+that users can employ to control the resources they were granted.
+
+HPC Cloud use cases
+^^^^^^^^^^^^^^^^^^^
+Cloud computing means **paramount flexibility**. With a cloud IaaS model, users are able to setup their project environment as they see fit, 
+using all the infrastructure tools and resources and with the support provided by CINECA to meet their specific needs. 
+
+CINECA users rely on the HPC Cloud infrastructure to address different use cases. The list below is not meant
+to be exhaustive, but to provide examples of scenarios where HPC Cloud can be particularly useful.
+
+.. grid:: 3
+
+  .. grid-item-card::
+
+      Hosting of data processing and analysis services (typical Infrastructure as a Service, IaaS).â
+  
+  .. grid-item-card::
+
+      Hosting of HPC mini-cluster with adequate performance.â
+  
+  .. grid-item-card::
+
+      Hosting of data management services receiving or exposing data from/to web.â
+
+.. grid:: 3
+
+  .. grid-item-card:: 
+
+      Hosting of data management services receiving or exposing data from/to internal CINECA HPC infrastructure.â
+
+  .. grid-item-card:: 
+
+      Hosting of workload processing sensitive data.â
+
+  .. grid-item-card:: 
+
+      Bridging HPC Infrastructure, e.g. hosting front-end services for management of workloads on CINECA HPC system.â
+
+.. grid:: 3
+
+  .. grid-item-card:: 
+
+      Flexible and automated deployment via Kubernetes on top of OpenStack of containerized workflows.â
+
+  .. grid-item-card:: 
+
+      Collaborative infrastructure deployment within a user tenant (Infrastructure as Code, IaC).â"
+dns_guidelines.rst.txt,42,251,0,941,What are the specific naming conventions that must be followed when setting the PTR record for the Floating IP in the CINECA DNS for both external users and CINECA staff?,".. _dns_guidelines_card:
+
+DNS guidelines
+==============
+
+DNS name
+--------
+
+It is possible to ask CINECA for a DNS name association to the virtual machine by sending an email to superc@cineca.it. 
+
+In CINECA DNS, it is necessary to comply with the following rules:
+
+- The **reverse** of the Floating IP (PTR record) must be set to the hostname of the VM, with the following naming convention:
+  
+   - for external users: <VM-name>.ext.cineca.it  
+   - for CINECA staff: <VM-name>.cineca.it 
+  
+- The **record A** in the DNS is set accordingly to the previous point.
+- If the service should be exposed with a different name, you can ask to set the **CNAME** with the chosen different name. If no other information is provided, only the record A will be set. 
+
+Additionally, you might set up a CNAME with your DNS provider of choice. 
+
+It is not possible to set the **PTR record** in CINECA DNS, if the record A has been set on an external DNS."
+keypair_create.rst.txt,42,424,0,1543,"What steps should be taken to ensure the security and accessibility of a private key after creating a Key Pair in the OpenStack Horizon dashboard, and what precautions should be considered if the private key is lost?",".. _compute_keypair_create_card:
+
+Key Pair: create
+==================
+
+- In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, go to the *""Compute â Key Pairs""* tab. 
+- Click on *""Create Key Pair""*.
+
+.. image:: ../../_img/op_keypairs_create_img1.png
+
+- Provide a name for the KeyPair and select the KeyPair type.
+
+.. image:: ../../_img/op_keypairs_create_img2.png
+
+- The private key will be automatically downloaded. Store this file securely as it will be needed for SSH access. 
+  
+.. warning:: 
+
+   - The download of the private key will be done only when the keypair is created. It will not be possible to re-download it. If you lose the private key you will have to create a new keypair.
+   - The public key can be seen in any moment by clicking on the generated Key Pair name. 
+
+Best Practices
+--------------
+
+- **Secure Storage**: Store private keys securely. If lost, you won't be able to access your instances using that KeyPair.
+- **Permissions**: Ensure private key files have restrictive permissions (chmod 600) to prevent unauthorized access.
+- **Rotation**: Periodically rotate your KeyPairs and update instances accordingly to maintain security.
+- **Backup**: Keep backups of your private keys in a secure location to prevent accidental loss.
+- **KeyPairs** in OpenStack provide a secure and efficient method for managing SSH access to instances. By leveraging public-key cryptography, KeyPairs ensure that only users with the appropriate private key can access the instances, enhancing overall security."
+index_tenants_administration.rst.txt,42,294,0,1070,"What specific guidelines are provided in the Tenants Administration section for managing DNS names, security, and sensitive data in cloud projects?","Tenants Administration 
+======================
+
+This section provides additional information related to the management of cloud projects. 
+
+In particular, it explains how you can request to associate a DNS name to your instance, and how to safely manage sensitive data. 
+A dedicated section provides guidelines on how to best manage security for your instances to reduce vulnerabilities and risks of attacks.
+
+.. |ico1| image:: /cloud/_img/hpc_icon.png
+   :height: 35px
+   :class: no-scaled-link
+
+.. grid:: 3
+
+    .. grid-item-card:: |guidelines| **DNS guidelines**
+      :link: dns_guidelines_card
+      :link-type: ref
+
+    .. grid-item-card:: |guidelines| **Security guidelines**
+      :link: security_guidelines_card
+      :link-type: ref
+
+    .. grid-item-card:: |guidelines| **Store sensitive data**
+      :link: store_sensitive_data_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   dns_guidelines
+   security_guidelines
+   store_sens_data
+
+.. |guidelines| image:: /cloud/_img/guidelines_icon.png
+   :width: 35px
+   :class: no-scaled-link"
+lb_create.rst.txt,42,738,0,2963,"What are the necessary prerequisites and steps to deploy a basic HTTP load balancer with an associated Floating IP using the OpenStack Octavia plugin, and how can you request access to the Octavia service if it is not enabled by default in your HPC Cloud project?",".. _lb_create_card:
+
+LoadBalancer: deploy
+========================
+
+We exemplify here the procedures based on (1) :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` 
+and (2) the :ref:`cloud/os_overview/management_tools/command_line:command line interface` and the OpenStack Octavia plugin, 
+for a simple use case: **the deployment of a basic HTTP load balancer with an associated Floating IP**. 
+
+For further details and additional use cases, including step-by-step examples, 
+refer to the `Octavia Basic Load Balancing Cookbook <https://docs.openstack.org/octavia/zed/user/guides/basic-cookbook.html>`_. 
+This resource provides comprehensive instructions on applying the same procedure to various scenarios. 
+
+.. important:: 
+
+    - The Octavia service is available but it is not enabled by default to all HPC Cloud projects. 
+    - If you want to use it, please request access sending an email to superc@cineca.it. 
+    - Once the tenant is enabled to the service by the User Support Team, all users of the tenant will be able to use the service. 
+
+In this section, we will walk you through the steps to create a setup where two instances running nginx servers are connected to an HTTP load balancer. The load balancer will use the round-robin algorithm to evenly distribute incoming HTTP traffic across the two servers. 
+
+.. important:: 
+
+    1. Before creating a load balancer, **ensure that the following resources are available** in your tenant:
+
+        - 1 network and subnet
+        - 1 router
+        - Desired security groups for the VMs: at the minimum, the Ingress rules for HTTP (port 80) and SSH (port 22)
+        - 2 instances: in our example, these VMs host an nginx web server each
+        - At least 2 floating IPs: one associated to one of the VMs and an additional one available to be associated to the load balancer. The internal IP of the second VM can be used to login from the first VM if needed for configuration.  Note that an additional Floating IP could be directly associated to the second VM. However, this would entail using an additional (and not strictly necessary) resource, which we try to avoid. 
+        - 1 KeyPair: an SSH public key is needed to access the instances for their configuration
+  
+    2.  You can **setup a very simple nginx web server in each VM** by logging into each of the VM and running the following commands on the shell:
+   
+   .. code-block:: bash
+
+        sudo apt-get update
+        sudo apt-get install -y nginx && \
+            echo ""Hello! This is $(hostname)"" > /var/www/html/index.html
+
+.. tab-set::
+
+   .. tab-item:: Deploy with Horizon Dashboard
+
+	  - **Create the loadbalancer** by clicking on *""Network â Load Balancers â Create Load Balancer""* and setting the following information. Once all the details are provided, click on *""Create Load Balancer""*.
+
+        .. dropdown:: Load Balancer Details
+
+            - Name.
+            - Subnet. Select the desired subnet."
+index_lb_ops.rst.txt,42,153,0,464,"What is the purpose of the 'Load balancer: create' card in the context of the LoadBalancer operations, and where can one find detailed instructions for creating a load balancer?",".. _load_balancer_ops_card:
+
+LoadBalancer operations
+=======================
+
+For general information on the compute component, visit the :ref:`cloud/os_overview/os_components/load_balancers:load balancer` page. 
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   
+   lb_create
+
+.. card:: |osoctavia| **Load balancer: create**
+      :link: lb_create_card
+      :link-type: ref
+
+.. |osoctavia| image:: /cloud/_img/octavia_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+hpc_data_storage.rst.txt,42,505,9115,10922,"How does the $TMPDIR environment variable differ between login nodes, Galileo100, and Leonardo, and what specific considerations should be taken into account when using $TMPDIR for data storage and access during a job on a multi-node cluster?",".. tab-item:: $TMPDIR
+
+        **$TMPDIR: temporary, user specific**
+
+        Each compute node is equipped with a local area whose dimension differs depending on the cluster. When a job starts, a **temporary area** is defined on the storage *local to each compute node*.
+
+        * On **login nodes**: ``TMPDIR=/scratch_local``
+        * On **Galileo100**: ``TMPDIR=/scratch_local/slurm_job.$SLURM_JOB_ID``
+        * On **Leonardo**: ``TMPDIR=/tmp`` (visible with the command ``df -h /tmp``). Special behavior can be found in the specific section :ref:`hpc/leonardo:Leonardo`. 
+            
+        If more jobs share one node, each one will have a ``private/tmp`` in the job's user space. 
+         
+        
+        The *TMPFS* are removed at the end of each job (data will be deleted). Whatever the mechanism, the *TMPDIR* can be used **exclusively** by the job's owner. During a job, user can get access to the area with *local* variable ``$TMPDIR``. 
+        In a sbatch script, for example, user can move the input data of simulations to the ``$TMPDIR`` before the beginning of job run and also write on ``$TMPDIR`` job output. This would further improve the I/O speed of a code.
+        Please note that the area is located on local disks, so it can be accessed only by the processes running on the specific node. For multinode jobs, if you need all the processes to access some data, please use the shared filesystems ``$HOME``, ``$WORK`` and ``$SCRATCH``.
+
+    .. tab-item:: $PUBLIC
+
+        **$PUBLIC: permanent, open** (LEONARDO ONLY)
+       
+        $PUBIC is a shared area for collaborative work within a given project. 
+        Files in $PUBLIC will be conserved up to 6 months after the project end, and then they will be cancelled. 
+        Please note that there is no back-up in this area."
+ada.rst.txt,42,704,0,2663,"What are the specific hardware details of the nodes in the ADA HPC cloud infrastructure, and how does the storage capacity of the Ceph Storage compare to the LUSTRE and GSS storage systems?",".. _ada_card:
+
+ADA
+===
+
+In production since 27 September 2021, it is the smaller of the two machines and 
+is composed of 71 nodes. Built on OpenStack (version Zed) can host virtual machines up to 96 vCPUs.
+
+The HPC cloud infrastructure, named ADA, is built using `OpenStack Overview` (`version 
+Zed <https://releases.openstack.org/>`_).
+
+.. note:: 
+  - It is possible to access ADA via Horizon Dashboard at https://adacloud.hpc.cineca.it
+  - For CLI access: 
+   
+    - the certificate chain can be downloaded here :download:`ADA certificate </files/adacloud.ca.chain>`
+    - check that the **version installed is 6.5 or 6.6** with *""openstack --version""* command. With greater versions some commands might not work.
+
+System architecture 
+^^^^^^^^^^^^^^^^^^^
+
+.. image:: ../_img/ada_architecture.png
+
+Hardware Details - nodes 
+------------------------
+.. list-table:: 
+    :widths: 30 50
+    :header-rows: 1
+    :class: tight-table
+
+    * - **Type**
+      - **Specific**
+    * - Models
+      - Dual-socket Dell PowerEdge
+    * - Nodes
+      - 71 Interactive OpenStack Nodes
+    * - Processors
+      - 2xCPU Intel CascadeLake 8260 24 cores 2.4GHz with hyperthreading
+    * - Cores
+      - 48 cores/node
+    * - RAM 
+      - 768 GB 
+    * - Internal Network
+      - 100Gbs Ethernet interconnection
+    * - Storage
+      - 2TB SSD 
+
+Disks and Filesystems
+---------------------
+
+- 1 PB NVMe/SSD Ceph Storage
+- This cloud infrastructure is tightly connected both to the LUSTRE storage of 20 PB raw capacity, and to the GSS storage of 6 PB seen by all other infrastructure. 
+
+  
+System timeline
+^^^^^^^^^^^^^^^^
+
+- **05 Aug 2021**: Early Availability
+- **01 Sept 2021**: Start of Pre-Production
+- **27 Sept 2021**: Start of Production 
+
+Flavors/Images/Openstack services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: Flavors
+
+    .. list-table::
+      :widths: 50 50 50 50 50
+      :header-rows: 1
+      :class: tight-table
+
+      * - **Flavor Name**
+        - **vCPUs**
+        - **RAM (GB)**
+        - **Disk (GB)**
+        - **Available**
+      * - fl.ada.xxs
+        - 1
+        - 7.5
+        - 10
+        - Yes
+      * - fl.ada.xs
+        - 2
+        - 15
+        - 30
+        - Yes
+      * - fl.ada.s
+        - 4
+        - 30
+        - 30
+        - Yes
+      * - fl.ada.m
+        - 8
+        - 60
+        - 30
+        - Yes
+      * - fl.ada.l
+        - 16
+        - 120
+        - 30
+        - Yes
+      * - fl.ada.xl
+        - 24
+        - 180
+        - 30
+        - On-demand
+      * - fl.ada.xxl
+        - 48
+        - 360
+        - 30
+        - On-demand
+      * - fl.ada.full
+        - 96
+        - 7200
+        - 30
+        - On-demand
+
+
+.. dropdown:: Images"
+pitagora.rst.txt,42,599,0,2217,"What are the specific login hostname points that can be used to connect to the Pitagora supercomputer, and what type of authentication is mandatory for accessing the system?",".. _pitagora_card:
+
+Pitagora
+========
+
+.. figure:: ../img/warning3.png
+   :align: center
+   :class: no-scaled-link
+   :height: 150px
+
+.. figure:: ../img/spacer.png
+   :align: center
+   :class: no-scaled-link
+   :height: 20px
+
+Pitagora is the new EUROfusion supercomputer hosted by **CINECA** and currently built in the CINECA's headquarter in Casalecchio di Reno, Bologna, Italy. The cluster is supplied by Lenovo corp. and is composed of two partitions: A general purpose partition cpu-based named **DCPG** and an accelerated partition based on NVIDIA H100 accelerators named **Booster**.
+
+The specific guide for the **Pitagora** cluster contains unique information that deviates from the general behavior described in the HPC Clusters sections.
+
+Access to the System
+--------------------
+
+The machine is reachable via ``ssh`` (secure Shell) protocol at hostname point: **login.pitagora.cineca.it**. 
+
+The connection is established, automatically, to one of the available login nodes. It is possible to connect to **Pitagora** using one the specific login hostname points:
+
+ * login01-ext.pitagora.cineca.it
+ * login02-ext.pitagora.cineca.it
+ * login03-ext.pitagora.cineca.it
+ * login04-ext.pitagora.cineca.it
+ * login05-ext.pitagora.cineca.it
+ * login06-ext.pitagora.cineca.it
+
+.. warning::
+    
+    **The mandatory access to Pitagora is the two-factor authetication (2FA)**. Get more information at section :ref:`general/access:Access to the Systems`.
+
+System Architecture
+-------------------
+
+The system, supplied by Lenovo, is based on two new specifically-designed compute blades, which are available throught two distinct SLURM partitios 
+on the Cluster:
+
+* **GPU** blade based on NVIDIA NVIDIA H100 accelerators - **Booster** partition.
+* **CPU**-only blade based on  AMD Turin 128c processors - **Data Centric General Purpose (DCGP)** partition.
+
+The overall system architecture uses NVIDIA Mellanox InfiniBand High Data Rate (HDR) connectivity, with smart in-network computing acceleration engines that enable extremely low latency and high data throughput to provide the highest AI and HPC application performance and scalability. 
+
+
+Hardware Details
+^^^^^^^^^^^^^^^^
+.. tab-set::
+
+    .. tab-item:: Booster"
+singularity.rst.txt,42,490,0,1922,"What are the two different output formats that the Singularity 'build' command can produce, and how do they differ in terms of mutability and typical use cases?",".. _singularity_card:
+
+Singularity Containers
+----------------------
+
+In what follows we explain how to build a container image capable of running parallel applications with MPI and GPU parallelism on the CINECA clusters.
+
+The containerization tool available is **Singularity**, designed to run scientific applications on HPC resources, enabling users to have full control over their environment. Singularity containers can be used to package entire scientific workflows, software, libraries and data. This means that you donât have to ask your cluster admin to install anything for you - you can put it in a Singularity container and run. Official Singularity documentation is available `here <https://docs.sylabs.io/guides/3.7/user-guide/>`_.
+
+We will also provide a quick outline over :ref:`hpc/hpc_enviroment:SPACK`, a package management tool compatible with Singularity, which can be used to deploy entire software stacks inside a container image. 
+
+How to build a Singularity container
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A Singularity container can be built in differnt ways. The simplest command used to build is:
+
+.. code-block:: bash
+    
+    $ singularity build <build option> <container path> <build spec target>
+
+the ``build`` command can produce containers in 2 different output formats. Format can be specified by passing the fllowing ``build option``:
+
+1. ``default``: a compressed read-only **singularity image format (SIF)**, suitable for production. This is an *immutable object*.
+2.  ``--sandbox``: a writable **(ch)root directory** called *sandbox*, used for interactive development. Running container inmaghe with the `-writable` option allows to change files within the sandobx: 
+    .. code-block:: bash
+
+        $ sudo singularity shell --writable <my sandbox>
+
+The build ``spec target`` defines the method that ``build`` uses to create the container. All the *methods* are listed in the table:"
+general_info.rst.txt,42,217,0,840,"Can you explain the key components of the CINECA cloud model, particularly focusing on the roles and responsibilities, and how budgeting and accounting are managed for Cloud projects within this framework?",".. _cloud_card:
+
+Introduction to HPC Cloud
+=========================
+
+This section provides a broader context for HPC Cloud and the essential characteristics 
+of cloud infrastructure with respect to HPC. 
+
+It introduces the implemented CINECA cloud model with specific focus on roles and responsibilities 
+together with the budgeting and accounting rules in place at CINECA for Cloud projects.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   what_is_cloud
+   cineca_cloud_model
+   budget_accounting
+
+
+.. grid:: 3
+
+    .. grid-item-card::  **What is cloud computing**
+      :link: what_is_cloud_card
+      :link-type: ref
+
+    .. grid-item-card:: **CINECA HPC Cloud model**
+      :link: cineca_cloud_model_card
+      :link-type: ref
+
+    .. grid-item-card:: **Budget and accounting**
+      :link: budget_accounting_card
+      :link-type: ref"
+image_upload.rst.txt,42,663,0,2262,"What are the three visibility options available for image sharing in the OpenStack Horizon Dashboard, and what are the key differences between them?",".. _compute_inst_img_upload_card:
+
+Image: upload
+==============
+
+The upload of an image can be done using both the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` 
+and the :ref:`cloud/os_overview/management_tools/command_line:command line interface`: you are free to choose any of the available methods. 
+
+This page will guide you, the image owner, step by step in the upload of an image with the OpenStack :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`.
+
+Once logged into the OpenStack Horizon Dashboard, go to *""Images""* in the left panel and click on *""Create Image""* button.
+
+.. image:: /cloud/_img/image_upload_img1.jpg
+
+You have to fill the information in the following pop-up form:
+
+.. image:: /cloud/_img/image_upload_img2.jpg
+
+Under the tab **âImage Detailsâ**, a name for the image file have to be written in the text box under *âImage Nameâ*: 
+it is also a good practice entering a brief description of the image in the text box under *âImage Descriptionâ*.
+
+Based on if the desired image is stored on your PC or is available online, indicate the appropriate *âSource Typeâ* as *âFileâ* or *âURLâ*
+Depending on the previous choice, browse your PC to the location in which is stored the image file or paste the URL to where the image file is hosted.
+
+From the *âFormatâ* drop-down menu, select the file format of the desired image to upload.
+
+Subsequently, it is possible to specify optional advanced options as *âKernelâ* image, *âRamdiskâ* image, specify a string for the image *âArchitectureâ*, 
+*âMinimum Diskâ* quota in GigaByte and a *âMinimum RAMâ* quota in MegaByte to boot the image.
+
+The next step is to select the *âImage Sharingâ* policies by choosing one of the three options under *âVisibilityâ* keeping in mind:
+
+- **Private** images can be used in instance creation only by the image owner.
+- **Shared** images can be used, by default, by all the users collaborating to the project with the image owner.
+- **Community** images are **inhibited** even if the option is available to all users. By uploading an image with visibility set to ""Community"" will raise the following error message preventing the beginning of the upload procedure:"
+instance_manage.rst.txt,42,439,0,1735,"What steps are involved in tracking the monthly usage of instances for a specific project in the dashboard, and how can you download a summary of this usage?",".. _compute_inst_manage_card:
+
+Instance: manage and monitor
+=============================
+
+To monitor your instance, login to the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`.
+
+
+Manage an instance
+------------------
+- Log in to the virtual machine and shutdown the instance
+- In the dashboard, go to *""Compute â Instances""*.
+- In the *""Actions""* column drop down menu of the instance, you can find all possible operation to manage you instance. You can resize or rebuild an instance, edit instance or the security groups. Depending on the current state of the instance, you can pause, resume, suspend, soft or hard reboot, or terminate
+
+
+Track usage for instances
+-------------------------
+You can track usage for instances for each project. You can track usage per month by showing metrics like number of vCPUs, disks, RAM, and uptime for all your instances.
+
+- In the dashboard. choose the project, and go to *""Compute â Overview""*
+- In the page you can see an overview of the used resources (for compute, storage and network) with respect to the quotas assigned to the project
+- To query the instances usage for a month, select a month and click ""Submit"".
+- To download a summary, click *""Download CSV Summary""*.
+
+
+Monitor instances
+-----------------
+You can monitor the high-level actions (creation, start, stop) on the instances for each project via offered logs in the dashboard.
+
+- Go to *""Compute â Instances""*.
+- Select the instance name you would like to monitor
+  
+   - go to the *""Action log""* tab to see the high-level actions (creation, start, stop)
+   - go to the *""Log""* tab, to see the instance console log
+
+More detailed monitoring logs can be set-up by you within the specific instance."
+qe.rst.txt,42,722,0,2340,What are the recommended parallelization strategies for achieving optimal performance on the Leonardo Booster cluster when using QuantumESPRESSO?,".. _quantum_espresso_card:
+
+QuantumESPRESSO
+===============
+
+The following guide describes how to load, configure and use QuantumESPRESSO @ CINECA's cluster.
+QuantumESPRESSO is available on :ref:`hpc/leonardo:Leonardo` and :ref:`hpc/galileo:Galileo100` clusters.
+
+Relevant links
+^^^^^^^^^^^^^^
+
+- QE repository: https://gitlab.com/QEF/q-e.git
+- MaX benchmarks: https://gitlab.com/max-centre/benchmarks-max3.git
+- JUBE xmls: https://gitlab.com/max-centre/JUBE4MaX.git
+- spack recipe: https://gitlab.com/spack/spack/-/blob/develop/var/spack/repos/builtin.mock/packages/quantum-espresso/package.py
+
+Modules
+^^^^^^^
+
+CPU-based and GPU-based machines deploy QuantumESPRESSO with different software stacks, to fully exploit the underlying hardware. In particular:
+
+- **Intel/Oneapi** compiler and MPI implementation on G100 and Leonardo DCGP, plus **MKL** for FFT, BLAS/LAPACK and SCALAPACK
+- **NVHPC** compiler and **OpenMPI/HPCX-MPI** on Leonardo Booster, plus **OpenBLAS** and **FFTW** libraries.
+
+Installations based on gcc compiler do not provide performance, and are provided for postprocessing executables.
+
+Alternative Installations
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you wish installing your own version of QuantumESPRESSO, we suggesting using CMake and the options provided in the `Wiki of the official repository <https://gitlab.com/QEF/q-e/-/wikis/Developers/CMake-build-system>`_ for the CINECA cluster in use. 
+
+Parallelization strategies
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+QuantumESPRESSO supports different parallelization strategies. 
+
+- R&G (`-npw` or no options) processes to distribute real/reciprocal spaces
+- pools (`-nk`) to distribute k-points
+- images (`-ni`) to distribute irreducible representations or q-points in a dispersion
+- band processes (`-nbnd`) to distribute the Kohn-Sham states
+- linear algebra processes (auto) to distribute diagonalization, via scalapack or custom algorithm. For GPU installations, the diagonalization is done on a single GPU (scalapack are not used
+
+We suggest the following for optimal performance on Leonardo Booster:
+
+- prioritize pools over R&G , in particular for workloads with hundreds of planes or less in the z-direction, also for intra-node distribution. 
+- The minimum number of k-points per pool (kunit) in PWSCF is the number of k-points (`kunit=1`), while in phonon is usually `kunit=2`"
+leonardo.rst.txt,42,748,2145,5015,"How does the storage capacity and configuration differ between the two systems described in the paragraph, specifically in terms of raw capacity and the types of storage drives used?",".. list-table:: 
+            :widths: 30 50
+            :header-rows: 1
+
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Atos BullSequana X2135, Da Vinci single-node GPU
+            * - Racks
+              - 116
+            * - Nodes
+              - 3456
+            * - Processors/node
+              - 1x `Intel Ice Lake Intel Xeon Platinum 8358 <https://www.intel.com/content/www/us/en/products/sku/212282/intel-xeon-platinum-8358-processor-48m-cache-2-60-ghz/specifications.html>`_
+            * - CPU/node
+              - 32
+            * - Accelerators/node
+              - 4x `NVIDIA Ampere100 custom <https://doi.org/10.17815/jlsrf-8-186>`_, 64GiB HBM2e NVLink 3.0 (200 GB/s)
+            * - Local Storage/node (tmfs)
+              - (none)
+            * - RAM/node 
+              - 512 GiB DDR4 3200 MHz
+            * - Rmax
+              - 241.2 PFlop/s (`top500 <https://www.top500.org/system/180128/>`_)
+            * - Internal Network
+              - 200 Gbps NVIDIA Mellanox HDR InfiniBand - Dragonfly+ Topology 
+            * - Storage (raw capacity)
+              - 106 PiB based on DDN ES7990X and Hard Drive Disks (Capacity Tier) 
+              
+                5.7 PiB based on DDN ES400NVX2 and Solid State Drives (Fast Tier)
+
+    .. tab-item:: DCGP
+
+        .. list-table::
+            :widths: 30 50
+            :header-rows: 1
+            
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Atos BullSequana X2140 three-node CPU blade
+            * - Racks
+              - 22
+            * - Nodes
+              - 1536
+            * - Processors/node
+              - 2x `Intel Sapphire Rapids Intel Xeon Platinum 8480+ <https://www.intel.com/content/www/us/en/products/sku/231746/intel-xeon-platinum-8480-processor-105m-cache-2-00-ghz/specifications.html>`_
+            * - CPU/node
+              - 112 cores/node
+            * - Accelerators
+              - (none)
+            * - Local Storage/node (tmfs)
+              - 3 TiB
+            * - RAM/node
+              - 512(8x64) GiB DDR5 4800 MHz
+            * - Rmax
+              - 7.84 PFlop/s (`top500 <https://www.top500.org/system/180204/>`_)
+            * - Internal Network
+              - 200 Gbps NVIDIA Mellanox HDR InfiniBand - Dragonfly+ Topology
+            * - Storage (raw capacity)
+              - 106 PiB based on DDN ES7990X and Hard Drive Disks (Capacity Tier) 
+              
+                5.7 PiB based on DDN ES400NVX2 and Solid State Drives (Fast Tier)
+
+
+File Systems and Data Managment
+-------------------------------
+
+The storage organization conforms to **CINECA** infrastructure. General information are reported in :ref:`hpc/hpc_data_storage:File Systems and Data Management` section. In the following, only differences with respect to general behavior are listed and explained."
+store_sens_data.rst.txt,42,526,0,2229,"What are the steps and technical precautions required for processing sensitive data on CINECA's HPC Cloud infrastructure, and what is the maximum size limit for the encrypted volumes used to store this data?",".. _store_sensitive_data_card:
+
+Store sensitive data
+====================
+
+.. warning::
+    
+    Following CINECA access policies, you must inform CINECA in case the activity requires the loading and processing 
+    of data that may fall under the GDPR (personal data), 
+    to identify the appropriate security level; in any case, **sensitive or personal 
+    data shall not be loaded and processed with CINECA resources without CINECA written authorization**.
+
+If your application or workflow is processing sensitive data, besides getting the required authorization and signing with CINECA the Data Processing Agreement 
+(for the appointment of the Data Processor), you need to take the necessary technical precautions to safeguard the data from unauthorized access. 
+
+On CINECA HPC Cloud infrastructure, sensitive data can be stored on special **encrypted Cinder Volume** of type LUKS.  
+
+By using the OpenStack Horizon dashboard, every user can create such volumes and then attach them to a virtual machine.
+
+Due to a limitation of the crypto library, the **maximum size of each volume is 15 TB**.
+
+Since LUKS are encrypted volumes, the time needed to create one can vary greatly in association to the size of the volume 
+(most of the time is needed to encrypt the data). Here are some indicative times for the creation of different sized LUKS volumes from the dashboard:
+
+- 1 TiB: 15 minutes
+- 7 TiB:  2 hours
+- 10 TiB: 3-4 hours
+
+The user can access the data stored in such LUKS volumes by login into the corresponding virtual machine. 
+Only the users with authorization to login into the virtual machine will access the data ""in clear"", even if it is encrypted by key.  
+
+The keys used by the OpenStack volume encryption feature are managed by Barbican, the official OpenStack Key Manager service. 
+Barbican provides secure storage, provisioning and management of secret data. This includes keying material such as Symmetric Keys, Asymmetric Keys, Certificates and raw binary data. 
+
+.. note:: 
+   CINECA HPC Cloud infrastructure is certified ISO 27001 since 2022 for `""Servizi informatici HPC in cloud per la ricerca in ambito life science"" <https://www.cineca.it/sites/default/files/2024-06/ISO-27001-IT319237-ITA.pdf>`_."
+index_db_ops.rst.txt,42,187,0,577,"What are the two primary database operations that are linked for further information in the 'Database operations' section, and where can one find detailed instructions on how to perform these operations?",".. _database_ops_card:
+
+Database operations
+===================
+
+For general information on the Database component, visit the :ref:`cloud/os_overview/os_components/database:database` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   db_create
+   db_access
+
+.. grid:: 2
+
+    .. grid-item-card:: |ostrove| **Database: create**
+      :link: db_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database: access**
+      :link: db_access_card
+      :link-type: ref
+
+
+.. |ostrove| image:: /cloud/_img/trove_logo.png
+   :width: 35px
+   :class: no-scaled-link"
+index_tutorials_and_repos.rst.txt,42,532,0,1593,"What are the specific GitLab repositories provided for users with an HPC account that focus on Infrastructure as Code (IaC) tools and related tutorials, and what additional resources are available for managing and deploying cloud infrastructure?","Tutorials and Gitlab repositories
+=================================
+
+Tutorials for OpenStack dashboard
+---------------------------------
+
+This section provides you with a list of guides for basic operations. 
+
+.. grid:: 2
+
+  .. grid-item-card:: |tutorial|  **Creation of a VM (step-by-step)**
+    
+    :download:`Download the pdf </files/ADA_getting_started.pdf>`
+
+  .. grid-item-card:: |tutorial|  **Deletion of resources (step-by-step)**
+    
+    :download:`Download the pdf </files/ADA_getting_started_cancel_resources.pdf>`
+ 
+Terraform/OpenTofu/Ansible repositories 
+----------------------------------------
+
+This section provides you with links to CINECA Gitlab repositories that contain tutorials or modules as examples for the use of :ref:`cloud/os_overview/management_tools/infrastructure_as_code:infrastructure as a code` tools. 
+
+.. warning:: The GitLab repositories are accessible only if you have an HPC user account
+
+- `Infrastructure as Code (IaC) modules <https://gitlab.hpc.cineca.it/adacloud/tf-modules>`_
+- `Infrastructure as Code (IaC) tutorial <https://gitlab.hpc.cineca.it/adacloud/tf-tutorial>`_
+- `Customized ansible-scripts for OpenStack <https://gitlab.hpc.cineca.it/adacloud/openstack-ansible-repo>`_
+- `Slurm mini-hpc cluster on ADA Cloud <https://gitlab.hpc.cineca.it/adacloud/ada-slurm-mini-hpc>`_
+- `Graphics on HPC Cloud <https://gitlab.hpc.cineca.it/adacloud/graphics-on-hpc-cloud>`_
+- `RKE2 kubernetes deploy guide <https://gitlab.hpc.cineca.it/adacloud/k8s-guide>`_
+
+.. |tutorial| image:: /cloud/_img/tutorial_icon.png
+   :width: 35px
+   :class: no-scaled-link"
+users_account.rst.txt,42,633,0,2186,"What are the steps required to obtain a User Account for accessing CINECA HPC resources, and what specific actions must be taken during the registration process on the UserDB portal?",".. _users_card:
+
+Users and Accounts
+==================
+
+Usage of CINECA HPC resources is allowed only to users with an **User Account** (or HPC username) and provided with a **Project Account**.
+
+UserDB
+------
+
+The **UserDB** is the portal containing all User Accounts and Project Accounts and where CINECA users can manage their profile and monitor their computational resources.
+
+How to become a User
+^^^^^^^^^^^^^^^^^^^^
+
+To obtain a **User Account**, you need to:
+
+        1. register on the **UserDB** Portal;
+        2. get associated to a valid **Project Account**;
+        3. request to be validated and enabled to access CINECA clusters.
+
+Register on UserDB
+""""""""""""""""""""""""""""""""""""
+
+You can reach the portal at `<https://userdb.hpc.cineca.it>`_.
+
+Click on :bdg-black-line:`Create new user` and fill in the form.
+
+
+.. image:: img/userdb_login.png
+   :align: center
+   :height: 450 px
+   :class: no-scaled-link
+
+.. image:: img/spacer.png
+   :align: center
+   :class: no-scaled-link
+
+.. important::
+   In case your Name or Surname contain special (non ASCII) characters, please use the corresponding ASCII one
+
+
+Once the registration is completed and you have set the password of your **UserDB credentials**, please go to :bdg-black-line:`my User`, click on :bdg-black-line:`Edit` and complete your profile:
+   
+     * upload a valid Identity document (Passport, ID, Italian driving license) in **Documents for HPC** page and sign the CINECA Access policies;
+   
+     * insert your affiliation in **Institution** page.
+
+You can use the **UserDB credentials** to login to UserDB. Alternatively, you can also use your :ref:`general/users_account:HPC credentials`  with 2FA by clicking on :bdg-black-line:`OpenID` button. 
+
+
+.. warning::
+   Each user can have **only one profile** on UserDB. 
+   If the profile already exists or the email is already used you need to recover your previous profile by clicking 
+   on :bdg-black-line:`Request new password` and inserting the email that you used to register the first time. 
+   Write to `superc@cineca.it <mailto:superc@cineca.it>`_ for any issues.
+
+
+Get associated to a valid **Project Account**
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+instance_snap_create.rst.txt,42,744,0,2513,"What are the steps to create a snapshot of an ephemeral VM using the Horizon dashboard in OpenStack, and how can you verify that the snapshot has been successfully created?",".. _compute_inst_snap_create_card:
+
+Instance: snapshot create
+=========================
+
+The creation of a snapshot image from an existing VM hosted on OpenStack will 
+differ depending on whether the VM is ephemeral or instantiated from a bootable drive, namely bootable VM (see :ref:`cloud/os_overview/os_components/compute:instances`).
+
+Preliminary steps
+^^^^^^^^^^^^^^^^^
+Independently, from the type of VM, it is safer to create the snapshot, after the VM has been shut down. 
+In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`:
+
+- Shutdown the VM
+- Detach any secondary volume attached on the VM (remember the volume */dev/vda* is the bootable volume from which the VM is loaded).
+
+Ephemeral VM
+^^^^^^^^^^^^^
+
+If the VM is loaded from an image, there is no bootable volume */dev/vda*.
+
+.. tab-set::
+
+   .. tab-item:: Horizon dashboard
+
+      - In the Horizon Dashboard, go to *Compute â Instances*
+      - Click on *""Create snapshot""* action for the instance to snapshot 
+      
+      .. image:: /cloud/_img/op_snap_create_1.jpg
+
+      - From the pop-up dialog, give a unique *âSnapshot Nameâ* for the image snapshot file, then click on the *âCreate Snapshotâ*.
+
+      .. image:: /cloud/_img/op_snap_create_2.jpg
+
+      - The procedure will bring you to the *""Compute â Images""* section, where the snapshot image will appear after the generation process indicated by the transition of the image *âStatusâ* from *âQueuedâ* to *âActiveâ*, passing from *âSavingâ*. 
+      - At the end the snapshot should appear with size different from zero.
+
+      .. image:: /cloud/_img/op_snap_create_3.jpg
+
+   .. tab-item:: Command Line Interface
+
+      - Configure your CLI following the steps in :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+      - Obtain the complete tabular list of all the servers available on the tenant 
+
+       .. code-block:: bash
+        
+                openstack server list 
+                +----------------+------------------+--------+-----+------------------+ 
+                | ID             | Name             | Status | ... | Flavor           | 
+                +----------------+------------------+--------+-----+------------------+ 
+                | <Server-ID-01> | <Server-Name-01> | ACTIVE |     | <Flavor-Name-01> | 
+                | <Server-ID-02> | <Server-Name-02> | ACTIVE |     | <Flavor-Name-02> | 
+                | <Server-ID-03> | <Server-Name-03> | ACTIVE |     | <Flavor-Name-03> |"
+index_compute_ops.rst.txt,42,529,0,1595,"What are the different compute operations related to instance management and key pair creation that are listed in the document, and where can one find more detailed information about each of these operations?",".. _compute_ops_card:
+
+Compute operations
+==================
+
+For general information on the compute component, visit the :ref:`cloud/os_overview/os_components/compute:compute` page.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   instance_create
+   instance_manage
+   instance_snap_create
+   instance_download
+   instance_deletion
+   instance_resize
+   instance_rescue
+   image_upload
+   keypair_create
+
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: create**
+      :link: compute_inst_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: manage**
+      :link: compute_inst_manage_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: resize**
+      :link: compute_inst_resize_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: snapshot create**
+      :link: compute_inst_snap_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: download**
+      :link: compute_inst_download_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: delete**
+      :link: compute_inst_delete_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Instance: rescue**
+      :link: compute_inst_rescue_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **Instance: image upload**
+      :link: compute_inst_img_upload_card
+      :link-type: ref
+
+    .. grid-item-card:: |osnova| **KeyPair: create**
+      :link: compute_keypair_create_card
+      :link-type: ref
+
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link"

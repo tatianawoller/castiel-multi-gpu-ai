@@ -1,0 +1,37 @@
+Tenants Administration 
+======================
+
+This section provides additional information related to the management of cloud projects. 
+
+In particular, it explains how you can request to associate a DNS name to your instance, and how to safely manage sensitive data. 
+A dedicated section provides guidelines on how to best manage security for your instances to reduce vulnerabilities and risks of attacks.
+
+.. |ico1| image:: /cloud/_img/hpc_icon.png
+   :height: 35px
+   :class: no-scaled-link
+
+.. grid:: 3
+
+    .. grid-item-card:: |guidelines| **DNS guidelines**
+      :link: dns_guidelines_card
+      :link-type: ref
+
+    .. grid-item-card:: |guidelines| **Security guidelines**
+      :link: security_guidelines_card
+      :link-type: ref
+
+    .. grid-item-card:: |guidelines| **Store sensitive data**
+      :link: store_sensitive_data_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   dns_guidelines
+   security_guidelines
+   store_sens_data
+
+.. |guidelines| image:: /cloud/_img/guidelines_icon.png
+   :width: 35px
+   :class: no-scaled-link

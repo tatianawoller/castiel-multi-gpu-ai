@@ -1,0 +1,258 @@
+.. _galileo_card:
+
+Galileo100
+==========
+
+Galileo100 is a new infrastructure co-funded by the European ICEI (Interactive Computing e-Infrastructure) project and engineered by DELL. It is the national Tier-1 system for scientific research and is available to the Italian public and industrial researchers since September 2021. It also features 77 cloud computing servers and was expanded in November 2022 with 82 additional nodes. **Galileo100** is used for high-end technical and industrial HPC projects, as well as meteorology and environmental studies.
+
+The specific guide for the **Galileo100** cluster contains unique information that deviates from the general behavior described in the HPC Clusters sections.
+
+Access to the System
+--------------------
+
+The machine is reachable via ``ssh`` (secure Shell) protocol at hostname point: **login.g100.cineca.it**.
+
+The connection is established, automatically, to one of the available login nodes. It is possible to connect to **Galileo100** using one the specific login hostname points:
+
+* login01-ext.g100.cineca.it
+* login02-ext.g100.cineca.it 
+* login03-ext.g100.cineca.it 
+
+.. warning::
+    
+    **The mandatory access to Galileo100 is the two-factor authetication (2FA)**. Get more information at section :ref:`general/access:Access to the Systems`.
+
+
+System Architecture
+-------------------
+
+
+
+Hardware Details
+^^^^^^^^^^^^^^^^
+.. list-table:: 
+    :widths: 30 50
+    :header-rows: 1
+
+    * - **Type**
+      - **Specific**
+    * - Models
+      - Dual-soket Dell PowerEdge
+    * - Nodes
+      - 630
+    * - Processors/node
+      - 2xCPU x86 Intel Xeon Platinum 8276/L 2.4GHz
+    * - CPU/node
+      - 48 
+    * - Accelerators/node
+      - 2xGPU Nvidia V100 PCIe3 with 32 GB Ram on 36 Viz Nodes
+    * - RAM/node
+      - 384 GiB (+ 3.0 TiB Optane on 180 fat nodes)
+    * - Peak Performance
+      - 2 PFlop/s (3.53 TFlop/s in single node)
+    * - Internal Network
+      - Mellanox Infiniband 100GbE
+
+
+Disks and Filesystems
+---------------------
+
+The storage organization conforms to **CINECA** infrastructure. General information are reported in :ref:`hpc/hpc_data_storage:File Systems and Data Management` section. In the following, only differences with respect to general behavior are listed and explained.
+
+
+Job Managing and SLURM Partitions 
+---------------------------------
+
+.. list-table:: 
+	:widths: 10 10 20 10 10 10 10 20
+	:header-rows: 1
+	:class: tight-table
+
+	* - **Partition**
+	  - **QOS**
+	  - **#Cores per job**
+	  - **Walltime**
+	  - **Max jobs/resources per user**
+	  - **Max memory per node (MB)**
+	  - **Priority**
+	  - **Notes**
+	* - g100_all_serial
+
+	    (default)
+	  - noQOS
+	  - 4 cores
+	  - 04:00:00
+	  - 4 cores
+
+	    120 submitted jobs
+	  - 31,200
+	  
+	    (30 GB)
+	  - 40
+	  - on two login nodes
+
+	    **budget free**
+	* - g100_all_serial
+
+	    (default)
+	  - qos_install
+	  - 16 cores
+	  - 04:00:00
+	  - 16 cores
+
+	    1 running job
+	  - 100 GB
+	  - 40
+	  - request to superc@cineca.it
+	* - g100_usr_dbg
+	  - noQOS
+	  - 2 nodes
+	  - 01:00:00
+	  -
+	  - 375,300
+
+	    (366 GB)
+	  - 40
+	  -
+	* - g100_usr_dbg
+	  - qos_ind
+	  - Depending on the specific agreement
+	  - Depending on the specific agreement
+	  -
+	  - 375,300
+
+	    (366 GB)
+	  - 90
+	  - Partition dedicated to specific kinds of users.
+	* - g100_usr_prod
+	
+	    *g100_usr_smem*
+	  
+	    **g100_usr_pmem**
+	  - noQOS
+	  - min = 1
+	  
+	    max =  32 nodes
+	  - 24:00:00
+	  - 100 running jobs
+	  
+	    120 submitted jobs
+	  - 375,300
+	  
+	    (366 GB)
+	  - 40
+	  - runs on thin and persistent memory nodes
+	
+	    *runs only on thin nodes*
+	  
+	    **runs only on persistent memory nodes**
+	* - g100_usr_prod
+	
+	    *g100_usr_smem*
+	  
+	    **g100_usr_pmem**
+	  - g100_qos_bprod
+	  - min = 1537 (33 nodes)
+	  
+	    max =  3072 (64 nodes)
+	  - 24:00:00
+	  - 100 running jobs
+	  
+	    120 submitted jobs
+	  - 375,300
+	  
+	    (366 GB)
+	  - 60
+	  - runs on thin and persistent memory nodes
+	
+	    *runs only on thin nodes*
+	  
+	    **runs only on persistent memory nodes**
+	* - g100_usr_prod
+	
+	    *g100_usr_smem*
+	  
+	    **g100_usr_pmem**
+	  - g100_qos_lprod
+	  - min = 1
+	  
+	    max =  2 nodes
+	  - 4-00:00:00
+	  - 2 nodes
+	  
+	    100 running jobs
+	  
+	    120 submitted jobs
+	  - 375,300
+	  
+	    (366 GB)
+	  - 40
+	  - runs on thin and persistent memory nodes
+	
+	    *runs only on thin nodes*
+	  
+	    **runs only on persistent memory nodes**
+	* - g100_usr_prod
+	
+	    *g100_usr_smem*
+	  
+	    **g100_usr_pmem**
+	  - qos_special
+	  - > 32 nodes
+	  - > 24:00:00
+	  -
+	  - 375,300
+	  
+	    (366 GB)
+	  - 40
+	  - request to superc@cineca.it
+	* - g100_usr_bmem
+	  - noQOS
+	  - 25 nodes
+	  - 24:00:00
+	  - 100 running jobs
+	  
+	    120 submitted jobs
+	  - 3,036,000
+	  
+	    (3 TB)
+	  - 40
+	  - runs on fat nodes
+	* - g100_usr_interactive
+	  - noQOS
+	  - max = 0.5 node
+	  - 8:00:00
+	  - 100 running jobs
+	  
+	    120 submitted jobs
+	  - 375,300
+	  
+	    (366 GB)
+	  - 40
+	  - on nodes with GPUs
+
+	    --gres=gpu:N (N=1)
+	* - g100_meteo_prod
+	  - qos_meteo
+	  - 
+	  - 24:00:00
+	  - 
+	  - 375,300
+	  
+	    (366 GB)
+	  - 40
+	  - Partition reserved to meteo services, **NOT opened to production.**
+	  
+	    Runs on thin nodes
+
+
+
+Dedicated Services 
+------------------
+
+Interactive Computing
+^^^^^^^^^^^^^^^^^^^^^
+
+Galileo 100 resources are also accessible via web browser on a Jupyter-based interface at the following link: https://jupyter.g100.cineca.it/
+
+Further details are reported at the following :ref:`services/interactive_computing:interactive Computing`. Please note that the service is considered in pre-production, thus the resources are not accounted from the budget and the service is provided with no warranty.

@@ -1,0 +1,85 @@
+.. _network_card:
+
+Network
+=======
+
+`OpenStack Neutron service <https://docs.openstack.org/neutron/latest/>`_ is a core component of the OpenStack 
+cloud computing platform, which provides "networking as a service" between interface 
+devices managed by other OpenStack components such as Nova (compute) and Cinder 
+(block storage) services. Neutron allows users to create and manage various networking services 
+like VLANs, SDNs (Software Defined Networks), and other complex network topologies.
+
+.. image:: ../../_img/openstack_network_topology.png
+
+Project networks are isolated and private. These networks are not accessible from 
+outside the OpenStack environment unless routed through an external network. The 
+**external network** is the public-facing network that allows VMs within the tenant 
+networks to access the internet.
+
+To operate, a network will need at least a **subnet** and a **router**. A subnet is 
+a range of IP addresses in your project's network, while a router is the virtual 
+device that forwards traffic between your project and the external network.
+
+Once the project has a network, it is possible to link to it virtual machines and other 
+resources in order to connect them between each other and to the external network.
+
+Subnets
+-------
+
+A subnet is a range of IP addresses in your project's network. You can create subnets 
+to group instances according to security and operational needs. When you create a 
+subnet, you specify the CIDR block for the subnet, which is a subset of the network 
+CIDR block. 
+
+.. note:: 
+  Typical CIDR reserved for private networks are: `192.168.0.0/16`, `10.0.0.0/8` 
+  or `172.16.0.0/12`.
+
+
+Routers
+-------
+
+With OpenStack routers, you can create and manage multiple networks, define routing 
+rules, and control the flow of traffic between subnets. This flexibility allows you 
+to design and implement complex network topologies to meet the specific requirements 
+of your cloud infrastructure. In addition to basic routing functionality, OpenStack 
+routers support advanced features like **floating IPs**, which allow you to associate a 
+public IP address with a private IP one to enable external access to instances on 
+your private network. The **gateway** is the IP address of the router that connects the 
+subnet to the external network. The gateway IP address is typically the first or last 
+IP address in the subnet range.
+
+Floating IPs
+------------
+
+In OpenStack, instances are by default assigned private IP addresses from the internal 
+network. These private IPs are not reachable from outside the OpenStack environment. 
+However, by assigning a floating IP to an instance, the instance becomes reachable from 
+the external network, enabling inbound and outbound communication via the internet.
+
+When a floating IP is allocated, it is reserved from a pool of available public IP 
+addresses. This pool is configured by the cloud administrator and can be customized 
+based on the organization's requirements. Each cloud project has a limited number of 
+floating IPs controlled by the project quota and these need to be allocated to the 
+project from the central pool prior to their use.
+
+Security Groups
+---------------
+
+A security group acts as a virtual firewall for instances and other resources on a
+network controlling the inbound and outbound traffic to instances. One security group 
+can be associated with one or more instances and a single instance can have multiple 
+security groups associated to it. It is always possible to modify, add and remove 
+security groups in a virtual machine after its creation.
+
+The security group contains one or more security rule which specify the network access. 
+A security rule defines how traffic can enter/exit the VM instance via:
+
+- an IP address or CIDR block
+- an EtherType (IPv4 or IPv6)
+- a direction (INGRESS or EGRESS)
+- a port the traffic will pass through
+  
+For example the rule: `INGRESS IPv4 TCP 22(SSH) 131.175.44.1` will imply that the 
+virtual machine will be reachable via SSH on port 22 using TCP protocol from the 
+IP `131.175.44.1`

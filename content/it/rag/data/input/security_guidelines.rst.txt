@@ -1,0 +1,159 @@
+.. _security_guidelines_card:
+
+Security guidelines
+===================
+
+This list of security guidelines is not meant to cover all the possible cases and scenarios, but to serve as a starting point for keeping everyone secure: please read it carefully. 
+
+A complete description of roles and responsibilities is provided in :ref:`cloud/general/cineca_cloud_model:responsibilities`.
+
+.. important:: Concerning security in particular: 
+
+  - Users are responsible for the security of the virtualized resources under their control. This includes, but it is not limited to, virtual machines, network configuration, user accounts, disk volumes 
+  - If you discover a critical security flaw or believe that your machine has been compromised, please contact us immediately at superc@cineca.it 
+  - CINECA **reserves the right to suspend connectivity for the IPs affected by security breaches**, if the infrastructure component is at risk or to mitigate adverse effects
+
+Credentials management
+----------------------
+
+- Carefully manage the credentials that provide access to the service. 
+- Set up additional user accounts to access the virtual machines using a SAML provider, enabling Multi-Factor Authentication (MFA), and assigning appropriate roles following the principle of least privilege. Utilize SAML accounts as much as possible and reserve the use of the Virtual Machine Admin for cases of actual necessity, managing the lifecycle of the user accounts enabled for the service. 
+- Promptly close access accounts to the service that are no longer necessary. 
+- Periodically verify (at least once a year) that the accounts for accessing the service are still necessary. 
+
+
+Be mindful about the user accounts in the VM
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Keep an eye on the user accounts enabled in your system. Some applications create default accounts which are unnecessary or even directly insecure. 
+An ideal scenario is to have three accounts:
+
+- **roor** with ssh disabled and no password. This is the default in the images provided on CINECA HPC Cloud for the different OS (i.e. Ubuntu, Centos,..).
+- a user **account for a sysadmin** that can only be accessed via ssh keys and has sudo access. CINECA HPC Cloud VM images provide this user pre-configured as well, the name of the user depends on the distribution (cloud-user, centos or ubuntu), see the :ref:`cloud/systems/index_system_specifics:cloud specifics` of the system you are using for specific information.
+- **user-level accounts** that run a single service and have no login possible, neither remote nor local access.
+
+Do not enable password login, **use SSH keys instead** (see :ref:`cloud/operative/compute_ops/keypair_create:key pair: create`). Passwords can be, with enough time and compute power, guessed with brute force. The average SSH server deals with thousands of such attacks every week. When using SSH keys, challenge-response authentication is used instead. This means that for each login a different challenge is asked and a different response is the correct one. No secret (password or key) ever travels across the network
+
+- Password protect your SSH keys and make sure your key never leaves the hardware where it was created.
+- Do not store public keys (much less private) on the image used to create the VM. 
+
+Network 
+-------
+
+It is very important to keep your network configuration as secure as possible, as it is the gate any intruder will use to enter in your system. 
+It is relatively simple to apply some good practices that will give a good extra security layer. Here below few strategies are advised.
+
+Restrictive firewall (white listing)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Your Virtual Machine instances should be configured so that they allow the minimum required access to run your application. 
+By default, virtual machines have no external access (default security group rules in CINECA HPC Cloud),
+this means no single port is opened by default to the public Internet. 
+In order to connect to them, or to provide any kind of service, access has to be explicitly granted. 
+It is important to open only the ports that are needed and open them only for the least amount of IPs possible.
+
+Every virtual machine running in CINECA HPC Cloud comes with default Security groups. 
+:ref:`cloud/os_overview/os_components/network:security groups` are the easiest way to apply a set of complex firewall rules to a set of virtual machines. 
+This is an example of a security group that gives access to port 22/SSH to only 2 subnets (which could be the 2 public ranges that your organization uses in its office network):
+
+.. image:: /cloud/_img/sec_guidelines.png
+
+Security groups are easy to configure and easy to visualize in the Horizon Dashboard under the Network tab or in each virtual machine's instance page (see :ref:`cloud/operative/network_ops/secgroups_create:security groups: create`).
+
+Disable unneeded services
+^^^^^^^^^^^^^^^^^^^^^^^^^
+Do not run unnecessary services on your VM, even if they are not accessible from the outside. The more services you run, the more potential attack surfaces you have that top intruders might exploit. 
+
+Use secure protocols
+^^^^^^^^^^^^^^^^^^^^
+Wherever possible, use encrypted and secure communication protocols to avoid man in the middle attacks; this is when someone get access to your communications and can read the data going through like in a public WIFI. For example: do not use HTTP, use instead HTTPS. Do not use FTP to transfer files, use instead FTPS, SFTP or S3.
+
+If you need a web certificate for your VM, we suggest to use the service provided by `Let's Encrypt <https://letsencrypt.org/>`_. 
+
+Use intrusion detection software
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Tools such as `denyhosts <https://github.com/denyhosts/denyhosts>`_ or `Fail2ban <https://en.wikipedia.org/wiki/Fail2ban>`_ can be used to analyse log files and ban IP addresses that are attempting to make brute-force attacks to your application. They are very powerful tools, but they have to be used with care as they can lead to false positives, i.e. Banning IPs that should not be banned. These tools are a best practice to provide 24/7 services, while may not be necessary for single user VMs.
+
+Software
+--------
+
+Running secure software is also very important. It is not a trivial task to develop fully secure software, but there are some simple strategies that will help with the task.
+
+Automatic software updates
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+All operating systems have the ability to apply updates automatically. If you run regular updates, you are less exposed to known security problems. It is common that the fix is available before the security problem is published.
+
+
+In Centos 8 and newer, you have ``dnf-automatic``:
+
+.. code:: bash
+
+  sudo yum install dnf-automatic -y
+  systemctl enable --now dnf-automatic-install.timer
+  
+For Centos 7, you have ``yum-cron``:
+
+.. code:: bash
+
+  sudo yum install yum-cron -y
+  sudo systemctl enable yum-cron.service
+  sudo systemctl start yum-cron.service
+
+For Ubuntu, you have ``unattended-upgrades``:
+
+.. code:: bash
+
+  sudo apt install unattended-upgrades
+  
+Each OS version will have its own way to activate this.
+
+**Kernel updates**: Some updates, such as kernel upgrades, require rebooting the virtual machines. Please schedule this into your regular maintenance.
+
+If your use case does not support automatic updates, which is common for highly available setups, please make sure to schedule regular maintenance windows where the software upgrade is scheduled.
+
+**Subscribe to security announcements for your OS**, if there is a security problem in your operating system, you need to find it out as soon as possible. You can subscribe to an appropriate mailing list, RSS feed, ... to keep an eye out for anything that requires urgent action.
+
+Only install from reputable sources
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Be mindful of the sources for the software you install. Only install software from reputable sources. If possible, use the distribution's package manager (yum, dnf, apt, ...). Packages managers make it easy to install software, keep it updated, and uninstall it. If the desired software is not available in the distribution package manager repository, an official source must be used. Follow the instructions on the official website of the software you need. If more than one source is offered, think about using the one that provides an easier life-cycle (install/update/uninstall/...), like `snap <https://en.wikipedia.org/wiki/Snap_(software)>`_ or `flatpak <https://en.wikipedia.org/wiki/Flatpak>`_.
+
+Security for databases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have databases in your VM please make sure that these:
+
+- are not open to the whole internet (0.0.0.0/0)
+- are password protected
+- information is transferred via a secure connection. 
+
+Keep logs of your applications
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Use the best practices for logging:
+
+- Make sure that the services are logging to a secure location, that is as tamper-proof as possible.
+- Keep the logs for a reasonably long amount of time.
+- Consider logging to a remote server as well.
+
+Images
+-------
+The main reason behind the **prohibition of uploading community images**, to be used for instances creation, is the fact that 
+they are visible and can be uploaded by any user on the cloud platform. 
+CINECA HPC Cloud infrastructure administrators have thus no control on community image content.
+
+The use of a community image implies an acceptance of the risk that the image owner has uploaded, unconsciously or not, 
+an image containing malicious software or vulnerability like **backdoors**, **keyloggers**, **viruses** or **malware**.
+
+Even if, the use of community images is not a guarantee of vulnerability, keeping in mind the aforementioned risks, 
+the CINECA HPC Cloud infrastructure administrators have chosen to inhibit the possibility to upload images with such visibility.
+
+More information
+----------------
+
+If you are interested to learn more about security in cloud application, we advise to read the material provided by `NeCTAR <https://support.ehelp.edu.au/support/solutions/folders/6000203455>`_. 
+
+
+
+
+**Acknowledgements**:
+CINECA Team would like to acknowledge the following source of information for this page: https://docs.csc.fi/cloud/pouta/security/

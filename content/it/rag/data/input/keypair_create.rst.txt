@@ -1,0 +1,29 @@
+.. _compute_keypair_create_card:
+
+Key Pair: create
+==================
+
+- In the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, go to the *"Compute â Key Pairs"* tab. 
+- Click on *"Create Key Pair"*.
+
+.. image:: ../../_img/op_keypairs_create_img1.png
+
+- Provide a name for the KeyPair and select the KeyPair type.
+
+.. image:: ../../_img/op_keypairs_create_img2.png
+
+- The private key will be automatically downloaded. Store this file securely as it will be needed for SSH access. 
+  
+.. warning:: 
+
+   - The download of the private key will be done only when the keypair is created. It will not be possible to re-download it. If you lose the private key you will have to create a new keypair.
+   - The public key can be seen in any moment by clicking on the generated Key Pair name. 
+
+Best Practices
+--------------
+
+- **Secure Storage**: Store private keys securely. If lost, you won't be able to access your instances using that KeyPair.
+- **Permissions**: Ensure private key files have restrictive permissions (chmod 600) to prevent unauthorized access.
+- **Rotation**: Periodically rotate your KeyPairs and update instances accordingly to maintain security.
+- **Backup**: Keep backups of your private keys in a secure location to prevent accidental loss.
+- **KeyPairs** in OpenStack provide a secure and efficient method for managing SSH access to instances. By leveraging public-key cryptography, KeyPairs ensure that only users with the appropriate private key can access the instances, enhancing overall security.

@@ -1,0 +1,105 @@
+.. _compute_inst_create_card:
+
+Instance: create
+================
+
+The creation of a virtual machine can be done using the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`, 
+using the :ref:`cloud/os_overview/management_tools/command_line:command line interface` 
+or with customized Ansible and Terraform scripts to automate the process (:ref:`cloud/os_overview/management_tools/infrastructure_as_code:declarative and procedural approaches to iac`). 
+You are free to choose any of these methods. However, there are a few mandatory steps that must be followed before creating a virtual machine. 
+
+This page will guide you step by step in the creation of a virtual machine with the **Openstack Horizon Dashboard**. 
+
+.. important:: 
+
+  **Prerequisites**: In order to create and boot a virtual machine, you need have already created the following resources
+  
+  - A tenant network â :ref:`cloud/operative/network_ops/network_create:network: create`
+  - A security group â :ref:`cloud/operative/network_ops/secgroups_create:security groups: create` 
+  - A key-pair (it is possible to create a new key-pair during instance creation or upload a preexisting pair) â :ref:`cloud/operative/compute_ops/keypair_create:key pair: create`
+
+
+Virtual machine creation
+------------------------
+Once you have completed the above steps, you can proceed to create a Virtual Instance.  
+Go to *"Compute â Instances"* and click on *"Launch Instance"*.
+
+A pop-up window will appear and you have to fill in the required information in the different tabs. 
+
+.. image:: ../../_img/op_instace_create_img1.png
+
+.. dropdown:: Details
+   :animate: fade-in-slide-down
+   :color: light
+
+   Under the tab *"Details"*, you need to insert the instance name and how many copies of this virtual machine you want to create (*"count"* field).
+
+.. dropdown:: Source 
+   :animate: fade-in-slide-down
+   :color: light
+    
+   Under the tab *"Source"*, you specify if you want to boot your virtual machine form an image/image snapshot or from a volume/volume snapshot. 
+   When booting from an image, you are able to decide if you want the virtual machine to be created as "ephemeral" 
+   or you want to create a root "bootable volume" contextually to the virtual machine creation (see :ref:`cloud/os_overview/os_components/compute:compute` 
+   for more information on bootable and ephemeral instances).
+
+   In this section, you also need to choose from the available list which image you would like to use to build your instance.  
+   To select the one to be use simply click on the up arrow from the list of available resources. 
+
+.. dropdown:: Flavor and network
+   :animate: fade-in-slide-down
+   :color: light
+
+   Under the respective tabs, you can choose the flavor of the virtual machine, and the network you want the virtual machine connected to.
+   To select the one to be used, simply click on the up arrow from the list of available resources.
+   
+   .. note:: 
+     The network should have been already created
+
+.. dropdown:: Security groups and key pair
+   :animate: fade-in-slide-down
+   :color: light
+
+   Under the respective tabs, you can choose the security groups you want to apply to the virtual machine, and the key-pairs you want to use to access.
+   To select the one to be used, simply click on the up arrow from the list of available resources.
+
+   .. note:: 
+     The key pair should have been already created
+   
+.. dropdown:: Server groups
+   :animate: fade-in-slide-down
+   :color: light
+
+   Under the *"Server Groups"* tab you find the options to create the virtual machine under a previously created affinity or anti-affinity group (see :ref:`cloud/os_overview/os_components/compute:compute` 
+   for more information on affinity groups).
+
+Once you have setup the preferred configuration, click on *"Launch instance"* to create your virtual machine.
+
+.. warning:: 
+
+   Once the instance has been created, it is possible only to modify the security groups and the flavor. 
+   If you need to change the network, or the key pair, you will need to create a new instance.
+
+
+Associate a Floating IP
+-----------------------
+
+Once the virtual machine is created, you can associate a floating IP with the virtual machine. For more information on how to associate a 
+floating IP with a virtual machine, refer to the :ref:`cloud/operative/network_ops/fip_association:floating ip: allocate and associate`.
+
+Once the floating IP is associated with the virtual machine, you can access the virtual machine using it.
+
+
+Accessing the instance
+----------------------
+
+.. note::
+   
+   If you created an instance using a default image available in the cloud computing, by default it is possible to login into the instance only by using the default user and key.
+
+Suppose you have used the default ubuntu cloud image, you can login as:
+
+.. code:: bash
+
+   $ ssh -i MyKey.pem ubuntu@<floating IP address>
+

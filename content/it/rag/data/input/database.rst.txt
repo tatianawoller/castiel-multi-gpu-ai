@@ -1,0 +1,21 @@
+.. _database_card:
+
+Database
+========
+
+`Trove <https://docs.openstack.org/trove/latest/>`_ is a database as a service (DBaaS) component of OpenStack. It is a pluggable 
+service that supports multiple database engines.
+
+Database as a service (DBaaS) is a cloud computing managed service offering that 
+provides access to a database without requiring the setup of physical hardware, the 
+installation of software or the need to configure the database. 
+
+The Database service provides scalable and reliable cloud provisioning functionality for both 
+relational and non-relational database engines. Users can quickly and easily use 
+database features without the burden of handling complex administrative tasks. Cloud 
+users and database administrators can provision and manage multiple database instances 
+as needed.
+
+The Database service provides resource isolation at high-performance levels, and 
+automates complex administrative tasks such as deployment, configuration, patching, 
+backups, restorations, and monitoring.

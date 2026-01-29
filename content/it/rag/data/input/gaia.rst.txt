@@ -1,0 +1,72 @@
+.. _gaia_card:
+
+GAIA
+====
+
+**PAGE UNDER CONSTRUCTION**
+
+Now under configuration, it is composed of 420 general purpose nodes and 
+80 GPU nodes, also built on OpenStack (version to be defined). It is not only 
+the biggest of the two infrastructures, but also the only accelerated one, 
+mounting Nvidia GPUs models: A30, L40s and H100NVL. 
+
+The HPC cloud infrastructure, named GAIA, is built using `OpenStack Overview` (version to be confirmed).
+
+.. note:: 
+  - It is possible to access GAIA via Horizon Dashboard at **TO BE ADDED**
+  - For CLI access, the certificate chain can be downloaded here **TO BE ADDED**
+
+System architecture
+^^^^^^^^^^^^^^^^^^^
+
+.. image:: ../_img/gaia_architecture.png
+
+**CPU nodes**
+
+- 420 Interactive OpenStack Nodes
+- Each node consist of:
+  
+  - 2x CPU Intel Xeon Sierra Forrest 144 cores 2.2GHz 
+  - 1 TiB of DDR5 6400 MT/s 
+
+**GPU nodes**
+
+- 80 Interactive OpenStack Nodes
+- Each node consist of:
+  
+  - 2x CPU Intel Xeon Emerald Rapids Platinum 8592+ 64 cores 1.9GHz
+  - 1 TiB of DDR5 4800 MT/s  
+- some equipped with one or more of: 
+  
+  - GPU Nvidia A30 
+  - GPU Nvidia L40s  
+  - GPU Nvidia H100 NVL 
+
+**Storage**
+  - 2 PB IOPS-optimized/SSD Ceph Storage
+  - 8 PB Capacity-optimized/HDD Ceph Storage
+
+
+System timeline
+^^^^^^^^^^^^^^^
+       
+- to be announced: Early Availability
+- to be announced: Start of Pre-Production
+- to be announced: Start of Production 
+
+
+Flavors/Images/Openstack services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: Flavors
+
+    TO BE ANNOUNCED
+
+
+.. dropdown:: Images
+
+    TO BE ANNOUNCED
+
+
+.. dropdown:: OpenStack Services
+
+    TO BE ANNOUNCED
