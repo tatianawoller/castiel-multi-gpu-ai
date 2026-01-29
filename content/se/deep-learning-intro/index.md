@@ -1,16 +1,5 @@
 # 1A: Introduction to Deep Learning
 
-```{include} ../index.md
-:start-after: Welcome
-:end-before: <!--end-intro-->
-```
-
-```{toctree}
-:maxdepth: 1
-:caption: Preparation
-
-setup
-```
 
 ```{toctree}
 :maxdepth: 1
@@ -20,6 +9,34 @@ setup
 2-keras
 3-monitor-the-model
 ```
+
+## Code and Jupyter notebooks
+
+````{note}
+The files are added here
+{{repo}}/se/deep-learning-intro/notebooks
+
+Access them by doing:
+```sh
+git clone https://github.com/ENCCS/castiel-multi-gpu-ai
+cd castiel-multi-gpu-ai/content/se/deep-learning-intro/notebooks
+```
+
+````
+
+To launch jupyter start with {ref}`instructions here <jupyter>` and then use the {download}`notebooks/start_jupyter_for_deep_learning_intro.sh` shown below:
+
+```{warning}
+To avoid wasting resources, remember to **save** (using the Jupyter interface) and **cancel** (using `scancel`) the jobs at the end of the session.
+```
+
+```{literalinclude} notebooks/start_jupyter_for_deep_learning_intro.sh
+```
+
+
+- {download}`notebooks/1_DL_test.py`
+- {download}`notebooks/2-Classification-NN-Keras-PenguinsClassification.ipynb`
+- {download}`notebooks/3-Monitor-training-process-WeatherPrediction.ipynb`
 
 <!-- 
 :::{admonition} Extra reading material
