@@ -1,0 +1,16 @@
+name: ai_tools_fine_tuning
+channels:
+  - conda-forge
+dependencies:
+  - accelerate
+  - bitsandbytes
+  - datasets
+  - jupyterlab
+  - matplotlib
+  - peft
+  - python=3.13
+  - python-dotenv
+  - pytorch
+  - transformers
+
+prefix: "/home/gjb/mambaforge/envs/ai_tools_fine_tuning"

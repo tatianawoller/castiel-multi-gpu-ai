@@ -6,7 +6,11 @@ HPC systems such as Leonardo provide a module that contains all the necessary to
 
 ## What is it?
 
-1. `environment_full_specs.yml`: conda environment file for installing the necessary
+1. {download}`environment_full_specs.yml`: conda environment file for installing the necessary
    dependencies, all dependencies with explicit versions (less portable).
-1. `environment_from_history.yml`: conda environment file for installing the necessary
-   dependencies, only high-level packages (more portable, less reproducible).
+1. {download}`environment_from_history.yml`: conda environment file for installing the necessary
+   dependencies, only high-level packages (more portable, less reproducible); see below:
+
+```{literalinclude} environment_from_history.yml
+:language: yaml
+```
