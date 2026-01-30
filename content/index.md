@@ -35,6 +35,7 @@ The course will run across 5 days with a morning and afternoon session each day.
 
 it/leonardo/README.md
 se/deep-learning-intro/index.md
+nl/index.md
 ```
 
 ```{toctree}
