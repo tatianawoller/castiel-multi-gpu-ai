@@ -32,6 +32,7 @@ To avoid wasting resources, remember to **save** (using the Jupyter interface) a
 ```
 
 ```{literalinclude} notebooks/start_jupyter_for_deep_learning_intro.sh
+:language: bash
 ```
 
 
