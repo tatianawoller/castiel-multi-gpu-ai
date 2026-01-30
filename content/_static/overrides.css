@@ -104,5 +104,6 @@
 
 /* Logo on the sidebar */
 a.icon.icon-home > img.logo {
-    width: 70%;
+    width: 10em;
 }
+
