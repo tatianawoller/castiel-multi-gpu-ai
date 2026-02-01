@@ -1,0 +1,176 @@
+.. _hpc_card:
+
+Introduction HPC Resources
+==========================
+
+This section provides a broader context for HPC Resources and the essential characteristics of HPC infrastructure.
+
+It introduces to CINECA Clusters and HPC services with specific focus on managment of resources by users together with the budgeting and accounting rules in place at CINECA for HPC projects.
+
+
+Budget and Accounting
+---------------------
+
+The ``saldo`` command allows you to quickly retrieve information about your Project Account, including the available budget, and details of the User Account.
+More information about the usage of the tool can be gained just executing the command without any option.
+ 
+.. tab-set::
+
+   .. tab-item:: User Account Balance
+   
+      ``saldo -b <User Account>`` lists the budget of all Project Accounts associated with a username.
+
+         * A single **User Account** can be associated to a multiple **Project Accounts**.
+         * For clusters with independent partitions, specify the partition using:
+            * ``saldo -b`` (default: , on Leonardo give you back the report for Booster partition)
+            * ``saldo -b --dcgp`` (to get a report for the DCGP partition on Leonardo, the flag ``--dcgp`` is mandatory)
+      
+      A typical example of ``saldo`` usage is reported in the following:
+
+      .. code-block:: bash
+
+	     saldo -b <User Account>
+         
+        -----------------------------------------------------------------------------------------------------------------------------------
+        account          start         end         total        localCluster   totConsumed     totConsumed     monthTotal     monthConsumed
+                                               (local h)   Consumed(local h)     (local h)               %      (local h)         (local h)
+        -----------------------------------------------------------------------------------------------------------------------------------
+        Proj_A        20110323    20300323         50000               25000      55027726            50.0            600               600
+        Proj_B        20220427    20301231        100000               10000         27086            10.0            731               731
+        Proj_C        20230524    20300323          6500                   0             0             0.0              0                 0
+
+   
+      **Description of columns:**
+         * **Account:** Refers to the Project Account (approved grants).
+         * **Start Date:** Start of the grant period.
+         * **End Date:** End of the grant period.
+         * **Total Hours (local):** Total CPU hours allocated to the grant on the local cluster.
+         * **Consumed (local):** Total CPU hours used from the allocation on the local cluster.
+         * **Total Consumed (%):** Percentage of the total hours consumed.
+         * **Month Total:** Allocated hours for the current month.
+         * **Month Consumed:** Hours consumed in the current month.
+
+   .. tab-item:: Project Account Balance
+
+      ``saldo -a <Project Account>`` lists the the usage of the **Project Account** for each associated **User Accunt**. The report specifies the date, consumed hours for each **User Account**, and the number of jobs submitted by the user on that day.
+
+      .. code-block:: bash
+
+         saldo -a <Project Account>
+ 
+         ------------------Resources used from 202404 to 202412------------------
+         date        username    account              localCluster       num.jobs
+                                                        Consumed/h
+         ------------------------------------------------------------------------
+         20240907    user001    example                 5553:34:39            542
+         20240908    user001    example                22340:07:36           2676
+         20240909    user001    example                 1606:21:39            154
+         20240910    user001    example                 3210:42:40            285
+         ------------------------------------------------------------------------
+
+
+Billing Policy
+^^^^^^^^^^^^^^
+The billing policy outlines the methodology employed to calculate budget consumption associated with the use of HPC resources. We strongly recommend familiarizing yourself with this policy, as understanding it is crucial to avoiding unnecessary budget losses and to effectively planning your activities.
+
+Budget consumption is measured in **effective CPU hours (CPUh)** and is calculated based on the amount of resources allocated per node and the duration of their usage. Resource allocations are exclusive by default, meaning that once assigned, the reserved resources cannot be used by other users.
+ 
+**Formula for Billed Hours:**
+
+ .. math:: 
+   
+    B_{H} = T \cdot N \cdot R \cdot C
+
+where:
+
+* *T* = **elapsed time** (in hours).
+* *N* = **number of nodes** allocated.
+* *R* = **reserved resources per node** (explained below).
+* *C* = **number of CPUs per node** (depends on node architecture). 
+
+The *R* factor measures the fraction of node resources reserved by a job that are consequently unavailable to other users. It is defined as the maximum among all reserved resource types (RES) â for example, the number of CPUs, GPUs, or memory â normalized by the total capacity of each respective resource on a single node:
+
+.. math::
+
+  R = \max_{r \in RES}\left\{ \frac{\text{Allocated}(r)}{\text{Total}(r)} \right\}
+
+This billing model is designed to ensure that users are charged based on the proportion of a node's resources made unavailable to others due to their job allocation. For example, if a job reserves all of a node's RAM â even without utilizing all its CPUs â the node becomes unusable for other jobs and is therefore billed accordingly. Similarly, if all GPUs on a node are reserved, the node is considered substantially occupied, even if some CPUs or RAM remain available.
+
+Although GPU reservations do not entirely prevent node usage by others, GPUs are high-cost resources and nodes equipped with them are dedicated to workloads that can fully leverage their capabilities. Therefore, GPU usage is considered as critical as CPU usage when determining billing, even if the node is still partially usable.
+
+.. dropdown:: Example
+   :animate: fade-in-slide-down
+   :chevron: down-up
+
+   A user requests 1 node, 4 CPUs, 4 GPUs, and 3 hours of walltime on the Booster partition of Leonardo. However, the job runs for only 2 hours.
+
+   From this information, we have:
+
+   * T = 2 h (elapsed time)
+
+   * N = 1 node
+
+   * C = 32 CPUs (number of CPUs available on a Leonardo Booster compute node â see :ref:`hpc/leonardo:Hardware Details`)
+
+   and, since:
+
+   .. math::
+
+      \frac{\text{Allocated}(\text{CPU})}{\text{Total}(\text{CPU})} = \frac{4}{32} = 0.125
+
+   .. math::
+
+      \frac{\text{Allocated}(\text{GPU})}{\text{Total}(\text{GPU})} = \frac{4}{4} = 1.0
+
+   the maximum of the resources requested per node is determined by the GPUs, therefore *R* = 1.0, and the billed hours are then calculated as:
+
+   .. math::
+
+      B_{H} = T \cdot N \cdot R \cdot C = 2 \cdot 1 \cdot 1.0 \cdot 32 = 64 \text{CPUh}
+
+   This means the job consumes 64 effective CPU hours from the project's budget.
+
+----
+
+.. note::
+
+   * The **serial partition** is available for limited post-production data analysis and can be used even after a Project Account has expired. Usage of this partition is excluded from STDH billing (**free of charge**).
+
+   * By default, the amount of memory allocated per node is proportional to the number of CPUs requested.
+
+   * When nodes are requested in **exclusive mode** (see :ref:`hpc/hpc_scheduler:Scheduler and Job Submission` section), the entire node is reserved for the job, regardless of the specific resources requested. In such cases, the allocated resources may exceed the explicitly requested ones.
+
+   * The **resources per node** are listed in the **Hardware Details** section for each cluster. Refer to the :ref:`hpc/hpc_clusters:Cluster Specifics` section for the complete list of Cineca's HPC systems.
+
+Budget Linearization
+^^^^^^^^^^^^^^^^^^^^
+
+A linearization policy governs the priority of scheduled jobs across Cineca clusters. To each Project Account is assigned a monthly quota (MQ) calculated as: 
+
+.. math::
+
+   MQ = TB/NM
+
+TB = total assigned budget
+
+NM = total number of months
+
+Beginning on the first day of each month, any User Accounts belonging a Project Account may utilize their quota at full priority. 
+As the budget is consumed, submitted jobs progressively lose priority until the monthly quota is exhausted. 
+Subsequently, these jobs are still considered for execution but with reduced priority compared to accounts with remaining quota. 
+This policy aligns with practices at other prominent HPC centers globally, aiming to enhance response times by aligning CPU hour usage with budget sizes.
+
+.. note::
+   
+   It's recommended to adhere to a linearized usage of your budget, as non-linear consumption may impact the welfare of all users concurrently utilizing our HPC systems.
+
+A simple working scheme of budget linearization is showed in the figure below.
+
+.. image:: img/bud_lin.png
+   :align: center
+   :height: 180 px
+
+.. image:: img/spacer.png
+   :align: center
+   :height: 20 px
+

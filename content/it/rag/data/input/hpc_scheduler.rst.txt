@@ -1,0 +1,455 @@
+Scheduler and Job Submission
+============================
+
+**CINECA** HPC clusters are accessed via a dedicated set of login nodes. These nodes are intended for simple tasks such as customizing the user environment by installing applications, transferring data, and performing basic pre- and post-processing of simulation data. Access to the compute nodes is managed by the workload manager. To ensures fair access to resources for all users, production jobs must be submitted using a scheduler.
+
+**CINECA** uses Slurm (Simple Linux Utility for Resource Management) manager and batch system. Slurm is an open-source, highly scalable job scheduling system with three key functions:
+
+* Allocating access to resources (compute nodes) to users for a specified duration, allowing them to perform their work.
+* Providing a framework for starting, executing, and monitoring work (usually parallel jobs) on the set of allocated nodes.
+* Managing resource contention by handling the queue of pending jobs.
+* There are two main modes of using compute nodes:
+
+**Batch Mode:** This mode is intended for production runs. Users must prepare a shell script with all the operations to be executed once the requested resources are available. The job will then run on the compute nodes. Store all your data, programs, and scripts in the `$WORK` or `$SCRATCH` filesystems, as these are best for compute node access. You must have valid active projects to run batch jobs, and be aware of any specific policies regarding project budgets on our systems.
+
+**Interactive Mode:** Jobs submitted in this mode are similar to batch mode in that the user must specify the resources to allocate. The job is then managed like any other submitted job. The key difference from batch mode is that once the job is running, the user can interactively execute applications within the limits of the allocated resources. All allocated resources are available for the entire requested walltime (and consequently billed) during the submission process.
+
+.. important::
+    
+   * **Interactive** mode under SLURM has a different meaning compared to the common understanding of interactive execution of an application under a Linux shell or prompt. 
+    
+   * **Interactive** execution of applications is allowed on compute nodes only via SLURM (see the next sections).
+    
+   * On login nodes, it is permitted to perform tasks such as data movement, archiving, code development, compilations, basic debugging, and very short test runs, provided these tasks do not exceed 10 minutes of CPU time and are free of charge under the current billing policy.
+
+   * A comprehensive documentation of SLURM and some examples on how to submit your job is described in a separate section under this chapter, as well as on the original `SchedMD site <https://slurm.schedmd.com/documentation.html>`_.
+
+
+Basic Usage of Slurm
+--------------------
+
+With SLURM, you can specify the tasks you want to execute, and the system will manage running these tasks and returning the results to you. If the resources are not available, SLURM will hold your jobs and run them when resources become available.
+
+Typically, you create a **batch job**, which is a file (a shell script in UNIX) containing the set of commands you want to run. This file also includes ``directives`` that specify the job's characteristics and resource requirements, such as the number of processors and CPU time needed. Once you create your job script, you can reuse it or modify it for subsequent runs.
+
+**Basic Workflow**
+
+* Create a job script with Slurm ``directives``.
+* Submit the job using ``sbatch``.
+* Monitor the job using commands like ``squeue`` and ``scontrol``.
+* Cancel a job if needed with ``scancel``.
+
+
+Here is a simple SLURM job script example to run a user's application, setting a maximum wall time of one hour and requesting **1** node with **32** cores:
+
+.. code-block:: bash
+
+    #!/bin/bash
+ 
+    #SBATCH --nodes=1                    # 1 node
+    #SBATCH --ntasks-per-node=32         # 32 tasks per node
+    #SBATCH --time=1:00:00               # time limit: 1 hour
+    #SBATCH --error=myJob.err            # standard error file
+    #SBATCH --output=myJob.out           # standard output file
+    #SBATCH --account=<Project Account>  # project account
+    #SBATCH --partition=<partition_name> # partition name
+    #SBATCH --qos=<qos_name>             # quality of service
+ 
+    ./my_application
+
+As shown in the example, a job requests resources through SLURM syntax. Resources can be allocated by including ``directives`` in the job script, or within the **interactive mode** via ``sbatch`` or ``salloc`` command. in a Once resources are allocated, the job can be executed. In the table below, a list of the main SLURM ``directives`` is reported.
+
+**Main Slurm Directives** 
+
+.. list-table:: 
+   :widths: 50 50 70
+   :header-rows: 1
+
+   * - **Directive**
+     - **Description**
+     - **Example**
+   * - ``--job-name``
+     - Stes the job name
+     - ``#SBATCH --job-name=my_job``
+   * - ``--output``
+     - Specifies the output file
+     - ``#SBATCH --output=output.log``
+   * - ``--error`` 
+     - Specifies the error file
+     - ``#SBATCH --error=error.log``
+   * - ``--time``
+     - Sets the max execution time
+     - ``#SBATCH --time=01:00:00``
+   * - ``--partition``
+     - Selects the partition 
+     - ``#SBATCH --partition=compute``
+   * - ``--ntasks``
+     - Nubmber of tasks
+     - ``#SBATCH --ntasks=1``
+   * - ``--cpus-per-task``
+     - CPUs per task
+     - ``#SBATCH --cpus-per-task=4``
+   * - ``--mem``
+     - Memory per node
+     - ``#SBATCH --mem=8GB``
+   * - ``--gres``
+     - Specifies generic resources (e.g. GPUs)
+     - ``#SBATCH --gres=gpu:1``
+   * - ``--qos``
+     - Quality of service (refer to specific clusters)
+     - ``#SBATCH --qos=<qos_name>``
+   * - ``--account``
+     - Name of the project
+     - ``--account=<account_no>``
+
+
+How to prepare a script to submit Jobs
+--------------------------------------
+
+.. tab-set::
+
+  .. tab-item:: Serial Job
+
+    This SLURM batch script is intended for running a serial (single-core) application on a Cineca's HPC cluster. It requests one node and allocates a single CPU core to execute a task that does not require parallel processing. This setup is ideal for lightweight computations, preprocessing steps, or applications that are not parallelized. 
+    
+    .. code-block:: bash
+
+      #!/bin/bash
+
+      #SBATCH --job-name=serial_jobÂ Â Â Â Â Â Â Â Â Â Â Â  # Descriptive name for the job
+      #SBATCH --time=00:30:00Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Maximum wall time (hh:mm:ss)
+      #SBATCH --nodes=1Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Request one node
+      #SBATCH --ntasks=1Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # One task (process) total
+      #SBATCH --cpus-per-task=1Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # One CPU core per task
+      #SBATCH --partition=<partition_name>Â Â Â Â   # Partition (queue) to submit to
+      #SBATCH --qos=<qos_name>Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â   # Quality of Service
+      #SBATCH --mem=2GÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Memory per node (adjust as needed)
+      #SBATCH --output=serialJob.outÂ Â Â Â Â Â Â Â Â Â   # File to write standard output
+      #SBATCH --account=<project_account>Â Â Â     # Project account number
+
+
+  .. tab-item:: OpenMP Job
+
+    This SLURM batch script is designed to run a pure OpenMP application on Cienca's HPC clusters. It requests a single node and allocates all available physical CPU cores to a single task, making it ideal for shared-memory parallel programs. The script sets up the environment, loads the necessary modules, and configures OpenMP-specific variables to ensure optimal performance. It is tailored for systems without hyperthreading and can be easily adapted by modifying the number of CPUs per task and other resource parameters.
+
+    .. code-block:: bash
+
+
+      #!/bin/bash
+
+      #SBATCH --job-name=openmp_jobÂ Â Â Â Â Â Â Â Â Â  # Job name
+      #SBATCH --time=01:00:00Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Walltime (hh:mm:ss)
+      #SBATCH --nodes=1Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Number of nodes
+      #SBATCH --ntasks-per-node=1Â Â Â Â Â Â Â Â Â Â Â  # One MPI task per node
+      #SBATCH --cpus-per-task=48Â Â Â Â Â Â Â Â Â Â Â Â  # Number of physical CPU cores per task (adjust to 32 for MARCONI100)
+      #SBATCH --partition=<partition_name>Â Â  # Partition to submit to
+      #SBATCH --qos=<qos_name>Â Â Â Â Â Â Â Â Â Â Â Â Â   # Quality of Service
+      #SBATCH --mem=<mem_per_node>Â Â Â Â Â Â Â Â Â Â  # Memory per node (e.g., 128G)
+      #SBATCH --output=myJob.outÂ Â Â Â Â Â Â Â Â Â Â Â  # Standard output file
+      #SBATCH --error=myJob.errÂ Â Â Â Â Â Â Â Â Â Â Â Â  # Standard error file
+      #SBATCH --account=<project_account>Â Â Â  # Project account number
+
+      # Load required modules
+      module load intelÂ Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  # Load Intel compiler and libraries
+
+      # Set environment variables for OpenMP
+      export SRUN_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK
+      export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASKÂ  # Set number of OpenMP threads
+
+      # Run the application using srun
+      srun ./myprogram < myinput > myoutput
+
+  .. tab-item:: MPI Job 
+
+    For a typical MPI job you can take one of the following scripts as a template, and modify it depending on your needs.
+
+    In this example we ask for 8 tasks, 2 SKL nodes and 1 hour of wallclock time, and runs an MPI application (myprogram) compiled with the intel compiler and the mpi library. The input data are in file "myinput", the output file is "myoutput", the working directory is where the job was submitted from. Through ``âcpus-per-task=1`` istruction each task will bind 1 physical cpu (core). This is a default option.
+
+    .. code-block:: bash
+
+      #!/bin/bash
+      #SBATCH --time=01:00:00
+ 
+      #SBATCH --nodes=2
+      #SBATCH --ntasks-per-node=4
+      #SBATCH --ntasks-per-socket=2
+      #SBATCH --cpus-per-task=1
+ 
+      #SBATCH --mem=<mem_per_node>
+      #SBATCH --partition=<partion_name>
+      #SBATCH --qos=<qos_name>
+      #SBATCH --job-name=jobMPI
+      #SBATCH --err=myJob.err
+      #SBATCH --out=myJob.out
+      #SBATCH --account=<project_account>
+ 
+      module load intel intelmpi
+      srun myprogram < myinput > myoutput
+
+  .. tab-item:: GPU Job
+
+    This SLURM batch script is designed to run a pure OpenMP application on Cienca's HPC clusters. It requests a single node and allocates all available physical CPU cores to a single task, making it ideal for shared-memory parallel programs. The script sets up the environment, loads the necessary modules, and configures OpenMP-specific variables to ensure optimal performance. It is tailored for systems without hyperthreading and can be easily adapted by modifying the number of CPUs per task and other resource parameters.
+
+    .. code-block:: bash
+
+      #!/bin/bash
+
+
+      #SBATCH --job-name=multi_gpu_job              # Descriptive job name
+      #SBATCH --time=04:00:00                       # Maximum wall time (hh:mm:ss)
+      #SBATCH --nodes=4                             # Number of nodes to use
+      #SBATCH --ntasks-per-node=4                   # Number of MPI tasks per node (e.g., 1 per GPU)
+      #SBATCH --cpus-per-task=10                    # Number of CPU cores per task (adjust as needed)
+      #SBATCH --gres=gpu:4                          # Number of GPUs per node (adjust to match hardware)
+      #SBATCH --partition=<gpu_partition>           # GPU-enabled partition
+      #SBATCH --qos=<qos_name>                      # Quality of Service
+      #SBATCH --output=multiGPUJob.out              # File for standard output
+      #SBATCH --error=multiGPUJob.err               # File for standard error
+      #SBATCH --account=<project_account>           # Project account number
+
+      # Load necessary modules (adjust to your environment)
+      module load cuda/12.2                         # Load CUDA toolkit
+      module load openmpi                           # Load MPI implementation
+      module load your_app_dependencies             # Load any other required modules
+
+      # Optional: Set environment variables for performance tuning
+      export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK   # Set OpenMP threads per task
+      export NCCL_DEBUG=INFO                        # Enable NCCL debugging (for multi-GPU communication)
+      
+      # Launch the distributed GPU application  
+      # Replace with your actual command (e.g., mpirun or srun)
+      srun --mpi=pmix ./my_distributed_gpu_app --config config.yaml
+
+Interactive Job Submission with SLURM
+-------------------------------------
+
+SLURM allows users to run jobs interactively using two main methods: ``salloc`` and ``srun``. These methods are useful for debugging, testing, or running short tasks that require real-time interaction.
+
+Using ``salloc``
+^^^^^^^^^^^^^^^^
+
+The ``salloc`` command is used to allocate resources (nodes, cores, GPUs, etc.) for an interactive session. Once the allocation is granted, you can run commands on the allocated compute nodes using ``srun``.
+
+**Key Characteristics:**
+
+- The job is queued and scheduled like a batch job.
+- Once started, the terminal session is connected to the allocated resources.
+- Input/output/error streams are tied to your terminal.
+- You can exit the session using ``exit`` or ``CTRL-D``.
+
+**Important Note:**
+
+Even though you're in an interactive session, your shell prompt may still appear as if you're on the login node. Any command not prefixed with ``srun`` will run on the login node, not the compute node.
+
+**Example:**
+
+.. code-block:: bash
+
+   salloc -N 1 --ntasks-per-node=8
+   squeue -u $USER          # Check if the allocation is ready
+   hostname                 # Runs on the login node
+   srun hostname            # Runs on the allocated compute node
+   exit                     # Ends the interactive session
+
+**Tip:** You can also specify a command directly with ``salloc``:
+
+.. code-block:: bash
+
+   salloc -N 1 --ntasks=8 ./myscript.sh
+
+This will run the script on the allocated resources and return output to your terminal.
+
+Using ``srun --pty``
+^^^^^^^^^^^^^^^^^^^^
+
+The ``srun`` command can also be used to start an interactive shell directly on the allocated compute node.
+
+**Syntax:**
+
+.. code-block:: bash
+
+   srun -N 1 --ntasks-per-node=8 --pty /bin/bash
+
+**Behavior:**
+
+- SLURM allocates the requested resources and launches a shell.
+- Any additional ``srun`` commands inside this shell may hang if no resources are left.
+- To allow multiple ``srun`` commands within the session, use the ``--overlap`` flag.
+
+**Recommendation:**
+
+While ``srun --pty`` is convenient, it is generally recommended to use ``salloc`` for interactive jobs, especially when you plan to run multiple commands or scripts within the session.
+
+**Summary**
+
++----------------+-------------------------------------------------------------+
+| **Method**     | **Description**                                             |
++================+=============================================================+
+| ``salloc``     | Allocates resources and opens an interactive session.       |
+|                | Use ``srun`` inside to run commands on compute nodes.       |
++----------------+-------------------------------------------------------------+
+| ``srun --pty`` | Directly opens a shell on compute nodes.                    |
+|                | Use ``--overlap`` for multiple ``srun`` calls.              |
++----------------+-------------------------------------------------------------+
+
+Monitoring Jobs
+---------------
+
+squeue Command Reference
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``squeue`` command is used to display the status of jobs in a SLURM-managed cluster. It shows jobs that are pending, running, or recently completed.
+
+**Common Options**
+
++--------------------+-------------------------------------------------------------+
+| **Option**         | **Description**                                             |
++====================+=============================================================+
+| ``-u <user>``      | Show jobs for a specific user.                              |
+|                    | Example: ``squeue -u alice``                                |
++--------------------+-------------------------------------------------------------+
+| ``-j <job_id>``    | Show information for a specific job ID.                     |
+|                    | Example: ``squeue -j 123456``                               |
++--------------------+-------------------------------------------------------------+
+| ``-p <partition>`` | Filter jobs by partition (queue).                           |
+|                    | Example: ``squeue -p gpu``                                  |
++--------------------+-------------------------------------------------------------+
+| ``-t <state>``     | Filter jobs by state (e.g., ``R`` for running, ``PD`` for   |
+|                    | pending).                                                   |
++--------------------+-------------------------------------------------------------+
+| ``-o <format>``    | Customize the output format.                                |
++--------------------+-------------------------------------------------------------+
+| ``--sort <fields>``| Sort the output by specified fields.                        |
+|                    | Example: ``--sort=-t`` to sort by time left.                |
++--------------------+-------------------------------------------------------------+
+| ``--start``        | Estimate job start times (useful for pending jobs).         |
++--------------------+-------------------------------------------------------------+
+| ``--help``         | Display help information for ``squeue``.                    |
++--------------------+-------------------------------------------------------------+
+
+**Example: Custom Output Format**
+
+To display a custom set of job details:
+
+.. code-block:: bash
+
+   squeue -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"
+
+This format shows:
+
+- Job ID
+- Partition
+- Job name
+- Username
+- State
+- Time used
+- Number of nodes
+- Reason (why pending or where running)
+
+``squeue`` is a powerful tool for monitoring job status and diagnosing scheduling issues. Combine it with other SLURM commands like ``sinfo`` and ``scontrol`` for full cluster visibility.
+
+
+sinfo
+^^^^^
+
+The ``sinfo`` command provides information about the state of SLURM nodes and partitions.
+
+**Common Options:**
+
++----------------------+-----------------------------------------------------------+
+| **Option**Â Â Â Â Â Â Â Â Â Â  | **Description**Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |
++======================+===========================================================+
+| ``-s``Â Â Â Â Â Â Â Â Â Â Â Â Â Â  | Display a summary of node states.Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |
++----------------------+-----------------------------------------------------------+
+| ``-N``Â Â Â Â Â Â Â Â Â Â Â Â Â Â  | Show information by node rather than by partition.Â Â Â Â Â Â Â  |
++----------------------+-----------------------------------------------------------+
+| ``-p <partition>``Â Â  | Show information for a specific partition.Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |
++----------------------+-----------------------------------------------------------+
+| ``-o <format>``Â Â Â Â Â  | Customize the output format.Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |
++----------------------+-----------------------------------------------------------+
+
+**Example:**
+
+.. code-block:: bash
+
+    sinfo -o "%P %D %t %C"
+
+This shows partition name, number of nodes, state, and CPU allocation.
+
+scontrol
+^^^^^^^^
+
+The ``scontrol`` command is used for querying and modifying SLURM configuration and job details.
+
+**Common Uses:**
+
++-------------------------------+----------------------------------------------------+
+| **Command**Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â    | **Description**Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  |
++===============================+====================================================+
+| ``scontrol show job <id>``    | Display detailed information about a specific job. |
++-------------------------------+----------------------------------------------------+
+| ``scontrol show node <name>`` | Show detailed info about a specific node.Â Â Â Â Â Â     |
++-------------------------------+----------------------------------------------------+
+| ``scontrol hold <job_id>``    | Place a hold on a job to prevent it from starting. |
++-------------------------------+----------------------------------------------------+
+| ``scontrol release <job_id>`` | Release a held job.Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â     |
++-------------------------------+----------------------------------------------------+
+
+**Example:**
+
+.. code-block:: bash
+
+    scontrol show job 123456
+
+This displays detailed job configuration, resource usage, and node assignment.
+
+scancel
+^^^^^^^
+
+The ``scancel`` command is used to **cancel jobs** that are pending, running, or held in the SLURM job queue. It is useful for terminating jobs that are no longer needed or were submitted in error.
+
+**Common Options**
+
+
++----------------------------+-----------------------------------------------------+
+| **Option**                 | **Description**                                     |
++============================+=====================================================+
+| ``scancel <job_id>``       | Cancel a specific job by its job ID.                |
++----------------------------+-----------------------------------------------------+
+| ``-u <user>``              | Cancel all jobs belonging to a specific user.       |
++----------------------------+-----------------------------------------------------+
+| ``-n <job_name>``          | Cancel jobs by job name.                            |
++----------------------------+-----------------------------------------------------+
+| ``-p <partition>``         | Cancel jobs in a specific partition.                |
++----------------------------+-----------------------------------------------------+
+| ``-t <state>``             | Cancel jobs in a specific state (e.g.,``PD``,``R``).|
++----------------------------+-----------------------------------------------------+
+| ``--help``                 | Display help information for ``scancel``.           |
++----------------------------+-----------------------------------------------------+
+
+**Examples**
+
+
+Cancel a specific job by ID:
+
+.. code-block:: bash
+
+   scancel 123456
+
+Cancel all jobs for the current user:
+
+.. code-block:: bash
+
+   scancel -u $USER
+
+Cancel all pending jobs in the GPU partition:
+
+.. code-block:: bash
+
+   scancel -p gpu -t PD
+
+.. note::
+
+  - You must have permission to cancel the job (typically your own jobs).
+  - Use with caution, especially when canceling multiple jobs at once.
+

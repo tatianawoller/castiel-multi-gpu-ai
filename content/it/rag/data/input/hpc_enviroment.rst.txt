@@ -1,0 +1,921 @@
+Environment and Customization
+=============================
+
+The Software Catalog
+--------------------
+
+CINECA offers a variety of third-party applications and community codes that are installed on its HPC systems. 
+Most of the third-party software is installed using software modules mechanism (see The module command section). 
+Information on the available packages and their detailed descriptions are organized in a catalog, 
+divided by discipline (`link <https://www.hpc.cineca.it/systems/software/>`_).
+
+The catalog is also accessible directly on HPC clusters by using the commands ``module`` and ``modmap`` descrived in next sections.
+
+The module command
+------------------
+
+All softwaresÂ installed on the CINECA clusters are available as modules. As default, a set ofÂ basic modules are preloaded in the enviroment at login. To manage modules in the production enviroment, the user can execute the command moduleÂ  with a variety of options. A short description of the most useful module command usage is reported in the following table.
+
+.. list-table:: 
+            :widths: 35 65
+            :header-rows: 1
+
+            * - **Command**
+              - **Action**
+            * - module avail
+              - show the available modules on the machine
+            * - module load <appl>
+              - load the module in the current shell session, 
+
+                preparing the enviroment for the application.
+            * - module load autoload <appl>
+              - load the module and all dependencies in the current session
+            * - module help <appl>
+              - show specific information and basic help on the application
+            * - module list
+              - show the module currently loaded in the shell session
+            * - module purge
+              - unload all the loaded modules
+            * - module unload <appl>
+              - unload a specific module
+
+
+The modmap command
+------------------
+
+For an easy reading, the modules are collected in different profiles. Only the **base** profile is automatically loaded at login.
+``modmap`` is a very useful command to look for a specific module in all the profiles at once.
+It shows at standard output all the modules with the searched name showing in wgicg profile they can be found.
+For example, suppose you are looking for the lammps software:
+
+.. code-block:: bash
+
+   $ modmap -m lammps
+        Profile: archive
+           applications
+                lammps
+                 20220623--openmpi--4.1.4--gcc--11.3.0-cuda-11.8
+        Profile: astro
+        Profile: base
+        Profile: bioinf
+        Profile: chem-phys
+           applications
+                lammps
+                 29aug2024
+                 2aug2023
+                 2aug2023--intel-oneapi-compilers--2023.2.1
+        Profile: deeplrn
+        Profile: eng
+        Profile: geo-inquire
+        Profile: lifesc
+        Profile: meteo
+        Profile: quantum
+        Profile: spoke7
+        Profile: statistics
+
+The output of modmap is showing that several lammps versions are present in the **chem-phys** profile and an old one in the **archive** profile.
+To load the module is now easy:
+
+.. code-block:: bash
+
+   $ module load profile chem-phys
+   $ module load lammps/29aug2024 
+
+Compilers
+---------
+
+You can check the complete list of available compilers on a specific cluster with the command:
+
+.. code-block:: bash
+
+   $ modmap -c compilers
+
+For **GPU compilation** the available compilers are:
+
+* For **NVIDIA GPUs** cuda-aware
+
+  * GNU Compilers Collection (GCC) 
+  * NVIDIA nvhpc (ex PGI)
+  * NVIDIA cuda
+
+For **CPU compilation** the available compilers are:
+
+* For **INTEL CPUs**
+
+  * Intel oneAPI compilers (x and classic compilers) 
+  * GNU Compilers Collection (GCC) 
+
+* For **AMD CPUs**
+
+  * AOCC compilers
+  * GNU Compilers Collection (GCC) 
+
+GCC
+^^^
+
+.. tab-set::
+
+   .. tab-item:: **Serial**
+
+      The GNU compilers are always available. A GCC version is available on the system (gcc --version ) without the need to load any module. In the module environment you can find more recent version though:
+
+      .. code-block:: bash
+
+         $ modmap -m gcc
+
+      To use a specific version:
+
+      .. code-block:: bash
+
+         $ module load gcc/<version>
+
+      The name of the GNU compilers are:
+
+      * **gfortran**: fully compliant with the Fortran 95 Standard and includes legacy F77 support
+
+      * **gcc**: C compiler
+
+      * **g++**: C++ compiler
+
+      The gcc module loading set a specific environment variable for each compiler:
+
+      * **CC**: gcc
+
+      * **CXX**: g++
+
+      * **FC**: gfortran
+
+      * **F90**: gfortran
+
+      * **F77**: gfortran
+
+      The documentation can be obtained with the "man" command after loading the gcc module:
+
+      .. code-block:: bash
+
+         $ module load gcc/<version>
+
+      On the **accelerated clusters** the available gcc modules support the offloading to the device. For NVIDIA GPUs the target is nvptx.
+
+      On the **cluster provided with accelerated and non-accelerated partitions** that share the same modules environment the available offloading gcc modules can be used on both. As a result there is one only installation of a specific gcc version that supports the offload-device and you can use also on CPUs partition.
+
+   .. tab-item:: **MPI wrappers**
+
+      The **GCC OpenMPI** implementation is always available on accelerated and non accelerated clusters.
+
+      The version installed for NVIDIA GPUs is configured to support CUDA, but you can use it also for partitions non accelerated of a cluster. In this case, however, it is **highly recommended** to compile with the MPI implementation specific for their architecture (e.g intel-oneapi-mpi module for INTEL CPUs).
+
+      You can check the list of available OpenMPI modules on a specific cluster with the command:
+
+      .. code-block:: bash
+
+         $ modmap -m openmpi
+
+      To use a specific one:
+
+      .. code-block:: bash
+
+         $ module load openmpi/<version>
+
+      After loading a specific GCC openmpi module select the MPI compiler wrapper for Fortran, C or C++ codes.
+
+      * **mpicc**: gcc compiler mpi wrappers
+
+      * **mpic++** **mpiCC** **mpicxx**: g++ compiler mpi wrappers
+
+      * **mpif77** **mpif90** **mpifort**: gfortran compiler mpi wrappers
+
+      e.g. Compiling C code:
+
+      .. code-block:: bash
+
+         $ module load openmpi/<version>
+      
+         $ mpicc -o myexec  myprog.c 
+
+NVIDIA nvhpc 
+^^^^^^^^^^^^
+
+(ex PORTLAND PGI + NVIDIA CUDA)
+
+.. tab-set::
+
+   .. tab-item:: **Serial**
+
+         The NVHPC compilers are always available on the NVIDIA GPUs clusters. In the module environment you can find more recent version though:
+
+         .. code-block:: bash
+
+            $ modmap -m nvhpc
+
+         To use a specific version:
+
+         .. code-block:: bash
+
+            $ module load nvhpc/<version>
+
+         The name of the NVHPC compilers are:
+
+         * **nvc**: Compile C source files (C11 compiler. It supports GPU programming with OpenACC, and supports multicore CPU programming with OpenACC and OpenMP)
+
+         * **nvc++**: Compile C++ source files (C++17 compiler. It supports GPU programming with C++17 parallel algorithms (pSTL) and OpenACC, and supports multicore CPU programming with OpenACC and OpenMP)
+
+         * **nvfortran**: Compile FORTRAN source files (supports ISO Fortran 2003 and many features of ISO Fortran 2008. It supports GPU programming with CUDA Fortran and OpenACC, and supports multicore CPU programming with OpenACC and OpenMP)
+
+         * **nvcc**: CUDA C and CUDA C++ compiler driver for NVIDIA GPUs
+
+         As of August 5, 2020, the "PGI Compilers and Tools" technology is a part of the NVIDIA HPC SDK product, available as a free download from NVIDIA. For legacy reasons, the NVIDIA nvhpc suite also offers the PGI C, C++, and Fortran compilers with their original names, as follows.
+
+         * **pgcc**: Compile C source files.
+
+         * **pgc++**: Compile C++ source files.
+
+         * **pgf77**: Compile FORTRAN77 source files.
+
+         * **pgf90**: Compile FORTRAN90 source files.
+
+         * **pgf95**: Compile FORTRAN95 source files.
+
+         * **pgfortran**: Compile PGI Fortran
+
+         The documentation can be obtained with the "man" command after loading the gcc module:
+
+         .. code-block:: bash
+
+            $ module load nvhpc/<version>
+
+            $ man nvc
+
+         To enable CUDA C++ or CUDA Fortran, and link with the CUDA runtime libraries, use the -cuda option (-Mcuda is deprecated). Use the -gpu option to tailor the compilation of target accelerator regions.
+
+         The OpenACC parallelization is enabled by the -acc flag. GPU targeting and code generation can be controlled by adding the -â gpu flag to the compiler command line.
+
+         The OpenMP parallelization is enabled by the -mp compiler option. The GPU offload via OpenMP is enabled by the -mp=gpu option.
+
+   .. tab-item:: **MPI wrappers**
+
+         The **NVHPC MPI** implementation is always available on the clusters provided with NVIDIA gpus.
+
+         The OpenMPI nvhpc version, if installed, is available as **openmpi/<nvhpc-version>** module. The version built-in from NVIDIA is available within nvhpc installation as **hpcx-mpi/<version>** module.
+
+         You can check the list of available NVHPC OpenMPI/hpcx-mpi modules on a specific cluster with the command:
+
+         .. code-block:: bash
+
+            $ modmap -m openmpi OR hpcx-mpi
+
+         To use a specific one:
+
+         .. code-block:: bash
+
+            $ module load openmpi/<version> OR hpcx-mpi/<version>
+
+         After loading a specific nvhpc openmpi module select the MPI compiler wrapper for Fortran, C or C++ codes.
+
+         * **mpicc**: nvc compiler mpi wrappers
+
+         * **mpic++** **mpiCC** **mpicxx**: nvc++ compiler mpi wrappers
+
+         * **mpif77** **mpif90** **mpifort**: nvfortran compiler mpi wrappers
+
+         e.g. Compiling C code:
+
+         .. code-block:: bash
+
+            $ module load openmpi/<version> OR hpcx-mpi/<version>
+
+            $ mpicc -o myexec  myprog.c (uses the nvc compiler)
+
+Intel oneAPI
+^^^^^^^^^^^^
+
+.. tab-set::
+
+   .. tab-item:: **Serial**
+
+         The Intel compilers are the best choice on the Intel CPUs clusters. In the module environment you can find more recent version though:
+
+         .. code-block:: bash
+
+            $ modmap -m intel-oneapi-compilers
+
+         To use a specific version:
+
+         .. code-block:: bash
+
+            $ module load intel-oneapi-compilers/<version>
+
+         Starting from 2021 version up to 2023 intel-oneapi-compilers module makes available two types of compilers, classic and oneAPI.
+
+         Intel **classic** compilers:
+
+         * **icc**: Compile C source files 
+         * **icpc**: Compile C++ source files 
+         * **ifort**: Compile FORTRAN source files 
+
+         LLVM-based Intel **oneAPI** compilers:
+
+         * **icx**: Compile C source files 
+         * **icpx**: Compile C++ source files 
+         * **ifx**: Compile FORTRAN source files 
+         * **dpcpp**: Compile C++ source files with SYCL extensions
+
+         Starting from 2024 version intel-oneapi-compilers module makes available only oneAPI compilers set and ifort classic compiler which is no longer available from 2025 version.
+
+         In order to use the Intel classic compilers load:
+
+         .. code-block:: bash
+
+            $ module load intel-oneapi-compilers-classic
+
+         e.g. Compiling Fortran code with oneAPI:
+
+         .. code-block:: bash
+
+            $ module load intel-oneapi-compilers/<version>
+
+            $ ifx -o myexec myprog.f90
+
+   .. tab-item:: **MPI wrappers**
+
+         The Intel MPI implementation is the best choice on the Intel CPUs clusters. In the module environment you can find more recent version though:
+
+         .. code-block:: bash
+
+            $ modmap -m intel-oneapi-mpi
+
+         To use a specific module:
+
+         .. code-block:: bash
+
+            $ module load intel-oneapi-mpi/<version>
+
+         This module makes available classic and oneAPI compilers wrappers.
+
+         After loading a specific intel-oneapi-mpi module select the MPI compiler wrapper, classic or oneaAPI, for Fortran, C or C++ code.
+
+         Intel **OneAPI** compilers wrappers: 
+
+         * **mpiicx** (C code)
+         * **mpiicpx** (C++ code)
+         * **mpiifx** (Fortran code)
+
+         Intel **classic** compilers wrappers: 
+
+         * **mpiifort** (Fortran code)
+         * **mpiicc**  (C code)
+         * **mpiicpc**  (C++ code)
+
+         Intel **GNU** compilers wrappers: 
+
+         * **mpifc**, **mpif77**, **mpif90** (Fortran MPI wrapper)
+         * **mpicc** (C MPI wrapper)
+         * **mpicxx**: (C++ MPI wrapper)
+
+         e.g. Compiling C code:
+
+         .. code-block:: bash
+
+            $ module load intel-oneapi-mpi/<version>
+
+            $ mpiicx -o myexec  myprog.c 
+
+AMD AOCC
+^^^^^^^^^^^^
+
+.. tab-set::
+
+   .. tab-item:: **Serial**
+
+         The AOCC compilers are available on the AMD CPUs clusters. In the module environment you can find more recent version though:
+
+         .. code-block:: bash
+
+            $ modmap -m aocc
+
+         To use a specific version:
+
+         .. code-block:: bash
+
+            $ module load aocc/<version>
+
+         The AOCC compilers allow the development for x86 applications written in C, C++, and Fortran.
+
+         AMD **AOCC** compilers:
+
+         * **clang**: Compile C source files 
+         * **clang++**: Compile C++ source files 
+         * **flang**: Compile FORTRAN source files 
+
+         e.g. Compiling Fortran code with AOCC:
+
+         .. code-block:: bash
+
+            $ module load aocc/<version>
+
+            $ flang [command line flags] -o myexec myprog.f90  
+
+         AOCC compiler offers target-dependent and target-independent optimizations, with a particular focus on AMD "Zen" processors.
+
+         You can read more about these in the command line option AMD section https://docs.amd.com/r/en-US/57222-AOCC-user-guide/Command-line-Options
+         
+   .. tab-item:: **MPI wrappers**
+
+      The **AOCC OpenMPI** implementation is available on AMD clusters.
+
+      You can check the list of available OpenMPI modules on a specific cluster with the command:
+
+      .. code-block:: bash
+
+         $ modmap -m openmpi
+
+      To use a specific one:
+
+      .. code-block:: bash
+
+         $ module load openmpi/<version>
+
+      After loading a specific AOCC openmpi module select the MPI compiler wrapper for Fortran, C or C++ codes.
+
+      * **mpicc**: gcc compiler mpi wrappers
+
+      * **mpic++** **mpiCC** **mpicxx**: g++ compiler mpi wrappers
+
+      * **mpif77** **mpif90** **mpifort**: gfortran compiler mpi wrappers
+
+      e.g. Compiling C code:
+
+      .. code-block:: bash
+
+         $ module load openmpi/<version>
+      
+         $ mpicc -o myexec  myprog.c 
+         
+
+Basic MPI execution
+^^^^^^^^^^^^^^^^^^^
+
+To test if your parallel executable works, you can execute it with mpirun on the login node and with a single process:
+
+.. code-block:: bash
+
+   module load <mpi module used to install your exec>
+
+   mpirun ./myexec 
+
+To run it in the parallel way you have to allocate the compute nodes via interactive job or sbatch job and execute it with mpirun or srun launcher . 
+
+**Example:** 2 GPU compute nodes allocation and 2 tasks execution
+
+.. tab-set::
+
+   .. tab-item:: **via interactive job (salloc):** 
+
+      .. code-block:: bash
+
+         module load <mpi module used to install your exec>
+
+         salloc -N 2 --ntasks-per-node=1 --cpus-per-task=1 --gres=gpu:1 -A <name account> --time=<execution time> --partition=<partition name> --qos=<qos name>   
+
+         srun -n 2 ./myexec    
+
+   .. tab-item:: **via interactive job (srun):** 
+
+      .. code-block:: bash
+
+         module load <mpi module used to install your exec>  
+
+         srun -N 2 --ntasks-per-node=1 --cpus-per-task=1 --gres=gpu:1 -A <name account> --time=<execution time> --partition=<partition name> --qos=<qos name>  --pty /bin/bash
+
+         mpirun -n 2 ./myexec
+
+   .. tab-item:: **via sbatch job:**
+
+      .. code-block:: bash
+
+         sbatch my_batch_script.sh 
+
+         cat my_batch_script.sh
+
+         #!/bin/sh
+         #SBATCH --job-name osu
+         #SBATCH -N2 --ntasks-per-node=1
+         #SBATCH --cpus-per-task=1
+         #SBATCH --gres=gpu:1
+         #SBATCH --time=<hh:mm:ss>
+         #SBATCH --account= <account name>
+         #SBATCH --partition=<partition name>
+         #SBATCH --qos=<qos name if necessary>
+
+         module load <mpi module used to install your exec> 
+
+         mpirun ./myexec or srun ./myexec
+
+
+Totalview
+^^^^^^^^^
+
+This document introduces the user how to launch totalview through an :ref:`general/access:Access via Remote Visualization (**RCM**)` session.
+
+..  Cineca provides the user with an easy tool to establish a graphic session with our systems: RCM. All the software that comes with a graphic user interface (GUI) can be used within an RCM session. In this regard, Totalview makes no exception and can be easily used in conjunction with RCM to establish a debugging session of a parallel code.
+
+With respect to other GUIs that can be run on RCM, Totalview is a little peculiar and must be run directly on the nodes that execute the parallel code. In the following, we will detail how to establish a Totalview debugging session through RCM with a SLURM job.
+
+.. Please refer to this page for the instructions on how to use RCM; for most of the cases is as simple as: 1) download the tool, 2) launch the executable.
+
+Once you have established a connection through RCM with one of our systems, GALILEO100 or Leonardo, please follow the instructions below.
+
+
+.. commented since marconi outdated
+
+    MARCONI (ahem)
+    ++++++++++++++
+    
+    Once connected you should have a desktop session open. Now open a terminal following "Applications -> System Tools -> Terminal". When done, a terminal pops-up and you can use it as you do normally with a ssh connection. Now let's go through the operations required to launch a Totalview job.
+    
+    
+    1. **Get the DISPLAY number**
+    
+        On a terminal session within RCM type the command:
+        
+        .. code-block:: bash
+        
+            $ echo $DISPLAY
+               :8
+        
+        This will return a display number to use for connecting your totalview job with the RCM session.
+    
+    2. **Prepare a batch script (job.sh)**
+    
+        .. code-block:: bash
+            :emphasize-lines: 15
+        
+            #!/bin/bash
+            #SBATCH -e totaljob.err
+            #SBATCH -o totaljob.out
+            #SBATCH -A <your_account>
+            #SBATCH -N 1
+            #SBATCH -t 00:10:00
+            #SBATCH -p skl_usr_dbg
+            
+            
+            module load autoload intelmpi
+            module load totalview
+            
+            #set the DISPLAY so as to use the same opened in the RCM session. This is just an example, use your own hostname and display setting.
+            
+            export DISPLAY="r161c001s02:8"
+            
+            totalview srun ./my_executable
+        
+        
+        Highlighted in the above example, we have told the Totalview user interface to open on the current VNC session (opened automatically by RCM). Please refer to the above section on how to get the correct DISPLAY number.
+    
+    3. **Submit the job**
+        
+        Now you can submit the above script to the SLURM scheduler. Once it becomes running, the Totalview user interface will pop-up and you will be able to debug your code:
+        
+            .. code-block:: bash
+        
+                $ sbatch job.sh
+
+    GALILEO100
+    ++++++++++
+
+    .. questa guida era giÃ  perfetta, sento il tocco di isa qui
+
+.. Once connected on one of our machine via RCM, you should have a desktop session open. Now open a terminal following "Applications -> System Tools -> Terminal". When done, a terminal pops-up and you can use it as you do normally with a ssh connection. Now let's go through the operations required to launch a Totalview job.  As in the example above, once connected to GALILEO100 with RCM,  open a terminal (start -> terminal). Then follow this set of instructions described below.
+
+.. dropdown:: 1) Setup the .tvdrc file - only the first time
+   :name: setup_tvdrc
+   :animate: fade-in-slide-down
+   :color: light
+
+    The first time you estabilish a Totalview session, a folder named .totalview will be created in your $HOME (it is not visible with the standard "ls" command, you have to add the flag -a for the hidden directories and files). Inside it, create a text file named .tvdrc, that should contain the following lines documented also in the `official Slurm manual <https://slurm.schedmd.com/faq.html#totalview>`_:
+    
+    .. code-block:: bash
+    
+        dset -set_as_default TV::bulk_launch_enabled true
+        dset -set_as_default TV::bulk_launch_string {srun --mem-per-cpu=0 -N%N -n%N -w`awk -F. 'BEGIN {ORS=","} {if (NR==%N) ORS=""; print $1}' %t1` -l --input=none %B/tvdsvr%K -callback_host %H -callback_ports %L -set_pws %P -verbosity %V -working_directory %D %F}
+        dset -set_as_default TV::bulk_launch_tmpfile1_host_lines {%R}
+
+.. dropdown:: 2) Prepare the job (job.sh script) and submit it
+   :name: g100_job_script
+   :animate: fade-in-slide-down
+   :color: light
+
+   Example ``job.sh`` for GALILEO100:
+
+    .. code-block:: bash
+    
+        #!/bin/bash
+        
+        #SBATCH -t 30:00
+        #SBATCH -N 1
+        #SBATCH -o totaljob.out
+        #SBATCH -e totaljob.err
+        #SBATCH -A <your_account>
+        #SBATCH -p g100_usr_prod
+        
+        module load totalview
+        module load <modules-needed-to-your_executable>
+        
+        tvconnect srun ./your_executable
+
+    Submit the job via:
+
+    .. code-block:: bash
+    
+        $ sbatch job.sh
+
+.. dropdown:: 3) Open a Totalview terminal
+   :name: g100_open_totalview
+   :animate: fade-in-slide-down
+   :color: light
+
+    In the RCM shell, load the module of Totalview and launch "totalview" to open the GUI. When the job starts, you will be asked by a prompt to connect to it and you will see that the tool is trying to debug the "srun" command.
+
+.. dropdown:: 4) Launch the simulation
+   :name: g100_launch
+   :animate: fade-in-slide-down
+   :color: light
+
+    Press the green "Go" button to launch the simulation. Eventually, a prompt will ask you if you want to stop the parallel job: if you choose "Yes", you will finally see the main code of the executable you want to debug and you can start working on it.
+
+Installing packages with python environment
+-------------------------------------------
+
+In Cineca clusters you can find the available versions for python and py-mpi4py with the command ``modmap -m python`` and ``modmap -m py-mpi4py``, respectively. In case you need to install packages through a python virtual environment you can do:
+
+.. code-block:: bash
+
+   $ module load python/<version>
+   # In case you need py-mpi4py
+   $ module load py-mpi4py/<version>
+   $ python -m venv my_env_test
+   $ source my_env_test/bin/activate
+   $ pip install <package>
+   
+
+.. Note::
+
+   * my_env_test: choose an arbitrary name for your personal virtual env. 
+     
+   * It is advised to create your personal envs in your $WORK area, since the $HOME disk quota is limited to 50 GB.
+
+   * Once you source your virtual environment you will see on your shell (before the login node name), something like this: ``(my_env_test) [otrocon1@login02 UserGuideTests]$`` .
+
+   * Once you finish to work on your env, you can deactivate it with the command ``deactivate``.
+
+
+   * In case you need specific python or artificial intelligence packages optimized for Cineca's clusters you can refer to the section: **Cineca-ai** and **Cineca-hpyc modules**.
+
+
+.. grid:: 2
+
+   .. grid-item-card:: **Cineca-ai**
+      :link: cineca-ai_card
+      :link-type: ref
+
+
+   .. grid-item-card:: **Cineca-hpyc**
+      :link: cineca-hpyc_card
+      :link-type: ref
+
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   hpc_cineca-ai-hpyc
+
+
+SPACK
+-----
+
+To assist users in customizing their production environment by installing fresh software, we offer a powerful tool named Spack. Spack is a multi-platform package manager that facilitates the easy installation of multiple versions and configurations of software. Below, you will find a step-by-step guide to install software using Spack. For a comprehensive and detailed guide, please refer to the `official Spack documentation <https://spack.readthedocs.io/>`_.
+
+
+Quick usage
+^^^^^^^^^^^
+
+.. code-block:: bash
+
+    $ ml spack
+    $ spack spec -Il <package>  # to check current specs
+    $ spack install <package>   # to actually install
+    $ ml <package>              # load the created module
+
+For a fine-grained control, you can select the Spack version (see :ref:`Loading_the_spack_module_available_on_the_cluster`), and you can add specs (see :ref:`Variants_and_dependencies`) to the ``spec`` and the ``install`` commands (see :ref:`Spec_command`).  It may happen that the module created by Spack will miss some dependencies, you can create the missing modulefiles via ``spack module tcl refresh`` (see :ref:`Module_command_and_Spack_managing`).
+
+Additional useful steps are:
+
+- check beforehand if the package exists in Spack and what is its *Spack name* (see :ref:`Listing_recipe`)
+- check if the package or its dependencies are already installed (:ref:`Listing_installed`)
+
+Installing a new package
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. dropdown:: Loading the preconfigured Spack available on the cluster
+   :name: Loading_the_spack_module_available_on_the_cluster
+   :animate: fade-in-slide-down
+   :color: light
+
+    We provide a module to load a pre-configured Spack instance:
+    
+    .. code-block:: bash
+    
+        $ modmap -m spack
+        $ module load spack/<version>
+
+    The directory ``/spack-<version>`` is automatically created into a default space, containing some sub-directories created and used by Spack during the package installation. On GALILEO100, the default area is ``$WORK/$USER``, while on LEONARDO is ``$PUBLIC``. You will find, for example on LEONARDO:
+
+    - software installation root: ``$PUBLIC/spack-<version>/install``
+    - modulefiles location: ``$PUBLIC/spack-<version>/modules``
+    - user scope: ``$PUBLIC/spack-<version>/user_cache``
+    - sources cache: ``$PUBLIC/spack-<version>/cache``
+    
+    For GALILEO100 users, please be aware that ``$WORK`` space will be removed after six months since project expiration. If you want to define different paths for installations, modules, user scope directories, and cache, please refer to Spack manual (a simple workaround is to redefine ``WORK`` to a different path, e.g. ``export WORK=/your/different/path``, before loading Spack module).
+
+.. dropdown:: Listing the software that can be installed via Spack
+   :name: Listing_recipe
+   :animate: fade-in-slide-down
+   :color: light
+
+    You can check if the software package you want to install is known to Spack via the command ``spack list``, which will print out the list of all the packages you can install via Spack. You can also specify the name of the package (or only part of its name):
+    
+    .. code-block:: bash
+    
+        $ spack list <package_name>
+        $ spack list <partial_package_name>
+    
+    or
+    
+    .. code-block:: bash
+    
+        $ spack list | grep <package_name>
+
+.. dropdown:: Find already installed packages
+   :name: Listing_installed
+   :animate: fade-in-slide-down
+   :color: light
+
+    You will find a suite of compilers, libraries, tools and applications already installed by Cineca staff via Spack. It is strongly recommended you use them to install additional software.
+
+    Find the already installed packages
+    
+    .. code-block:: bash
+    
+        $ spack find
+    
+    Check if a specific package is already installed or what packages have been already installed to provide a specific `virtual package <https://spack.readthedocs.io/en/latest/basic_usage.html#sec-virtual-dependencies>`_ (e.g mpi)
+    
+    .. code-block:: bash
+    
+        $ spack find <package_name>
+        $ spack find <virtual_package_name>
+    
+    List the packages already installedÂ and see e.g. the used variants (-v), dependencies (-d), the installation path (-p) and the hash (-l). The meaning of the hash is discussed in the next paragraph.
+     
+    .. code-block:: bash
+    
+        $ spack find -ldvp <package>
+    
+    You can also list the packages already installed with a specific variant
+    
+    .. code-block:: bash
+    
+        $ spack find -l +<variant>
+        e.g. $ spack find -l +cuda
+    
+    or which depends on a specific package (e.g openmpi) or a generic virtual package (e.g. mpi)
+    
+    .. code-block:: bash
+    
+        $ spack find -l ^<package_name>
+        e.g. $ spack find -l ^openmpi
+        e.g. $ spack find -l ^mpi
+    
+    or installed with a specific compiler
+    
+    .. code-block:: bash
+    
+        $ spack find %<compiler>
+    
+.. dropdown:: Add a new compiler to Spack compilers
+   :name: add_compiler
+   :animate: fade-in-slide-down
+   :color: light
+
+    The list of all the compilers already installed and ready to be used can be seen with
+    
+    .. code-block:: bash
+    
+        $ spack compilers
+    
+    To add a compiler to the ones known to Spack:
+    
+    .. code-block:: bash
+    
+        $ module load <compiler>
+        $ spack compiler add
+        $ module unload <compiler>
+
+.. dropdown:: Variants and dependencies
+   :name: Variants_and_dependencies
+   :animate: fade-in-slide-down
+   :color: light
+
+   If the package of your interest is listed by ``spack list``, you can inspect its build *variants* via
+   
+   .. code-block:: bash
+   
+       $ spack info <package_name>
+   
+   You can activate (``+``) or deactivate (``-``) variants via
+   
+   .. code-block:: bash
+   
+       $ spack spec -Il <package_name> +variant_1 -variant_2 variant_3=value
+       $ spack install <package_name> +variant_1 -variant_2 variant_3=value
+   
+   and also for a dependency
+   
+   .. code-block:: bash
+   
+       $ spack spec -Il <package_name> ^"<dependency_package_name> +variant_1 -variant_2 variant_3=value"
+       $ spack install <package_name> ^"<dependency_package_name> +variant_1 -variant_2 variant_3=value"
+
+.. _Spec_command:
+
+Spec and install commands
++++++++++++++++++++++++++
+
+In order to install a package with the Spack module, you have to select for it a version (``@``), a compiler (``%``), the dependencies (``^``) and the building variants (``+``/``-``). The combination of all these parameters is the *spec* with which the package will be installed.
+
+If you donât select any combination during the installation, a default *spec* is selected. Before installing a package, it is strongly recommended to check the default *spec* with which the package would be installed:
+
+.. code-block:: bash
+
+    $ spack spec -Il <package_name>
+
+The suggested options to the ``spec`` command used in the example above are: ``-I`` (install), which shows the installation status of the package and its dependencies with a symbol preceding the hash of the *spec* (``-`` not installed, ``+/^`` installed/installed from another user); ``-l`` (long) which shows the unique identifier ("hash") of the package installation (e.g. aouyzha).
+
+.. Important::
+
+    On Cineca clusters itâs recommended to execute always ``spec`` command before installing a package to make sure its dependencies are satisfied with Cineca installations (``^``) where available. The Cineca installations are optimised and tested for the architecture of the specific cluster.  This is especially true for e.g. openmpi.
+
+.. Note::
+
+    Even when a Cineca installation is available to satisfy a dependency, the default *spec* for that dependency may differ, thus a symbol ``-`` may be shown. If possible, force the *spec* to match the one corresponding to the Cineca one (so the symbol will become ``^``). A simple way to force this is to force the dependency via its hash:
+
+    .. code-block:: bash
+    
+         $ spack spec -Il <package_name> ^/hash
+         $ spack install <package_name> ^/hash
+         e.g. $ spack spec -Il <package_name> ^/aouyzha
+         e.g. $ spack install <package_name> ^/aouyzha
+
+
+
+Once you select the *spec*, a ``spack install`` is all you need:
+
+.. code-block:: bash
+
+    $ # default spec
+    $ spack install <package_name>
+    $
+    $ # custom spec
+    $ spack install <package_name>@<version> +/~/<variant> <variant>=<value> %<compiler>@<version> ^<dependency_name>
+
+.. _Module_command_and_Spack_managing:
+
+Module command and Spack managing
++++++++++++++++++++++++++++++++++
+
+You can load the installed software by loading the correspondent modulefile Spack automatically created. To force its creation, you can run:
+
+.. code-block:: bash
+
+    $ spack module tcl refresh --upstream-modules <package_name>
+
+Then you can find and load the new modulefile by adding the "modules" folder to the search path via ``module use`` (this is done implicitly also when loading Spack), e.g. on Leonardo:
+
+.. code-block:: bash
+
+    $ module use $PUBLIC/spack-<version>/modules
+    $ module av <package_module>
+    $ module load <package_module>
+
+Please refer to section :ref:`Loading_the_spack_module_available_on_the_cluster` to know the correct path to the modulefiles folder.
+
+.. silvia voleva gli env, ma era incerta se fornire quelli di propro in macchina (magari li prendono mentre li stiamo editando), o via git (mi piace di piÃ¹, ma al momento non ne so nulla, silvia proponeva una call di aggiornamento, aspetto prima di fare cose)
+
+.. io userei direttamente $SPACK_ROOT/../../ccs<TAB>/spack<TAB>/env<TAB>, ma diventa troppo confuso per un utente.  ma se non posso riferirmi ai nostri env, non vale la pena
+
+    .. _Env:
+    
+    Spack environments
+    ------------------
+    
+    A Spack environment allows users to group software specs for building them in a coherent and reproducible manner.  If you have many packages that needs to share the same dependencies (e.g. the same MPI), then Spack environments may be a valuable option.  For a comprehensive guide, please refer to the `official Spack documentation <https://spack.readthedocs.io/>`_. Here, it will suffice 

@@ -1,0 +1,23 @@
+.. _dns_guidelines_card:
+
+DNS guidelines
+==============
+
+DNS name
+--------
+
+It is possible to ask CINECA for a DNS name association to the virtual machine by sending an email to superc@cineca.it. 
+
+In CINECA DNS, it is necessary to comply with the following rules:
+
+- The **reverse** of the Floating IP (PTR record) must be set to the hostname of the VM, with the following naming convention:
+  
+   - for external users: <VM-name>.ext.cineca.it  
+   - for CINECA staff: <VM-name>.cineca.it 
+  
+- The **record A** in the DNS is set accordingly to the previous point.
+- If the service should be exposed with a different name, you can ask to set the **CNAME** with the chosen different name. If no other information is provided, only the record A will be set. 
+
+Additionally, you might set up a CNAME with your DNS provider of choice. 
+
+It is not possible to set the **PTR record** in CINECA DNS, if the record A has been set on an external DNS.

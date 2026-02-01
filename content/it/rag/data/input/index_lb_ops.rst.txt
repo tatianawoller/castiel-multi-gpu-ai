@@ -1,0 +1,20 @@
+.. _load_balancer_ops_card:
+
+LoadBalancer operations
+=======================
+
+For general information on the compute component, visit the :ref:`cloud/os_overview/os_components/load_balancers:load balancer` page. 
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   
+   lb_create
+
+.. card:: |osoctavia| **Load balancer: create**
+      :link: lb_create_card
+      :link-type: ref
+
+.. |osoctavia| image:: /cloud/_img/octavia_logo.png
+   :width: 35px
+   :class: no-scaled-link

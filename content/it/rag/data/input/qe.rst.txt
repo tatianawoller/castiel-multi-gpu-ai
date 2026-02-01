@@ -1,0 +1,126 @@
+.. _quantum_espresso_card:
+
+QuantumESPRESSO
+===============
+
+The following guide describes how to load, configure and use QuantumESPRESSO @ CINECA's cluster.
+QuantumESPRESSO is available on :ref:`hpc/leonardo:Leonardo` and :ref:`hpc/galileo:Galileo100` clusters.
+
+Relevant links
+^^^^^^^^^^^^^^
+
+- QE repository: https://gitlab.com/QEF/q-e.git
+- MaX benchmarks: https://gitlab.com/max-centre/benchmarks-max3.git
+- JUBE xmls: https://gitlab.com/max-centre/JUBE4MaX.git
+- spack recipe: https://gitlab.com/spack/spack/-/blob/develop/var/spack/repos/builtin.mock/packages/quantum-espresso/package.py
+
+Modules
+^^^^^^^
+
+CPU-based and GPU-based machines deploy QuantumESPRESSO with different software stacks, to fully exploit the underlying hardware. In particular:
+
+- **Intel/Oneapi** compiler and MPI implementation on G100 and Leonardo DCGP, plus **MKL** for FFT, BLAS/LAPACK and SCALAPACK
+- **NVHPC** compiler and **OpenMPI/HPCX-MPI** on Leonardo Booster, plus **OpenBLAS** and **FFTW** libraries.
+
+Installations based on gcc compiler do not provide performance, and are provided for postprocessing executables.
+
+Alternative Installations
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you wish installing your own version of QuantumESPRESSO, we suggesting using CMake and the options provided in the `Wiki of the official repository <https://gitlab.com/QEF/q-e/-/wikis/Developers/CMake-build-system>`_ for the CINECA cluster in use. 
+
+Parallelization strategies
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+QuantumESPRESSO supports different parallelization strategies. 
+
+- R&G (`-npw` or no options) processes to distribute real/reciprocal spaces
+- pools (`-nk`) to distribute k-points
+- images (`-ni`) to distribute irreducible representations or q-points in a dispersion
+- band processes (`-nbnd`) to distribute the Kohn-Sham states
+- linear algebra processes (auto) to distribute diagonalization, via scalapack or custom algorithm. For GPU installations, the diagonalization is done on a single GPU (scalapack are not used
+
+We suggest the following for optimal performance on Leonardo Booster:
+
+- prioritize pools over R&G , in particular for workloads with hundreds of planes or less in the z-direction, also for intra-node distribution. 
+- The minimum number of k-points per pool (kunit) in PWSCF is the number of k-points (`kunit=1`), while in phonon is usually `kunit=2`, except the following cases: (i) lgamma and not noncolin or domag: `kunit=1` (ii) not lgamma but noncolin and domag: `kunit=4`. 
+- Images implements independent calculations but they might be affected by imbalanced workload, so a mixture of images and poolsusually provides best performances.
+
+More detailed information about parallelization strategies can be found on this `link <https://qe-on-leonardo.readthedocs.io/en/latest/usage.html>`_
+
+GPU performance considerations and troubleshooting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Mapping and binding
+"""""""""""""""""""
+
+If you are using the node in exclusive mode, distribute the resources among MPI tasks (usually 1 MPI task per GPU) as follows
+
+1. Set SLURM options to ask for 8 cpus per task
+
+.. code-block::
+
+        #SLURM --nodes=<your-node-number>
+        #SLURM --ntasks-per-node=4
+        #SLURM --cpus-per-task=8
+
+2. Launch the MPI application by mapping the tasks over the full node with 8 cpus per task. The following code snippets show the command line for mpirun and srun:
+
+.. code-block::
+
+        mpirun --map-by node:PE=$SLURM_CPUS_PER_TASK --rank by core pw.x
+
+.. code-block::
+
+        srun --cpus-per-task=$SLURM_CPUS_PER_TASK --cpu-bind=cores pw.x
+
+3. MPI-GPU binding is done by source code, so an external binding with `CUDA_VISIBLE_DEVICES` is not needed.
+
+Multi-node multi-GPU runs
+"""""""""""""""""""""""""
+
+If your workload requires **multi-node distribution** due to memory constrains on GPUs, we suggest testing the following environment variables to improve performnaces.
+
+**Memory issues during SCF loop (OOM)**
+
+Your code crashes after some iterations steps in the SCF loop. Instead of increasing the number of nodes, try adding the folliwing environment variable in your jobscript.
+
+.. code-block:: matlabsession
+
+        export UCX_TLS=^cuda_ipc
+
+This error is due to handles automatically created by the MPI library when calling Isend+Irecv*Waitall. 
+
+.. note::
+     Do not export this environment variable if using a number of R&G processes less or equal to 4.
+
+**Increase multi-node BW**
+
+If your code distributes FFTs across multiple nodes, the MPI installations might not use all the NICs available for inter-node communications. Try interposing this script between the mpi launcher and the executable
+
+.. code-block:: 
+
+        #!/bin/bash
+        # Replace with OMPI_COMM_WORLD_LOCAL_RANK if using mpirun
+        case $(( ${SLURM_LOCALID} )) in
+        0) export UCX_NET_DEVICES=mlx5_0:1 CUDA_VISIBLE_DEVICES=0  ;;
+        1) export UCX_NET_DEVICES=mlx5_1:1 CUDA_VISIBLE_DEVICES=1  ;;
+        2) export UCX_NET_DEVICES=mlx5_2:1 CUDA_VISIBLE_DEVICES=2  ;;
+        3) export UCX_NET_DEVICES=mlx5_3:1 CUDA_VISIBLE_DEVICES=3  ;;
+        esac
+
+        echo Launching on $UCX_NET_DEVICES
+
+.. note::
+
+        The environment variable depends on the mpi launcher, srun (`SLURM_LOCALID`) or mpirun (`OMPI_COMM_WORLD_LOCAL_RANK`)
+
+**Improve multi-node scaling with FFT distribution**
+
+If you need to distribute FFTs over multiple-nodes and achieve the so called 'eager' regime, with small messages exchanged among processes, try reducing the threshold for the rendez-vous algorithm, which can be more efficient on GPUs
+
+.. code-block::
+
+        export UCX_RNDV_THRESH=8192
+
+

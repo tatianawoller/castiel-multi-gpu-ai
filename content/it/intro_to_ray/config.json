@@ -1,0 +1,10 @@
+{
+    "paths":{
+        "project_root":"/leonardo_work/tra26_castiel2"
+    },
+    "models": {
+        "llms": [],
+        "vision": [],
+        "embedders": ["sentence-transformers/all-mpnet-base-v2"]
+    }
+}

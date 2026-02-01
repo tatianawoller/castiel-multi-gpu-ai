@@ -1,0 +1,124 @@
+OpenStack Overview
+==================
+
+What is OpenStack?
+------------------
+
+In CINECA, we use OpenStack to virtualize and manage cloud computing resources. `OpenStack <https://www.openstack.org/>`_
+is an open-source cloud operating system that controls and manages the compute resources 
+of a cloud data center.  
+
+.. image:: ../_img/openstack_software-overview-diagram-new.png
+  :align: center
+
+
+Management Tools
+----------------
+
+To manage the resources assigned to a project, the users can 
+interact with OpenStack using in-house tools like Horizon Web Dashboard and the 
+Command Line Interface (CLI) or using Infrastructure as a Code tools. 
+
+.. grid:: 3
+  
+  .. grid-item-card:: |oslogo| **Horizon Dashboard**
+    :link: dashboard_card
+    :link-type: ref
+
+  .. grid-item-card:: |oslogo| **Command Line**
+    :link: command_line_card
+    :link-type: ref
+
+  .. grid-item-card:: |oslogo| **Infrastructure as code**
+    :link: infrastructure_as_code_card
+    :link-type: ref
+
+
+.. toctree:: 
+   :maxdepth: 1
+   :hidden:
+   
+   management_tools/dashboard
+   management_tools/command_line
+   management_tools/infrastructure_as_code
+
+
+
+Components
+----------
+
+OpenStack is a flexible tool that has a modular structure: it is split up in different 
+components that can be installed and activated independently to address every user's need.
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Compute**
+      :link: compute_card
+      :link-type: ref
+
+    .. grid-item-card:: |oscinder| **Storage**
+      :link: storage_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Network**
+      :link: network_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osmanila| **Shares**
+      :link: shares_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database**
+      :link: database_card
+      :link-type: ref
+
+    .. grid-item-card:: |osoctavia| **Load Balancer**
+      :link: load_balancers_card
+      :link-type: ref
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   os_components/compute
+   os_components/storage
+   os_components/network
+   os_components/shares
+   os_components/database
+   os_components/load_balancers
+
+
+
+.. |oslogo| image:: /cloud/_img/openstack_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osneutron| image:: /cloud/_img/neutron_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |oscinder| image:: /cloud/_img/cinder_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osmanila| image:: /cloud/_img/manila_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |ostrove| image:: /cloud/_img/trove_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osoctavia| image:: /cloud/_img/octavia_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+

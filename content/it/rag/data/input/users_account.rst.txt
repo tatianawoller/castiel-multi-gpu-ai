@@ -1,0 +1,345 @@
+.. _users_card:
+
+Users and Accounts
+==================
+
+Usage of CINECA HPC resources is allowed only to users with an **User Account** (or HPC username) and provided with a **Project Account**.
+
+UserDB
+------
+
+The **UserDB** is the portal containing all User Accounts and Project Accounts and where CINECA users can manage their profile and monitor their computational resources.
+
+How to become a User
+^^^^^^^^^^^^^^^^^^^^
+
+To obtain a **User Account**, you need to:
+
+        1. register on the **UserDB** Portal;
+        2. get associated to a valid **Project Account**;
+        3. request to be validated and enabled to access CINECA clusters.
+
+Register on UserDB
+""""""""""""""""""
+
+You can reach the portal at `<https://userdb.hpc.cineca.it>`_.
+
+Click on :bdg-black-line:`Create new user` and fill in the form.
+
+
+.. image:: img/userdb_login.png
+   :align: center
+   :height: 450 px
+   :class: no-scaled-link
+
+.. image:: img/spacer.png
+   :align: center
+   :class: no-scaled-link
+
+.. important::
+   In case your Name or Surname contain special (non ASCII) characters, please use the corresponding ASCII one
+
+
+Once the registration is completed and you have set the password of your **UserDB credentials**, please go to :bdg-black-line:`my User`, click on :bdg-black-line:`Edit` and complete your profile:
+   
+     * upload a valid Identity document (Passport, ID, Italian driving license) in **Documents for HPC** page and sign the CINECA Access policies;
+   
+     * insert your affiliation in **Institution** page.
+
+You can use the **UserDB credentials** to login to UserDB. Alternatively, you can also use your :ref:`general/users_account:HPC credentials`  with 2FA by clicking on :bdg-black-line:`OpenID` button. 
+
+
+.. warning::
+   Each user can have **only one profile** on UserDB. 
+   If the profile already exists or the email is already used you need to recover your previous profile by clicking 
+   on :bdg-black-line:`Request new password` and inserting the email that you used to register the first time. 
+   Write to `superc@cineca.it <mailto:superc@cineca.it>`_ for any issues.
+
+
+Get associated to a valid **Project Account**
+"""""""""""""""""""""""""""""""""""""""""""""
+
+.. image:: img/registration.png
+
+
+Each user can be  either a *Principal Investigator (PI)*, or a *Collaborator* of a **Project Account**.
+
+	* **Principal Investigators**: apply for a project or acquire HPC resources through the processes described below.
+	* **Collaborators**: request the PI of a project to be associated to it. See :ref:`general/users_account:PI and Collaborators` section.
+
+Currently, there are several ways to become **Principal Investigator**:
+
+	1. **ISCRA Projects**: dedicated to all scientific researchers affiliated to an Italian research organization.
+	2. **EuroHPC Projects**: dedicated to European researchers.
+	3. **Agreements**: For Italian research institutions, contact `superc@cineca.it <mailto:superc@cineca.it>`_.
+	4. **General Users and Industrial Applications**: Send a request to `superc@cineca.it <mailto:superc@cineca.it>`_.
+
+You can find on `HPC Access <https://www.hpc.cineca.it/hpc-access/>`_ page of our HPC portal a detailed description of each case and useful links.
+
+Once your project has been approved, we will create the corresponding **Project Account** on UserDB portal and associate you as **PI**.
+
+.. important::
+   Write to `superc@cineca.it <mailto:superc@cineca.it>`_ in case the project is approved but you still do not see it in the portal.
+
+
+Submit a request to have a **User Account**
+"""""""""""""""""""""""""""""""""""""""""""
+
+Once the steps above are all completed you can request us to create a **User Account** by going to the page :bdg-black-line:`HPC Access` and click :bdg-black-line:`Submit`.
+
+.. image:: img/submituserdb.png
+
+.. warning::
+    If the :bdg-black-line:`Submit` button does not appear, it means that one or more of the above steps are still not completed.
+    In the **HPC Access** page, the portal will indicate you which step is still **not OK**.
+
+We will receive your request and after a check of the inserted data we will grant you access to our HPC resources.
+Within 24 hours you will receive via email the information needed to set your **HPC credentials**:
+
+   * your **User account** name (or HPC username)
+   * a link to setup your **2FA** access (the link will be **valid only for 12h**)
+
+You can visit the dedicated page :ref:`general/access:How to activate the **2FA** and the **OTP** generator` for the steps to configure the 2FA and use it to access our HPC resources.
+
+HPC credentials
+^^^^^^^^^^^^^^^
+
+**HPC credentials** are different from the **UserDB credentials**. The former are needed to access CINECA HPC and Cloud infrastructures, while the latter are only to be used inside the UserDB portal.
+
+.. caution::
+   Both **HPC credentials** and **UserDB credentials** are strictly personal and for any reasons cannot be shared with others.
+
+
+PI and Collaborators
+^^^^^^^^^^^^^^^^^^^^
+
+Each **Project Account** has a *PI (Principal Investigator)*. The PI is usually who have applied for obtaining the budget and is responsible of everything that happens using that account.
+Each **Project Account** may have one or more *Collaborators*. The PI can add autonomously collaborators to its account.
+
+.. image:: img/userdb_collaborator.png
+
+The Collaborator needs to be registered on UserDB. To add the Collaborator, the PI needs to go to the page of the Project Account visible 
+in the :bdg-black-line:`My projects` page and click on :bdg-black-line:`Edit`. In the Collaborators section, insert the **UserDB username** in a blank line and click on the correct name of the collaborator among the ones proposed by the appearing scroll-down menu. 
+
+.. important::
+        For any issues in finding the collaborator, please write to `superc@cineca.it <mailto:superc@cineca.it>`_
+
+.. warning::
+        If the PI of the project account is registered to UserDB but **is not yet approved to access the cluster (HPC STATUS: Not Configured)**, the project is not loaded on the infrastructure and collaborators **may not be able to access** the cluster. Once the PI is approved, the project account will be activated.
+
+
+
+Project Accounts
+----------------
+
+CINECA users can have access to HPC resources in several ways listed in :ref:`general/users_account:Get associated to a valid **Project Account**` and described in detail in our `HPC portal <https://www.hpc.cineca.it/hpc-access/>`_.
+
+Each approved grant is uniquely identified by a **Project Account** name. Each Project Account is provided with at least one budget, usually in standard core hours (STDH) for HPC clusters or VCPUs for Cloud resources, on a specific CINECA cluster. A Project Account may have multiple budgets on different CINECA systems.
+
+A User Account may be associated as *Principal Investigator (PI)* or as *Collaborator* to one or multiple Project Accounts.
+
+
+Budgets
+^^^^^^^
+
+In the context of HPC (High-Performance Computing) resources, **budget** refers to the allocation of some computational resources granted to a Project Account. The resources differs if the Project is defined on HPC  or Cloud systems.
+
+
+.. tab-set::
+
+   .. tab-item:: HPC
+
+        | The utilization of our High-Performance Computing (HPC) resources operates within a "pay-per-use" framework. 
+        | Usually short interactive serial jobs run on login nodes for testing incur no charges. 
+        | Parallel and Production simulations instead must be executed on compute nodes by submitting jobs to a scheduler.
+        | Compute nodes of a HPC system are usually divided into different partitions. Some partitions may be free of charge. 
+        | Please check on :ref:`hpc/hpc_clusters:Cluster Specifics` section for the available partitions and their cost on the cluster where you have budget.
+
+        On UserDB all the budgets are expressed in **standard core-hours**. On the cluster they are translated into **local core-hours**. The convertion factor depends on the different cost of a single core-hour among the available clusters.
+
+        Each approved **Project Account** may have multiple budgets on several clusters. In this case the budget name may differ among the clusters. Please check with the command ``saldo`` the correct name of your budget on the specific cluster.
+        Further information about how to check the availabe ``saldo`` of a project are reported in the :ref:`hpc/hpc_intro:Budget and Accounting` section.
+        
+        On CINECA clusters a budget linearization policy is enforced. A detailed description is found in the specific :ref:`hpc/hpc_intro:Budget Linearization` section.
+
+   .. tab-item:: CLOUD
+
+        Cloud budget is assinged in Virtual CPUs (VCPUs) and Storage Your accounts are in the menu on the top left in Horizon Dashboard.
+
+
+Projects validity and expiration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Project accounts allocated in UserDB have a fixed duration. Once reached the end date, the account enters a so called **expired** status.
+In the **expired** period, the budget cannot be used to submit jobs, but the data in the project specific areas are preserved.
+The expiration duration depends on the kind of project. Usually it is **6 months** for HPC accounts and **1 month** for Cloud accounts, but in special cases it may differ.
+At the end of the expiration delay all the data in the project specific areas are deleted.
+
+Please check the :ref:`hpc/hpc_data_storage:Backup Policy and Data Availability` for further details.
+
+Manage your UserDB credentials
+------------------------------
+
+In the UserDB portal, the users can manage the following information:
+
+* Changing the UserDB password
+* Request a new UserDB password
+* Update the affiliation
+
+.. note::
+   It is **not possible** to update the email address directly on UserDB. The change has to be made on SSO portal and the UserDB will automatically update the email (see :ref:`general/users_account:Manage your HPC credentials`).
+
+.. dropdown:: How to change the UserDB password
+   :animate: fade-in-slide-down
+   :color: light
+
+        Login to UserDB portal, then click on :bdg-black-line:`Edit`. Insert the Current Password and then below the New Password. If the quality is Good, click on Save at the bottom of the page.
+
+        .. figure:: img/UserDBpassword.png
+
+        Please follow the :ref:`general/users_account:Policy for UserDB password definition`. 
+
+
+.. dropdown:: How to recover the UserDB password
+   :animate: fade-in-slide-down
+   :color: light
+
+        If you do not remember the password you can reset it by clicking on :bdg-black-line:`Request new password`.
+        You will be asked to insert the email that you used to register on UserDB.
+        The portal will send you an email with a link to set a new password.
+
+        .. note::
+                If you insert a different email address, you will **not receive** any link.
+
+.. dropdown:: How to update the affiliation
+   :animate: fade-in-slide-down
+   :color: light
+
+        Any time you chnge your affiliation if you still make use of CINECA resources, we kindly ask you to update your affiliation.
+        
+        .. figure:: img/Institution.png
+        
+        Login to UserDB portal, click on :bdg-black-line:`Edit` and then on :bdg-black-line:`Institution` and update it.
+
+
+Policy for UserDB password definition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you change the password on UserDB portal here you can find the password policies:
+
+        - Password must not match last 3 passwords.
+        - Password must not contain the username.
+        - Password must be at least 10 characters in length.
+        - Password must contain at least 2 digits, 4 letters, 2 lowercase and 2 uppercase characters.
+        - The following special characters are allowed **(!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)**
+
+
+Manage your HPC credentials
+---------------------------
+
+Thanks to the new Identity Provider, `sso.hpc.cineca.it <https://sso.hpc.cineca.it>`_ , users can now manage their HPC authentication credentials independently. This includes:
+
+* Changing the HPC password
+* Updating the email address associated to their User Account
+* Recovering the OTP generator and re-generating recovery codes
+
+For any issues with these procedures or if you have any questions, please contact superc@cineca.it.
+
+
+.. dropdown:: How to change the HPC *password*
+   :animate: fade-in-slide-down
+   :color: light
+
+   	* If you have already configured the 2FA but do not remember the password
+		* by clicking on :bdg-black-line:`Forgot password` while authenticating on https://sso.hpc.cineca.it
+
+		.. figure:: img/pwd_1.png
+
+		* specify your *HPC Username* or the *email* address used to register on :ref:`general/users_account:UserDB` portal. You will receive on that email a link to reset the password.
+
+		.. figure:: img/pwd_2.png
+
+		* click on the link and insert a *new password* according to the :ref:`general/users_account:Policy for HPC password definition` and click on :bdg-black-line:`submit`
+
+		.. figure:: img/pwd_3.png
+
+
+	* If you **remember the password**, but just want to update it on SSO portal
+		
+		* login on the `SSO <https://sso.hpc.cineca.it>`_ portal.
+
+		* choose **Account security**.
+		
+		.. figure:: img/key_2.png
+
+		* select :bdg-black-line:`Update` in **my password** section. Choose a *new password* according to the :ref:`general/users_account:Policy for HPC password definition`
+		
+		.. figure:: img/key_3.png
+
+	.. warning::
+		The ``passwd`` command has been disabled.
+		If you still need to configure your 2FA but you don't remember the password, or your password is expired, the above solutions **will not work**. Please write to superc@cineca.it in order to solve the issue.
+
+
+.. dropdown:: How to change the *email* address
+   :animate: fade-in-slide-down
+   :color: light
+
+   	* login on the `SSO <https://sso.hpc.cineca.it>`_ portal.
+
+	* select **Personal Info**.
+		
+	.. figure:: img/key_2.png
+
+	* edit the field ``email`` and ``save``.
+
+	.. figure:: img/key_1.png
+
+        Within 24 hours the email will be updated also on UserDB portal.
+
+     .. warning::
+
+	  Users cannot change their email address directly on the UserDB portal.
+          If you encounter issues while attempting to update your email address, please contact superc@cineca.it for assistance.	
+
+
+.. dropdown:: Recover OTP One-Time Code Generator
+   :animate: fade-in-slide-down
+   :color: light
+
+   If you lost access to your OTP generator, you can configure a new one using the recovery authentication codes saved during the initial OTP setup. 
+   After inserting username and password on SSO login procedure, the page will request the One-Time Password. Click on :bdg-black-line:`Try another way`.
+
+   .. figure:: img/otp_recover_1.png
+
+   * choose :bdg-black-line:`Recovery Authentication Code`
+
+   .. figure:: img/otp_recover_2.png
+
+   * Insert the requested **Recovery Code** (obtained during the first configuration of the OTP).
+
+   .. figure:: img/otp_recover_3.png
+
+   .. note::    
+      The system requires a specific recovery code of the list of available codes. It is identified by the "#<number>" on top of the Recovery code field. 
+      In the above example it is asking the first (#1) recovery code of the list.
+
+   .. important:: 
+   
+      **Renew the recovery codes**: It is also possible to generate new recovery codes by clicking on :bdg-black-line:`Set up Recovery authentication codes` in the section **Recovery authentication codes** of **Account Security** page.
+
+
+Policy for HPC password definition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you change the password on the portal `sso.hpc.cineca.it <https://sso.hpc.cineca.it>`_, it will be automatically changed on all the clusters (the propagation can take up to one hour).
+
+Here we report the HPC password policies:
+
+	- The new password has to be at least 10 characters long and contains at least 1 capital letter, 1 number, and 1 special character **(!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)**
+	- The password has a validity of 3 months. You will receive a reminder 10 days before the expiration when you login.
+	- The new password has to be different from the previous 5 ones.
+	- Any password change will be notified to the user by email.
+
+
+

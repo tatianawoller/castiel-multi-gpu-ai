@@ -1,0 +1,32 @@
+.. _budget_accounting_card:
+
+Budget and accounting
+======================
+
+Following the :ref:`cloud/general/cineca_cloud_model:cineca hpc cloud model`, the users manage autonomously the Cloud projects (tenants), one or more, to which they are associated.
+
+To access Cloud resources, you need to get a CINECA HPC account. 
+For detailed instructions on creating an account, please refer to the :ref:`general/users_account:How to become a User` section.
+
+Each tenant is then composed by a pool of virtual resources (project quota/budget) which are defined in terms of:
+
+- Number of vCPUs
+- GB of RAM
+- GB of storage
+- Number of public IP addresses (floating IPs)
+
+On request, you can be also granted
+
+- Number of GPUs
+- Additional storage for shares
+
+Upon accessing the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` with HPC credentials, within the assigned tenants, 
+you can autonomously create and manage all components of the virtual infrastructure 
+(VMs, Networks, Security Policies, Load Balancer Policies, and so on) in compliance with 
+the Access Policies accepted at the time of registration on UserDB (see the :ref:`cloud/operative/index_operative_manual:operative manual` for specific operations details).
+
+When resource consuming operations, such as virtual machine creation, are performed, 
+the request is validated against the maximum quota permitted for the current project. 
+
+The users can also autonomously monitor the usage of the assigned resources in the OpenStack Horizon Dashboard, 
+see :ref:`cloud/operative/compute_ops/instance_manage:instance: manage and monitor` page. 

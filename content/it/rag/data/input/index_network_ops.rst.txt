@@ -1,0 +1,32 @@
+.. _network_ops_card:
+
+Network operations
+==================
+
+For general information on the Network component, visit the :ref:`cloud/os_overview/os_components/network:network` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+   network_create
+   secgroups_create
+   fip_association 
+
+.. grid:: 3
+
+    .. grid-item-card:: |osneutron| **Network: create**
+      :link: network_create_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **floating IP: association**
+      :link: fip_associate_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Security groups: create**
+      :link: secgroups_create_card
+      :link-type: ref
+
+.. |osneutron| image:: /cloud/_img/neutron_logo.png
+   :width: 35px
+   :class: no-scaled-link

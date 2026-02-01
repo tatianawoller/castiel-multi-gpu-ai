@@ -1,0 +1,124 @@
+.. _shares_cephfs_create_card:
+
+Create and use a CEPHFS_TYPE share
+==================================
+
+Request to be enabled to the service
+------------------------------------
+
+A user that would like to make use of the Manila service needs to send an email to superc@cineca.it, communicating how many shares are needed and for each share:
+
+- its dimensions (GB)
+- the instance name of the virtual machines (VMs) that will share that filesystem
+- the tenant's name.
+
+Once enabled by the User Support Team, the user needs to create the share and mount it in a special network interface on the VMs attached to a dedicated storage network.
+
+As an example, in what follows, we will create a share in common between VM_alice and VM_bob belonging to the same tenant.
+
+Create the share
+----------------
+
+- Create the share by clicking in the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` on *"Create Share"* in *"Share â Shares* 
+- In the interface set:
+  
+  - share name
+  - share protocol  == "CephFS" (other cases not allowed)
+  - size (on the right side is visualized information about the actual available and used space within the tenant)
+  - Type == "cephfs_type"
+  - Leave blank the option "Make visible for all projects" because it is not enabled
+  - In the end, click on the "save" button.
+
+ .. image:: /cloud/_img/op_share_cephfs_img1.png
+
+- Set the access rule on the share just created. Click on *"Share â Shares"*, then select the share just created and in the menu on the right select *"Manage Rules"*.
+
+ .. image:: /cloud/_img/op_share_cephfs_img2.png
+
+- Click on *"Add rule"* and set:
+
+  - access type: cephx 
+  - access level: read-write or read-only (depending on your needs)
+  - access to: write the name of the client (in our example "charlie")
+
+ .. image:: /cloud/_img/op_share_cephfs_img3.png
+
+- By clicking on the *"add"* button the dashboard will show the *"access key"* and *"access to"* keys that must be used to mount the share on the virtual machines. 
+
+Mount the share on the VMs
+--------------------------
+
+You are now ready to mount the share on VMs. In the following example, we will consider two VM with Ubuntu 20.04 OS.
+**Please refer to the network guide of the operating system of your VM to be sure about the operations to be done.** 
+
+- Login in the first VM, configure the network interface attached to the storage network
+
+  - ``ip a`` command lists all the network interfaces. Find the new interface, attached to the storage network, and refer to the mac-address of the interface to be sure. 
+
+     .. image:: /cloud/_img/op_share_cephfs_img4.png
+
+  - Create a new file in the /etc/netplan directory to configure such new interface (in our example *"ens7"*), and enable it
+
+    .. code-block:: bash
+
+        $ sudo su
+        $ cd /etc/netplan
+        $ cp <file-cloud-init> <file-ens-number>   - example: cp 50-cloud-init.yaml ens7.yaml -
+    
+        $ vim <file-ens-number> ==> Modify the value of the fields "ens", "mtu <value>", "macaddress <value>" and "set-name < value>" with the values shown by "ip a" command.
+    
+        -- example of the ens7.yaml is --
+    
+        network:
+        version: 2
+        ethernets:
+            ens7:
+                dhcp4: true
+                match:
+                    macaddress: <your MAC address>
+                mtu: <MTU value>
+                set-name: ens7
+    
+        $ netplan apply ==> to enable the new interface
+        $ ip a ==> check that the interface is enabled
+
+
+    .. image:: /cloud/_img/op_share_cephfs_img5.png
+
+
+    - Install the client, by installing the package named *"ceph-common"* (**NOTE**: Beware that different versions of ceph-common are available for different versions of Ubuntu and the syntax of the mount command could change.)
+    - Create the mount point in the virtual machines (in our example "/mnt/share_manila") and mount the share
+    - To mount the share you will need some information contained in the *"Share Overview"* page on OpenStack dashboard, in particular you will need the values of PATH, ACCESS_TO and ACCESS KEY (here an example):
+
+      .. image:: /cloud/_img/op_share_cephfs_img6.png
+
+.. tab-set::
+  .. tab-item:: Ubuntu 20.04
+    
+    The command is:
+
+    ``sudo mount -t ceph -v <mount PATH> <mount point on the VM> -o  name=<CLIENT_ACCESS_TO>,secret=<ACCESS_KEY>``
+
+    An example of the complete command is: 
+
+    ``sudo mount -t ceph -v 10.35.1.9:6789,10.35.1.10:6789,10.35.1.11:6789,10.35.1.12:6789,10.35.1.13:6789:/volumes/_nogroup/43aa4ecc-1db6-4952-b2dd-6336b45075d5 /mnt/share_manila/ -o name=my-client-name,secret=AQBP07Nejv/RLhAABYqQ5tvgePh2EP7EL0UuhQ==``
+
+  .. tab-item:: Ubuntu 22.04 or higher
+
+    The command is:
+
+    ``sudo mount.ceph <CLIENT_ACCESS_TO>@482d24d4-df47-11eb-8d80-0c42a1f53648.g100_fs=<FS_ADDRESS> <mount point on the VM>  -o  mon_addr=<MON_IPS>,secretfile=<SECRET_FILE>``
+
+    Where <FS_ADDRESS> and <MON_IPS> are the two parts of the "Path" string on OpenStack:
+
+     - <MON_IPS> is the first numeric part of the "Path" string, up to ":/volumes", where each IP has to be separated using the character "/" instead of ","
+     - <FS_ADDRESS> is everything else, from "/volumes/" to the end of the string
+
+    Finally, the <SECRET_FILE> is the path to a text file that contains the string <ACCESS_KEY>. Following the same example that uses the picture from above:
+
+    ``sudo mount.ceph  charlie@482d24d4-df47-11eb-8d80-0c42a1f53648.g100_fs=/volumes/_nogroup/43aa4ecc-1db6-4952-b2dd-6336b45075d5 /mnt/share_manila/ -o mon_addr=10.35.1.9:6789/10.35.1.10:6789/10.35.1.11:6789/10.35.1.12:6789/10.35.1.13:6789,secretfile=/home/ubuntu/my_secret_file.txt``
+
+
+**NOTE**: If you are using a different Linux distribution, please refer to the ceph user manual to be sure that the syntax you are using is appropriate for the ceph version installed.
+
+    - Then repeat the same steps for the second VM as well. Now the two VMs share the same filesystem

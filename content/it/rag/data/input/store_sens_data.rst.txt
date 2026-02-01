@@ -1,0 +1,36 @@
+.. _store_sensitive_data_card:
+
+Store sensitive data
+====================
+
+.. warning::
+    
+    Following CINECA access policies, you must inform CINECA in case the activity requires the loading and processing 
+    of data that may fall under the GDPR (personal data), 
+    to identify the appropriate security level; in any case, **sensitive or personal 
+    data shall not be loaded and processed with CINECA resources without CINECA written authorization**.
+
+If your application or workflow is processing sensitive data, besides getting the required authorization and signing with CINECA the Data Processing Agreement 
+(for the appointment of the Data Processor), you need to take the necessary technical precautions to safeguard the data from unauthorized access. 
+
+On CINECA HPC Cloud infrastructure, sensitive data can be stored on special **encrypted Cinder Volume** of type LUKS.  
+
+By using the OpenStack Horizon dashboard, every user can create such volumes and then attach them to a virtual machine.
+
+Due to a limitation of the crypto library, the **maximum size of each volume is 15 TB**.
+
+Since LUKS are encrypted volumes, the time needed to create one can vary greatly in association to the size of the volume 
+(most of the time is needed to encrypt the data). Here are some indicative times for the creation of different sized LUKS volumes from the dashboard:
+
+- 1 TiB: 15 minutes
+- 7 TiB:  2 hours
+- 10 TiB: 3-4 hours
+
+The user can access the data stored in such LUKS volumes by login into the corresponding virtual machine. 
+Only the users with authorization to login into the virtual machine will access the data "in clear", even if it is encrypted by key.  
+
+The keys used by the OpenStack volume encryption feature are managed by Barbican, the official OpenStack Key Manager service. 
+Barbican provides secure storage, provisioning and management of secret data. This includes keying material such as Symmetric Keys, Asymmetric Keys, Certificates and raw binary data. 
+
+.. note:: 
+   CINECA HPC Cloud infrastructure is certified ISO 27001 since 2022 for `"Servizi informatici HPC in cloud per la ricerca in ambito life science" <https://www.cineca.it/sites/default/files/2024-06/ISO-27001-IT319237-ITA.pdf>`_.

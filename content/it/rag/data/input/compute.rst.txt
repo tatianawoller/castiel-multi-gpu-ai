@@ -1,0 +1,133 @@
+.. _compute_card:
+
+Compute
+=======
+
+This component, based on the `OpenStack Nova Service <https://docs.openstack.org/nova/latest/>`_, allows the management of the 
+computing resources. 
+
+
+Instances
+---------
+
+An instance (or virtual machine) is a software-based emulation of a physical computer. 
+It runs an operating system and applications, just like a physical computer. With 
+instances, users can run applications and workloads in the cloud. Instances can be 
+created from an image, or from a snapshot.
+
+In the corresponding part of the OpenStack Horizon dashboard *"Compute â Instances"*, 
+you can:
+
+- visualize the quota of the selected project and its usage in the *"Overview"* page
+- access the list of instances
+- create a new instance
+- perform operations (**Actions**) on the selected instance, like attaching/de-attaching volumes, 
+  suspend or shut off, creation of snapshots
+
+Virtual machines can be of two types:
+
+.. grid:: 2
+
+  .. grid-item-card:: 
+
+    **Ephemeral** Virtual Machines are booted from an OpenStack image. 
+    
+    These images have fixed 
+    root volume dimension, dictated from the used flavor.
+    
+    Creating an ephemeral virtual machine is more lightweight for tenant resources, since the root volume won't be accounted 
+    on the tenant storage quota.
+
+  .. grid-item-card:: 
+
+    **Bootable** Virtual Machines are created using a pre-existing volume as root volume. 
+
+    Users can choose freely the size of the root volume of the virtual machine.
+    Creating a virtual machine from a bootable volume has two main advantages:
+
+    - customizable root volume size
+    - the data of the root volume won't be deleted when deleting the instance
+
+.. note:: 
+  
+  **Instance affinity and anti-affinity groups**
+  In some cases, users might want to be sure two or more instances run specifically on 
+  the same hypervisor (e.g. for ensuring better communication) or on different ones 
+  (e.g. to implement high availability).
+  In OpenStack, it is possible to create affinity or anti-affinity groups for this 
+  purpose. When creating an instance, it is possible to define whether this will be 
+  part of one of the groups available in the tenant.
+
+Key Pairs 
+---------
+
+Key Pairs are a method for securing SSH access to instances by using public-key 
+cryptography. 
+When a Key Pair is associated with an instance, it allows users to SSH into the 
+instance securely without using a password. This ensures a higher level of security 
+compared to traditional password-based access. 
+
+Public-Key Cryptography is a cryptographic system that uses pairs of keys - **public 
+keys** (which can be shared) and **private keys** (which are kept secret). The public key 
+is used to encrypt data, and the private key is used to decrypt it. The public key 
+is injected into the instance at the time of creation. The private key is kept by 
+the user and used to establish an SSH connection to the instance.
+
+Image Snapshots
+---------------
+
+A snapshot is a point-in-time copy of data capturing the current state of a virtual 
+machine. It preserves the state and the data of the VM including its power state (on, 
+off, or suspended) and all its files (such as disks, memory, and network interfaces). 
+Snapshots are generally used to restore a VM after a system failure, bad 
+update, or error.
+
+You can find instances snapshots under the *"Compute â Images"* section in the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`. 
+
+.. warning:: 
+
+  - Before taking a snapshot, log in to the virtual machine and shutdown the instance.
+  - Snapshots are stored on the same cloud infrastructure of the instances, but can be downloaded to be stored at a different location.
+
+
+Images
+------
+
+An image is a template which contains a specific operating system and pre-installed software. 
+
+Images hosted on the cloud platform have the **âvisibilityâ** attribute which can assume 4 different values that define which users can use the image for the instance creation and provides information about who uploaded the image.
+
+.. list-table:: 
+   :widths: 50 50 
+   :header-rows: 1
+
+   * - **Visibility**
+     - **Characteristics**
+   * - Public
+     - 
+      - Uploaded only by CINECA HPC Cloud infrastructure administrators. 
+      - Usable by all the users on the cloud platform and appears in the default image list.
+   * - Private
+     - 
+      - Uploaded by any user on the cloud platform (image owner). 
+      - Usable only by the image owner.
+   * - Shared
+     - 
+      - Uploaded by any user on the cloud platform (image owner). 
+      - By default, usable only by all the users which work on the same project of the image owner.
+      - The image owner can explicitly chose a user or a group of users to share the image to: the user or the group of user have to accept the sharing.
+   * - Community
+     - 
+      - Uploaded by any user on the cloud platform (image owner). 
+      - Usable by all the users on the cloud platform and appears in the default image list.
+
+
+.. warning:: 
+
+  Since no control can be performed on *Community* images by the CINECA HPC Cloud infrastructure administrators, **Community images are inhibited**.
+  Trying to **upload a Community image** will results in a **blocking error** both from Horizon dashboard and OpenStack CLI.
+
+Default images for common operating systems are provided by CINECA and available to be used.
+The updated list of all the images uploaded by CINECA HPC Cloud infrastructure administrators on each HPC cloud infrastructure 
+can be found in the systems specifics pages at :ref:`cloud/systems/index_system_specifics:Cloud Specifics`. 
+

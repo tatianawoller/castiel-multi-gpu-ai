@@ -1,0 +1,36 @@
+.. _compute_inst_manage_card:
+
+Instance: manage and monitor
+=============================
+
+To monitor your instance, login to the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`.
+
+
+Manage an instance
+------------------
+- Log in to the virtual machine and shutdown the instance
+- In the dashboard, go to *"Compute â Instances"*.
+- In the *"Actions"* column drop down menu of the instance, you can find all possible operation to manage you instance. You can resize or rebuild an instance, edit instance or the security groups. Depending on the current state of the instance, you can pause, resume, suspend, soft or hard reboot, or terminate
+
+
+Track usage for instances
+-------------------------
+You can track usage for instances for each project. You can track usage per month by showing metrics like number of vCPUs, disks, RAM, and uptime for all your instances.
+
+- In the dashboard. choose the project, and go to *"Compute â Overview"*
+- In the page you can see an overview of the used resources (for compute, storage and network) with respect to the quotas assigned to the project
+- To query the instances usage for a month, select a month and click "Submit".
+- To download a summary, click *"Download CSV Summary"*.
+
+
+Monitor instances
+-----------------
+You can monitor the high-level actions (creation, start, stop) on the instances for each project via offered logs in the dashboard.
+
+- Go to *"Compute â Instances"*.
+- Select the instance name you would like to monitor
+  
+   - go to the *"Action log"* tab to see the high-level actions (creation, start, stop)
+   - go to the *"Log"* tab, to see the instance console log
+
+More detailed monitoring logs can be set-up by you within the specific instance.

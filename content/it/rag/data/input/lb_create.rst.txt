@@ -1,0 +1,146 @@
+.. _lb_create_card:
+
+LoadBalancer: deploy
+========================
+
+We exemplify here the procedures based on (1) :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` 
+and (2) the :ref:`cloud/os_overview/management_tools/command_line:command line interface` and the OpenStack Octavia plugin, 
+for a simple use case: **the deployment of a basic HTTP load balancer with an associated Floating IP**. 
+
+For further details and additional use cases, including step-by-step examples, 
+refer to the `Octavia Basic Load Balancing Cookbook <https://docs.openstack.org/octavia/zed/user/guides/basic-cookbook.html>`_. 
+This resource provides comprehensive instructions on applying the same procedure to various scenarios. 
+
+.. important:: 
+
+    - The Octavia service is available but it is not enabled by default to all HPC Cloud projects. 
+    - If you want to use it, please request access sending an email to superc@cineca.it. 
+    - Once the tenant is enabled to the service by the User Support Team, all users of the tenant will be able to use the service. 
+
+In this section, we will walk you through the steps to create a setup where two instances running nginx servers are connected to an HTTP load balancer. The load balancer will use the round-robin algorithm to evenly distribute incoming HTTP traffic across the two servers. 
+
+.. important:: 
+
+    1. Before creating a load balancer, **ensure that the following resources are available** in your tenant:
+
+        - 1 network and subnet
+        - 1 router
+        - Desired security groups for the VMs: at the minimum, the Ingress rules for HTTP (port 80) and SSH (port 22)
+        - 2 instances: in our example, these VMs host an nginx web server each
+        - At least 2 floating IPs: one associated to one of the VMs and an additional one available to be associated to the load balancer. The internal IP of the second VM can be used to login from the first VM if needed for configuration.  Note that an additional Floating IP could be directly associated to the second VM. However, this would entail using an additional (and not strictly necessary) resource, which we try to avoid. 
+        - 1 KeyPair: an SSH public key is needed to access the instances for their configuration
+  
+    2.  You can **setup a very simple nginx web server in each VM** by logging into each of the VM and running the following commands on the shell:
+   
+   .. code-block:: bash
+
+        sudo apt-get update
+        sudo apt-get install -y nginx && \
+            echo "Hello! This is $(hostname)" > /var/www/html/index.html
+
+.. tab-set::
+
+   .. tab-item:: Deploy with Horizon Dashboard
+
+	  - **Create the loadbalancer** by clicking on *"Network â Load Balancers â Create Load Balancer"* and setting the following information. Once all the details are provided, click on *"Create Load Balancer"*.
+
+        .. dropdown:: Load Balancer Details
+
+            - Name.
+            - Subnet. Select the desired subnet.
+
+            .. image:: /cloud/_img/op_lb_create_img2.png
+
+        .. dropdown:: Listener Details
+            
+            - Name.
+            - Protocol and Port. The protocol defines the type of network traffic the listener will handle, while the port specifies the network port on which the listener will accept incoming traffic. In our example we select protocol HTTP and port 80.
+
+            .. image:: /cloud/_img/op_lb_create_img3.png
+
+        .. dropdown:: Pool Details
+            
+            - Name.
+            - Algorithm. The algorithm determines how traffic is distributed across the members. We select ROUND_ROBIN.
+
+            .. image:: /cloud/_img/op_lb_create_img4.png
+
+        .. dropdown:: Pool Members
+            
+            - Add members. Choose the desired members among those available. We add VM-1 and VM-2, the names of the VMs in our example. 
+            - Port. For each VM, specify the port number on which the member will receive traffic. In our case, we expose the nginx server on port 80.
+            - Weight. The weight of the member for load balancing purposes. The weight determines the relative portion of requests the member should handle compared to others. We use the default value.
+
+            .. image:: /cloud/_img/op_lb_create_img5.png
+
+        .. dropdown:: Monitor Details 
+            
+            - Decide whether you'd like to create a Health Monitor. In this example, we will not make use of a monitor. 
+
+            .. image:: /cloud/_img/op_lb_create_img6.png
+
+      - **Associate a floating IP** to the load balancer. 
+  
+       - Move to the *Network â Load Balancers"* section 
+       - Display the options within the drop-down menu on the right side for the desired load balancer, and click on *"Associate Floating IP"*. 
+
+            .. image:: /cloud/_img/op_lb_create_img7.png
+
+       - Select the floating IP among those suggested in the drop-down menu *"Floating IP address or Pool"* and click on *"Associate"*. 
+
+            .. image:: /cloud/_img/op_lb_create_img8.png
+
+       - The floating IP associated to the load balancer appears in the overview of its characteristics. In order to see the properties, click on the name of your load balancer in the *"Network â Load Balancers"* section of the dashboard.
+
+      - **Test** your load balancer.
+
+        Use the above floating IP to reach the nginx servers. The traffic will be managed by the load balancer following the algorithm ROUND_ROBIN.
+
+        .. image:: /cloud/_img/op_lb_create_img1.png
+
+   .. tab-item:: Deploy with Command Line Interface
+
+      .. important::
+
+        - Follow the instructions on how to setup your cloud environment at :ref:`cloud/os_overview/management_tools/command_line:command line interface`
+        - Install the Octavia service plugin ``pip install python-octaviaclient``
+
+    - **Create a Load Balancer**
+
+      ``openstack loadbalancer create --name <loadbalancer_name> --vip-subnet-id <subnet_id>``
+      
+      The *<subnet_id>* can be found through the Horizon Dashboard. On the main menu, select the *Network â Networks* tab. 
+      Then, click on your network and select the *Subnets* tab. Finally, click on the desired subnet. This information can also be gathered using the CLI.
+
+      Note: Wait until the creation is completed. It will take a while and the next steps will return an error if the load balancer is not available. 
+
+    - **Create a Listener**
+
+        ``openstack loadbalancer listener create --name <listener_name> --protocol HTTP --protocol-port 80 <loadbalancer_name>``
+
+    - **Create a Pool**
+
+        ``openstack loadbalancer pool create --name <pool_name> --lb-algorithm <algorithm_e.g.ROUND_ROBIN> --listener <listener_name> --protocol HTTP``
+
+    - **Add Members** to the pools
+
+        ``openstack loadbalancer member create --subnet-id  <subnet_id> --address <ip_vm_1> --protocol-port 80 <pool_name>``
+
+        ``openstack loadbalancer member create --subnet-id <subnet_id> --address <ip_vm_2> --protocol-port 80 <pool_name>``
+
+      You can find the *IPs* of the VMs in the *Compute â Instances* section of the lateral menu of Horizon Dashboard. The IPs can also be gathered using the CLI.
+
+    - **Associate a Floating IP** to the load balancer 
+
+        ``openstack floating ip set --port <port_id> <floating_ip>``
+
+      You can find the *<port_id>* if you navigate to the description of your load balancer on the Horizon Dashboard. 
+      Select the *Network â Load Balancers* section on the left-hand menu of the dashboard. 
+      Then, click on your load balancer and go to the *Overview* tab.  You can also use the CLI to identify the value of the *<port_id>*.
+
+    - **Test** your load balancer.
+
+      Finally, use this floating IP to reach the nginx servers. The traffic will be managed by the load balancer following the algorithm <algorithm_e.g.ROUND_ROBIN>.
+
+      .. image:: /cloud/_img/op_lb_create_img1.png
+

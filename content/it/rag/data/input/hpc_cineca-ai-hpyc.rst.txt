@@ -1,0 +1,166 @@
+Cineca-hpyc and Cineca-ai modules
+=================================
+
+Cineca-hpyc and Cineca-ai are collection of python and artifitial intelligence packages, respectively, optimized for Cineca's clusters.
+
+.. _cineca-hpyc_card:
+
+The cineca-hpyc module
+----------------------
+
+CINECA-HPyC is a collection of Python scientific packages optimized for CINECA HPC clusters. List of principal packages includes:
+
+        * numpy           
+        * scipy        
+        * pandas          
+        * numexpr    
+        * mpi4py         
+        * Cython         
+        * pythran       
+        * joblib       
+        * matplotlib     
+        * IPython        
+        * notebook 
+
+To see the complete list of all the python packages available and check their versions:
+
+.. code-block:: bash
+
+   $ module load cineca-hpyc/<version>
+   # list all available installations
+   $ python -m pip list
+   # To use a specific pakage
+   $ python -c "import <package>"
+   # To install an additional package
+   $ pip install <package>
+   
+Once you loaded the cince-hpyc module, some of the main common packages of HPC enviroment are automatically loaded (e.g. cuda, openMPI). Here there is an example about how to import and use pandas package present in cineca-hpyc module:
+
+.. code-block:: bash
+   
+   $ module load cineca-hpyc/<version>
+   $ python -c "import pandas"
+   # You can start a python interactive section and use pandas
+   $ python
+   Python 3.8.12 (default, Jul 29 2022, 16:25:49)
+   [GCC 10.2.0] on linux
+   Type "help", "copyright", "credits" or "license" for more information.
+   >>> import pandas as pd
+   >>> df = pd.DataFrame({"col1": ["sap", "hi"], "col2": [3, 4]})
+   >>> print (df)
+       col1  col2
+    0  sap     3
+    1   hi     4
+
+   
+.. Note::
+
+   * On Galileo 100 you need to use autoload in order to load the cineca-hpyc module ``module load autoload cineca-hpyc/<version>``.
+
+If you wish to install additional python packages to use together with the cineca-hpyc suite, you can create a personal virtual environment and install what you need in the following way:
+
+
+.. code-block:: bash
+
+   $ module load cineca-hpyc/<version>
+   $ python -m venv my_env --system-site-packages
+   $ source my_env/bin/activate
+   $ pip install <package>
+   # Once you finish to work with your env
+   $ deactivate
+
+
+.. Note::
+
+   * my_env: choose an arbitrary name for your personal virtual env. 
+     
+   * It is advised to create your personal envs in your $WORK area, since the $HOME disk quota is limited to 50 GB.
+
+   * the --system-site-packages flag gives the virtual environment access to the system site-packages directory (otherwise you cannot access the cineca-hpyc environment).
+
+.. _cineca-ai_card:
+
+The cineca-ai module
+--------------------
+
+The bulk of the "cineca-ai" package, provided by the deeplrn profile, includes (for example) Tensorflow, Pytorch, XGBoost, and other related packages and dependencies.
+
+This module has been personalized by CINECA AI experts. You can find different cineca-ai modules in profile/deeplrn. For a complete list load the module and launch the "python -m pip list" command.
+
+The CINECA AI project can be used in several ways, depending on the method more suited to your needs and on the availability of conda/pip packages.
+
+The way to use the installations of the cineca-ai environment goes through the loading of the module:
+
+.. code-block:: bash
+
+   $ module load profile/deeplrn
+   # To see the available versions
+   $ module av cineca-ai
+   # Select a verion and load it
+   $ module load cineca-ai/<version>
+   # list all available python installations of cineca-ai
+   $ python -m pip list
+   # use a specific package
+   $ python -c "import <package>"
+
+If you need to use a package not included in the list of those provided by the cineca-ai modules, you can always rely on the cineca-ai environment for the dependencies and install what you need within a personal virtual environment and/or a conda environment.
+
+
+**Installing additional packages within a python virtual environment**
+
+If you wish to install additional python packages to use together with the cineca-ai suite, you can create a personal virtual env and install what you need in the following way :
+
+.. code-block:: bash
+
+   # create the virtual env loading cineca-ai module
+   $ module load profile/deeplrn
+   $ module av cineca-ai
+   $ module load cineca-ai/<version>
+   $ python -m venv <myvenv> --system-site-packages 
+   # activate the created virtual env to install your python packages.
+   $ source my_env/bin/activate
+   $ pip list
+   $ pip install <package>
+   # Once you finish to work with your env
+   $ deactivate
+
+.. Note::
+
+   * my_env: choose an arbitrary name for your personal virtual env. 
+     
+   * It is advised to create your personal envs in your $WORK area, since the $HOME disk quota is limited to 50 GB.
+
+   * the --system-site-packages flag gives the virtual environment access to the system site-packages directory (otherwise you cannot access the cineca-ai environment).
+
+   * to test the installation launch: python -c "import <package>".
+
+   * to use the installed package, just source your env (source <myvenv>/bin/activate): you will access your packages AND those of the cineca-ai environment.
+
+**Installing additional packages within a conda virtual environment**
+
+If you wish to install additional conda packages to use together with the cineca-ai suite, you can create your conda virtual environment and install what you need in the following way (we strongly suggest using a python venv if possible) :
+
+.. code-block:: bash
+
+   # create the conda virtual env loading cineca-ai module
+   $ module load anaconda3/deeplrn
+   $ module load profile/deeplrn
+   $ module av cineca-ai
+   $ module load cineca-ai/<version>
+   $ conda create -p <path>/my_env -c conda-forge --override-channels 
+   # activate the created conda virtual env to access cineca packages and install your conda packages.
+   $ conda activate <path>/my_env
+   $ python -m pip list
+   $ python -m pip install <package>
+   # Once you finish to work with your env
+   $ conda deactivate
+
+
+.. Note::
+
+   * my_env: choose an arbitrary name for your personal virtual env. 
+     
+   * It is advised to create your personal envs in your $WORK area, since the $HOME disk quota is limited to 50 GB.
+
+   * the --system-site-packages flag gives the virtual environment access to the system site-packages directory (otherwise you cannot access the cineca-ai environment).
+

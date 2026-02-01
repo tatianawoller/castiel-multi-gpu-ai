@@ -1,0 +1,220 @@
+.. _faq_card:
+
+FAQ
+===
+
+This is a page collecting answers to requests arrived to the HPC Helpdesk. Please check the page before sending a specific request.
+
+General
+-------
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+     .. card:: I still didnât receive the username and the link for the 2FA configuration?
+
+        You have to do the complete registration on the UserDB page and to be associated with a project (PI has to add you). 
+        Once you have inserted all the necessary information and you are associated with a project a new access button will appear, 
+        just click on it and you will receive in two mails the username and the link for the 2FA configuration.
+
+     .. card:: I have finished my budget but my project is still active, how can I do?
+
+        Non-expired projects with exhausted budgets may be allowed to keep using the computational resources at the cost of minimal priority. Ask superc@cineca.it 
+        to motivate your request and, in case of a positive evaluation, you will be enabled to use the qos_lowprio QOS.
+
+     .. card:: Information about my project on CINECA clusters (end data, total end monthly amount of hours, the usage?)
+
+        You can list all the Accounts attached to your username on the current cluster, together with the "budget" and the consumed resources, with the command:
+
+        ``> saldo -b``
+
+        Find more information in :ref:`hpc/hpc_data_storage:Data Occupancy Monitoring Tools` section.
+
+Access and Login
+----------------
+
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+    .. card:: My new password isn't accepted, with error "Could not execute the password modify extended operation for DN"
+
+        The error message can be difficult to interpret, but it means that the new password you have chosen does not respect our password policies. 
+        Please check the :ref:`general/users_account:Users and Accounts` and choose your new password accordingly.
+
+    .. card:: I receive the error message "WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!" when trying to login
+
+        The problem may happen because we have reinstalled the login node changing the fingerprint. 
+        We should have informed you through an HPC-news. If this is the case you can remove the old fingerprint from your known_hosts file with the command
+
+        ``ssh-keygen -f "~/.ssh/known_hosts" -R "login.<cluster_name>.cineca.it"``
+
+    .. card:: I keep receiving the error message "WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!" even if I modify known_host file
+
+        Please, follow the procedure described below to solve the problem.
+
+        .. tab-set::
+
+            .. tab-item:: Linux/MacOS
+        
+                .. code-block:: bash
+
+                    # LEONARDO
+                    ssh-keygen -f ~/.ssh/known_hosts -R login.leonardo.cineca.it; for keyal in ssh-rsa ecdsa-sha2-nistp256; do for address in login01-ext.leonardo.cineca.it login02-ext.leonardo.cineca.it login05-ext.leonardo.cineca.it login07-ext.leonardo.cineca.it; do ssh-keyscan -t  ${keyal} ${address} | sed "s/\b${address}/login*.leonardo.cineca.it/g" >> ~/.ssh/known_hosts; done; done
+
+                .. code-block:: bash
+
+                    # G100
+                    ssh-keygen -f ~/.ssh/known_hosts -R login.g100.cineca.it; for keyal in ssh-rsa ecdsa-sha2-nistp256; do for address in login01-ext.g100.cineca.it login02-ext.g100.cineca.it login03-ext.g100.cineca.it; do ssh-keyscan -t  ${keyal} ${address} | sed "s/\b${address}/login*.g100.cineca.it/g" >> ~/.ssh/known_hosts; done; done
+
+            .. tab-item:: Windows
+
+                .. code-block:: powershell
+
+                    # LEONARDO
+                    ssh-keygen -f "$HOME\.ssh\known_hosts" -R "login.leonardo.cineca.it"; foreach ($keyal in "ssh-rsa", "ecdsa-sha2-nistp256") { foreach ($address in "login01-ext.leonardo.cineca.it", "login02-ext.leonardo.cineca.it", "login05-ext.leonardo.cineca.it", "login07-ext.leonardo.cineca.it") { ssh-keyscan -t $keyal $address | ForEach-Object { $_ -replace "$address", "login*.leonardo.cineca.it" } >> "$HOME\.ssh\known_hosts" } }
+
+                .. code-block:: powershell
+                    
+                    # G100
+                    ssh-keygen -f "$HOME\.ssh\known_hosts" -R "login.g100.cineca.it"; foreach ($keyal in "ssh-rsa", "ecdsa-sha2-nistp256") { foreach ($address in "login01-ext.g100.cineca.it", "login02-ext.g100.cineca.it", "login03-ext.g100.cineca.it") { ssh-keyscan -t $keyal $address | ForEach-Object { $_ -replace "$address", "login*.g100.cineca.it" } >> "$HOME\.ssh\known_hosts" } }
+
+
+    .. card:: Windows WSL issue DNS resolution failing 
+
+        If the DNS resolution fails with Temporary failure in name resolution or resolution timing out, an automatic change in ``/etc/resolv.conf`` occured.  You can change it manually by replacing the name server value with 8.8.8.8 . This file is automatically
+        generated by WSL: to stop the automatic generation of this file, add the following entry to /etc/wsl.conf: [network] generateResolvConf = false. 
+        
+        Then, add in your ``.bashrc`` the following commands for the automatic creation of the name server value in the ``resolv.conf`` file:
+
+        .. code-block:: bash
+            
+            if [ ! -f /etc/resolv.conf ]; then
+            echo "nameserver 8.8.8.8" > /etc/resolv.conf
+            fi
+
+    .. card:: The message "perl: warning: Setting locale failed" appear when I login. How do I solve?
+
+        This warning is typical of Mac users (but can happen with other OS too). 
+        It is actually innocuous and can be safely ignored, but if you want to get rid of it you can add these lines 
+        to the ``.bashrc`` of your workstation, or in general you can execute them before trying to login to our systems:
+
+        .. code-block:: bash
+
+         export LANGUAGE=en_US.UTF-8
+         export LANG=en_US.UTF-8
+         export LC_ALL=en_US.UTF-8
+
+        if you try to login afterwards, the warnings should have disappeared.
+
+    .. card:: Can I login with *ssh* inside a compute node?
+
+        In general is forbidden to login via ssh in a compute node, as the network is local-only restricted, It is always possible to access to compute node by
+        submitting an interactive job with ``srun`` or ``salloc`` (check the :ref:`hpc/hpc_scheduler:Submit Jobs via Interactive Mode` section), but apart from that,
+        ``ssh`` is **only** possible if there is a *running* job from the user that want to login into compute node.
+
+        Specifically, in Leonardo, due to recent system updates, the connection via ``ssh`` can be denied even for that specific case described before. To avoid such
+        limitation is now mandatory to have a pair of SSH keys generated inside Leonardo cluster. 
+        
+        The user can create the keys with the command ``ssh-keygen`` and copy the output
+        , the public key, in their configuration file ``~/.ssh/autorized_keys``. After the generation of SSH Keys, the connection via ``ssh`` in a compute node will be
+        possible (with the condition of a job running from the user that whant to connect to compute node).
+
+2FA 
+---
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+    .. card:: ERROR: The term 'step' is not recognized as the name of a cmdlet (Powershell)
+
+        If running the command step to verify the installation of smallstep you incour in the following error:
+
+        .. code-block:: bash
+
+            PS C:\Users\user > step
+            step : The term 'step' is not recognized as the name of a cmdlet,
+            function, script file, or operable program. Check
+            the spelling of the name, or if a path was included, verify that the path
+            is correct and try again.
+            At line:1 char:1
+            + step
+            + ~~~~
+            + CategoryInfo : ObjectNotFound: (step:String) [],
+            ParentContainsErrorRecordException
+            + FullyQualifiedErrorId : CommandNotFoundException
+
+        check if you find the executable step.exe inside the folder: ``C:\Users\user\scoop\shims``
+
+        The installation command should have placed it there. If you don't find it, run on your Powershell  the command: ``scoop install smallstep/step``
+
+        **ERROR associated to X11 execution**
+
+        1. install Xming: https://sourceforge.net/projects/xming/, it will open a window in the background that you won't be able to see but you can see that it's there looking between the icons in the Windows' applications bar (bottom right)
+        2. follow the steps reported at  https://x410.dev/cookbook/built-in-ssh-x11-forwarding-in-powershell-or-windows-command-prompt/ for PowerShell
+        3. then you can run the command ssh to login on the cluster
+
+
+    .. card:: undefined method 'cellar' when installing step on MacOS
+
+        You may encounter an error that looks like this:
+
+        Error: step: undefined method ``cellar for #<BottleSpecification:0x000000012e579660>``
+
+        In this case, the problem is in your homebrew. It may refer to the directories of different processes, e.g. Intel, while you need to make it refer to AMD. You can reinstall homebrew:
+
+        brew tap homebrew/core and then set the proper paths with simple shell commands:
+
+        .. code-block:: bash
+
+          (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/<my_user>/.zprofile
+
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
+        If this is not the solution of your error, the command *brew doctor* should give you an hint about how to proceed in your specific case.
+
+
+Scheduler and Job Execution
+---------------------------
+
+ .. dropdown::
+    :animate: fade-in-slide-down
+    :color: warning
+    :chevron: down-up
+
+    .. card:: My job has been waiting for a long time
+
+        The priorities in the queue are composed of several factors and the value may change due to the presence of other jobs, of the resources required, and your priority.  You can see the reason for your job in the queue with the squeue command. If the state is PD, the job is pending. Some reasons for the pending state that could bee displayed:
+
+            * Priority= The job is waiting for free resources. 
+            * Dependency= It is depending to the end of another job.
+            * QOSMaxJobsPerUserLimit = The maximum number of jobs a user can have running at a given time.
+
+        You can also consult the estimated starting run time with the SLURM command ``scontrol``: ``scontrol show job #JOBID``
+
+        or you can see the priority of your job with the sprio  SLURM command: ``sprio -j #JOBID``
+
+    .. card:: Can I modify SLURM settings of a waiting job?
+
+        Some Slurm settings of a pending job can be modified using the command scontrol update. For example, setting the new job name and time limit of the pending job: 
+
+        ``scontrol update JobId=2543 Name=newtest TimeLimit=00:10:00``
+
+    .. card:: How can I place and release a job from hold state?
+
+        In order to place a job on hold type: ``scontrol hold JOB_ID``.
+
+        To release the job from the hold state, issue: ``scontrol release JOB_ID``.
+
+    .. card:: Error invalid account when submitting a job: Invalid account or account/partition combination specified
+
+        The error Invalid account might depend on the lack of resources associated to your project or there is an error with the account name in your batch script. Just use the ``saldo`` command.  
+        If the account is correct and valid, are you lunching the job on the right partition? To see which partition is right for your case and account, please consult the :ref:`hpc/hpc_scheduler:Scheduler and Job Submission` section.
+
+    .. card:: I get the following message: "srun: Warning: can't honor --ntasks-per-node set to xx which doesn't match the requested tasks yy with the number of requested nodes yy. Ignoring --ntasks-per-node." What does it mean?
+
+        This is a message that can appear when using mpirun and Intelmpi parallel environment. It is a known problem that can be safely ignored,since mpirun does not read the proper Slurm variables and thinks that the environment is not set properly, thus generating the warning: in reality, the instance of srun behind it will respect the setting you requested with your Slurm directives. While there are workarounds for this, the best solution (apart from ignoring the message) is to use srun instead of mpirun: with this command, the Slurm environment is read properly and the warning does not appear.
+

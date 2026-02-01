@@ -1,0 +1,54 @@
+.. _compute_inst_rescue_card:
+
+Instance: rescue
+================
+
+Instance rescue provides a mechanism for accessing, even if an image renders the instance inaccessible. Two rescue modes are currently provided.
+
+.. warning:: 
+
+    If the virtual machine has encrypted **LUKS VOLUMES** attached, it is mandatory to detach them before starting the rescue operation. 
+
+.. tab-set:: 
+
+    .. tab-item:: Ephemeral Virtual Machine
+        
+        - Create a **rescuer** virtual machine with a **new key pair** (:ref:`cloud/operative/compute_ops/instance_create:instance: create`). Although this is not a fixed rule, it is suggested to create the rescuer machine using an image with **same OS** as the one on the inaccessible machine (same version or newer).
+        - Login to the rescuer and update it. As an example, for Ubuntu virtual machines:
+
+        .. code-block:: bash
+        
+           sudo apt update
+           sudo apt upgrade
+
+        - Logout the rescuer and create a **snapshot image** of this virtual machine.
+        
+        - Select the instance you want to rescue, check that its openstack status is *"Active"*, and from the drop-down menu on the right select *"rescue instance"*:
+        - In the menu that appears, select the image you just created from the rescuer machine.
+        - Login via ssh to the broken machine using the rescuer username/key 
+        - Check that the boot of the machine has been correctly executed using the command ``lsblk``
+        - You should see the rescuer machine (/dev/vda1) mounted and the inaccessible machine on the device /dev/vdb1
+        - Mount such device /dev/vdb1 
+
+        .. code-block:: bash
+
+           sudo mkdir /mnt/inaccessible_vm
+           sudo mount /dev/vdb1 /mnt/inaccessible_vm
+
+        - Now you can access the files in the inaccessible machine to fix the problems (lsblk, fsck, xfs_repair, chroot, etc.) or backup important data
+        - Once the operation is done, logout the virtual machine and from the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard` select *"unrescue"*.
+
+    .. tab-item:: Bootable Virtual Machine
+
+        - Shutdown the instance.
+        - In the tab *"Volumes"*, track which secondary volumes are attached to the VM to be rescued and detach them.
+        - **IMPORTANT**: verify that the bootable volume won't be erased when deleting the VM!
+
+            - using the :ref:`cloud/os_overview/management_tools/command_line:command line interface`, execute the command ``openstack server volume list <id-vm-to-be-rescued>``, and have a look to the field *"delete_on_termination"* that must be set to *'False'*.  (**Note** that this will work with openstack-cli >= 6.2.0)
+            - If delete_on_termination option is set to *true*, it can be changed using the :ref:`cloud/os_overview/management_tools/command_line:command line interface` with the command ``openstack server volume set --preserve-on-termination <server_id> <volume_id>``
+        - Keep track of the Flavor, Security Groups and FIP associated with the VM (FIP in particular if there is a DNS association).
+        - Delete the instance.
+        - Create a throwaway VM, attach the bootable volume to rescue as a secondary volume and associate a FIP to such VM.
+        - Login via ssh to the throwaway VM and execute all the needed operations on the volume to rescue (lsblk, fsck, xfs_repair, chroot, etc.).
+        - Once the volume has been recovered, exit the throwaway VM and detach the secondary volume that has been rescued.
+        - Restart the VM from the rescued bootable volume, reattaching the secondary volumes, FIP, and check the problem has been solved.

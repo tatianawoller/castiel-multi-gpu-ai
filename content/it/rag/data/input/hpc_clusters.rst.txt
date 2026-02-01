@@ -1,0 +1,31 @@
+Cluster Specifics
+=================
+
+In this section, we highlight the specific features of the HPC systems at CINECA, focusing on deviations from the general behavior described earlier.
+
+.. |ico1| image:: img/hpc_icon.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. grid:: 3
+
+   .. grid-item-card:: |ico1| **Leonardo**
+      :link: leonardo_card
+      :link-type: ref
+
+
+   .. grid-item-card:: |ico1| **Galileo100**
+      :link: galileo_card
+      :link-type: ref
+
+   .. grid-item-card:: |ico1| **Pitagora**
+      :link: pitagora_card
+      :link-type: ref
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+      
+   leonardo
+   galileo
+   pitagora

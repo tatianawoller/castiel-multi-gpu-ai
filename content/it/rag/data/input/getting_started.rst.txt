@@ -1,0 +1,117 @@
+.. _get_str_card:
+
+Getting Started
+===============
+
+**Welcome to CINECA HPC !!!**
+
+Here you will find in few simple steps the instructions to get your first access to CINECA HPC resources.
+
+**Let's start !!!**
+
+.. card:: 1. Create your personal **User account** on `UserDB <https://userdb.hpc.cineca.it>`_ portal.
+    
+    * Visit the :ref:`general/users_account:How to become a User` section for detailed information. 
+    * Please, consider that, once completed, the registration alone does not grant the access to the HPC resources. 
+  
+
+.. card:: 2. Get associated to a valid **Project Account**.
+    
+    * Visit the :ref:`general/users_account:Project Accounts` section to find all the ways you can be granted a **Project Account** on our HPC resources.
+    * If you are the *Principal Investigator (PI)* of a project, please write to superc@cineca.it to be associated.
+    * If you are a collaborator, please ask to the PI of the Project Account to be associated.
+    * Visit the :ref:`general/users_account:PI and Collaborators` section for more information.
+
+
+.. card:: 3. Submit a request to get access to CINECA HPC resources
+    
+    * by clicking on Submit button in HPC Access page on UserDB (:ref:`general/users_account:Submit a request to have a **User Account**`)
+    * Once enabled, we will provide you with a HPC username and a link to configure the 2FA (password + OTP token)
+
+
+.. card:: 4. Configure your 2FA
+    
+    * click on the link arrived via email and configure your HPC password and OTP token as described here :ref:`general/access:Access to the Systems`
+
+
+.. card:: 5. Select the **Infrastracture**
+    
+    * According to resources assigned to your **Project Account**, choose the :bdg-primary:`HPC`, or :bdg-secondary:`Cloud` infrastructure. 
+
+  .. dropdown:: HPC Infrastructure
+   :animate: fade-in-slide-down
+   :color: primary
+
+    .. card:: 6. Configure the **smallstep client**
+
+       The smallstep client is needed to get the temporary 2FA certificate to access the cluster (:ref:`general/access:How to configure *smallstep* client`)
+
+    .. card:: 7. **Connect to the Cluster**
+
+       Open a new shell/terminal and use the following commands to connect:
+
+       .. code-block:: bash
+
+         $ step ssh login <your email> --provisioner cineca-hpc
+         $ ssh <username>@login.<cluster>.cineca.it
+
+
+       Visit the page :ref:`general/access:Access to the Systems` to find instructions about other possible ways to connect
+
+
+    .. important::
+
+       You can login only to clusters where you have active budgets on it.
+
+    .. card:: 8. **Managing Data Files**
+
+       Get familiar with the FS areas and where they are located. 
+       On our HPC clusters there are several storage areas. The basic ones are: $HOME, $WORK and $SCRATCH, but sometimes there may be more. In section :ref:`hpc/hpc_data_storage:File Systems and Data Management` you can find a description of all of them with their properties and limitations.
+
+    .. card:: Explore the **Enviroment**
+
+       Check available software and/or compilers and pick-up the most convenient for your purpose.
+       In the :ref:`hpc/hpc_enviroment:Environment and Customization` section is described how to check, load and get info of the available software, enviroment and compilers. 
+
+    .. card:: 9. Check your **budget status**
+
+        Verify the status of your Project account budgets and their name with saldo command.
+        A descrption of the saldo command and additional flags that may be needen in some cases are described in :ref:`hpc/hpc_intro:Budget and Accounting`. 
+
+    .. card:: 10. **Submit your jobs**
+
+        Execute your simulation on compute nodes of our HPC cluster by submitting a job script to our SLURM scheduler.
+        In :ref:`hpc/hpc_scheduler:Scheduler and Job Submission` you can find how to properly create a job script and to submit it. 
+
+  .. dropdown:: Cloud Infrastructure
+   :animate: fade-in-slide-down
+   :color: secondary
+   
+    .. card:: 6. Learn about **OpenStack**
+       
+       Follow the link for more information: :ref:`cloud/os_overview/index_openstack_overview:what is openstack?`
+
+
+    .. card:: 7. Access the :ref:`cloud/os_overview/management_tools/dashboard:horizon dashboard`
+       
+       You can find the link to the dashboard and other useful information on the page specific to the cloud you have been assigned to:
+       :ref:`cloud/systems/ada:ada` or :ref:`cloud/systems/gaia:gaia`
+     
+    .. important::
+
+       You can only login on clouds where you have active budgets on.
+
+    .. card:: 8. Setup your **project**
+       
+       Create your network stack and your first virtual machine instance:
+
+        - :ref:`cloud/operative/network_ops/network_create:network: create`
+        - :ref:`cloud/operative/network_ops/secgroups_create:security groups: create`
+        - :ref:`cloud/operative/compute_ops/instance_create:instance: create`
+
+
+    .. note:: 
+      
+      Be sure to check our :ref:`cloud/tenant_adm/index_tenants_administration:tenants administration` tips
+
+

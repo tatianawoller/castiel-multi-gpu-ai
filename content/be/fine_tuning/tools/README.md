@@ -1,0 +1,12 @@
+# Tools
+
+Tools required for this training.  The environment can be created using conda if required.
+HPC systems such as Leonardo provide a module that contains all the necessary tools.
+
+
+## What is it?
+
+1. `environment_full_specs.yml`: conda environment file for installing the necessary
+   dependencies, all dependencies with explicit versions (less portable).
+1. `environment_from_history.yml`: conda environment file for installing the necessary
+   dependencies, only high-level packages (more portable, less reproducible).

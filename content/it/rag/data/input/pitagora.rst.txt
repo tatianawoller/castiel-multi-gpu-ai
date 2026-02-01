@@ -1,0 +1,162 @@
+.. _pitagora_card:
+
+Pitagora
+========
+
+.. figure:: ../img/warning3.png
+   :align: center
+   :class: no-scaled-link
+   :height: 150px
+
+.. figure:: ../img/spacer.png
+   :align: center
+   :class: no-scaled-link
+   :height: 20px
+
+Pitagora is the new EUROfusion supercomputer hosted by **CINECA** and currently built in the CINECA's headquarter in Casalecchio di Reno, Bologna, Italy. The cluster is supplied by Lenovo corp. and is composed of two partitions: A general purpose partition cpu-based named **DCPG** and an accelerated partition based on NVIDIA H100 accelerators named **Booster**.
+
+The specific guide for the **Pitagora** cluster contains unique information that deviates from the general behavior described in the HPC Clusters sections.
+
+Access to the System
+--------------------
+
+The machine is reachable via ``ssh`` (secure Shell) protocol at hostname point: **login.pitagora.cineca.it**. 
+
+The connection is established, automatically, to one of the available login nodes. It is possible to connect to **Pitagora** using one the specific login hostname points:
+
+ * login01-ext.pitagora.cineca.it
+ * login02-ext.pitagora.cineca.it
+ * login03-ext.pitagora.cineca.it
+ * login04-ext.pitagora.cineca.it
+ * login05-ext.pitagora.cineca.it
+ * login06-ext.pitagora.cineca.it
+
+.. warning::
+    
+    **The mandatory access to Pitagora is the two-factor authetication (2FA)**. Get more information at section :ref:`general/access:Access to the Systems`.
+
+System Architecture
+-------------------
+
+The system, supplied by Lenovo, is based on two new specifically-designed compute blades, which are available throught two distinct SLURM partitios 
+on the Cluster:
+
+* **GPU** blade based on NVIDIA NVIDIA H100 accelerators - **Booster** partition.
+* **CPU**-only blade based on  AMD Turin 128c processors - **Data Centric General Purpose (DCGP)** partition.
+
+The overall system architecture uses NVIDIA Mellanox InfiniBand High Data Rate (HDR) connectivity, with smart in-network computing acceleration engines that enable extremely low latency and high data throughput to provide the highest AI and HPC application performance and scalability. 
+
+
+Hardware Details
+^^^^^^^^^^^^^^^^
+.. tab-set::
+
+    .. tab-item:: Booster
+
+        .. list-table:: 
+            :widths: 30 50
+            :header-rows: 1
+
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Lenovo SD650-N V3
+            * - Racks
+              - 7
+            * - Nodes
+              - 168
+            * - Processors/node
+              - 2x Intel Emerald Rapids 6548Y 32c 2.40 GHz
+            * - CPU/node
+              - 64
+            * - Accelerators/node
+              - 4x NVIDIA H100 SXM 80GB HBM2e
+            * - Local Storage/node (tmfs)
+              - 
+            * - RAM/node
+              - 512 GiB DDR5 5600 Mhz
+            * - Rmax
+              - 27.27 PFlop/s (`top500 <https://www.top500.org/system/180348/>`_)
+            * - Internal Network
+              - Nvidia ConnectX-7 NDR200
+            * - Storage (raw capacity)
+              - 2 x 7.68 GiB SSDs (HW RAID 1)
+
+
+    .. tab-item:: DCGP
+
+        .. list-table::
+            :widths: 30 50
+            :header-rows: 1
+
+            * - **Type**
+              - **Specific**
+            * - Models
+              - Lenovo SD665 V3
+            * - Racks
+              - 14
+            * - Nodes
+              - 1008
+            * - Processors/node
+              - 2x AMD Turin 128c - Zen5 microarch 2.3 GHz
+            * - CPU/node
+              - 256 
+            * - Accelerators/node
+              - (none)
+            * - Local Storage/node (tmfs)
+              -                
+            * - RAM/node
+              - 768 GiB DDR5 6400 Mhz
+            * - Rmax
+              - 17 Pflop/s (`top500 <https://www.top500.org/system/180348/>`_)
+            * - Internal Network
+              - Nvidia ConnectX-7 NDR
+            * - Storage (raw capacity)
+              - 
+
+Job Managing and SLURM Partitions 
+---------------------------------
+
+In the following table you can find informations about the SLURM partitions for **Booster** and **DCGP** partitions of the production environment.  
+
+.. seealso:: 
+  Further information about job submission are reported in the general section :ref:`hpc/hpc_scheduler:Scheduler and Job Submission`. 
+
+
+.. warning::
+
+  **PLEASE NOTE THAT THE CONFIGURATION OF SLURM PARTITIONS REPORTED IN THE FOLLOWING TABLES WILL BE ENFORCED AT THE START OF THE PRODUCTION PHASE**. 
+  
+  You can check the current partition configurations with the ``sinfo`` command.
+
+.. tab-set::
+
+    .. tab-item:: Booster
+
+        +------------------+------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        | **Partition**    | **QOS**                | **#Nodes/#per job**       | **Walltime** | **#Max Nodes/#per user**   | **Priority** | **Notes**                           |
+        +==================+========================+===========================+==============+============================+==============+=====================================+
+        | boost_fua_prod   | normal                 | max = 16                  | 24:00:00     | 32                         | 40           |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | boost_qos_fuadbg       | max = 2                   | 00:10:00     |  2                         | 80           |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | boost_qos_fuaprod      | min = 17 (full nodes)     | 24:00:00     | 32                         | 60           | runs on 96 nodes (GrpTRES)          |
+        |                  |                        | max = 32                  |              |                            |              |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | boost_qos_fualprod     | max = 3                   | 4-00:00:00   |  3                         | 40           |                                     |
+        +------------------+------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+
+    .. tab-item:: DCGP
+
+        +------------------+------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        | **Partition**    | **QOS**                | **#Nodes/#per job**       | **Walltime** | **#Max Nodes/#per user**   | **Priority** | **Notes**                           |
+        +==================+========================+===========================+==============+============================+==============+=====================================+
+        | dcgp_fua_prod    | normal                 | max = 64                  | 24:00:00     | 64                         | 40           |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | dcgp_qos_fuadbg        | max = 2                   | 00:10:00     |  2                         | 80           |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | dcgp_qos_fuaprod       | min = 65 (full nodes)     | 24:00:00     | 128                        | 60           | runs on 640 nodes (GrpTRES)         |
+        |                  |                        | max = 128                 |              |                            |              |                                     |
+        +                  +------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+
+        |                  | boost_qos_fualprod     | max = 6                   | 4-00:00:00   |  12                        | 40           |                                     |
+        +------------------+------------------------+---------------------------+--------------+----------------------------+--------------+-------------------------------------+

@@ -1,0 +1,33 @@
+.. _cloud_card:
+
+Introduction to HPC Cloud
+=========================
+
+This section provides a broader context for HPC Cloud and the essential characteristics 
+of cloud infrastructure with respect to HPC. 
+
+It introduces the implemented CINECA cloud model with specific focus on roles and responsibilities 
+together with the budgeting and accounting rules in place at CINECA for Cloud projects.
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   what_is_cloud
+   cineca_cloud_model
+   budget_accounting
+
+
+.. grid:: 3
+
+    .. grid-item-card::  **What is cloud computing**
+      :link: what_is_cloud_card
+      :link-type: ref
+
+    .. grid-item-card:: **CINECA HPC Cloud model**
+      :link: cineca_cloud_model_card
+      :link-type: ref
+
+    .. grid-item-card:: **Budget and accounting**
+      :link: budget_accounting_card
+      :link-type: ref

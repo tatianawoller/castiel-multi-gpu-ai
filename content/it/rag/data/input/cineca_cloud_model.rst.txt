@@ -1,0 +1,128 @@
+.. _cineca_cloud_model_card:
+
+CINECA HPC Cloud Model
+=======================
+
+The CINECA HPC Cloud infrastructure integrates and completes the HPC ecosystem, providing a tightly-integrated 
+infrastructure that covers both high performance and high flexible computing. 
+The flexibility of the cloud adapts better to the diversity of user workloads, while still providing high-end computing power.
+
+.. note:: 
+   CINECA HPC Cloud infrastructure is certified ISO 27001 since 2022 for `"Servizi informatici HPC in cloud per la ricerca in ambito life science" <https://www.cineca.it/sites/default/files/2024-06/ISO-27001-IT319237-ITA.pdf>`_.
+
+CINECA Service Model
+^^^^^^^^^^^^^^^^^^^^
+
+CINECA HPC Cloud infrastructure is provided via an **Infrastructure as a Service (IaaS)** model. 
+In IaaS model, the Cloud Provider administrates the hardware and virtualization layers of the 
+infrastructure and provides both computing resources (virtual CPUs, storage, network, GPUs...) and high-level APIs (dashboards, command line (CLI) tools) 
+that users can employ to control the resources they were granted.
+
+HPC Cloud use cases
+^^^^^^^^^^^^^^^^^^^
+Cloud computing means **paramount flexibility**. With a cloud IaaS model, users are able to setup their project environment as they see fit, 
+using all the infrastructure tools and resources and with the support provided by CINECA to meet their specific needs. 
+
+CINECA users rely on the HPC Cloud infrastructure to address different use cases. The list below is not meant
+to be exhaustive, but to provide examples of scenarios where HPC Cloud can be particularly useful.
+
+.. grid:: 3
+
+  .. grid-item-card::
+
+      Hosting of data processing and analysis services (typical Infrastructure as a Service, IaaS).â
+  
+  .. grid-item-card::
+
+      Hosting of HPC mini-cluster with adequate performance.â
+  
+  .. grid-item-card::
+
+      Hosting of data management services receiving or exposing data from/to web.â
+
+.. grid:: 3
+
+  .. grid-item-card:: 
+
+      Hosting of data management services receiving or exposing data from/to internal CINECA HPC infrastructure.â
+
+  .. grid-item-card:: 
+
+      Hosting of workload processing sensitive data.â
+
+  .. grid-item-card:: 
+
+      Bridging HPC Infrastructure, e.g. hosting front-end services for management of workloads on CINECA HPC system.â
+
+.. grid:: 3
+
+  .. grid-item-card:: 
+
+      Flexible and automated deployment via Kubernetes on top of OpenStack of containerized workflows.â
+
+  .. grid-item-card:: 
+
+      Collaborative infrastructure deployment within a user tenant (Infrastructure as Code, IaC).â
+
+  .. grid-item-card:: 
+
+      Everything that requires performance and flexibility (respect to the HPC cluster).â
+
+Responsibilities
+^^^^^^^^^^^^^^^^^
+
+While CINECA is responsible for the provisioning and maintenance of the hardware and virtualization layer (OpenStack), 
+the users are responsible for anything they set up and install on their project (e.g. network setup, 
+OS and applications on virtual machines, access to services and VMs).
+A clear separation of roles in using the service is represented in the scheme below:
+
+.. image:: ../_img/cloud_model.png
+
+.. list-table:: Roles and responsibilities
+   :widths: 1 1 1 1
+   :header-rows: 1
+   :class: tight-table   
+
+   * - **Name**
+     - **Description**
+     - **Role** 
+     - **Responsibilities**  
+   * - **CINECA**
+     - Cloud provider
+     - 
+       - Administers physical infrastructure
+       - Provides virtualization layer and API tools
+     - 
+       - Maintaining hardware and virtualization layer
+       - User support
+   * - **User Admin**
+     - 
+       - Users with granted budget on CINECA HPC cloud
+       - Project PIs and collaborators in `CINECA UserDB <http://userdb.hpc.cineca.it/>`_
+     - 
+       - Create and manage cloud resources via the provided APIs (dashboard or CLI)
+       - Responsible for all the resources they create (VMs, storage, networks,...)
+     - 
+       - Administer of the resources
+       - Maintain VMs for which they have admin privileges
+       - Implement security measures 
+       - Backups/snapshots of resources during the project and at 
+         the end of the validity period
+   * - **User**
+     - Users with granted access to the project VMs by User Admins.
+     - Can utilize VMs and services they have been granted access to by User Admins.
+     - Maintain the VMs for which they have admin privileges 
+
+Any user (*âUser Admins"* or *âUsersâ*) with administration privileges on IaaS resources 
+(VMs) has the responsibility to maintain the security (security patch, fix) on those 
+resources. In particular, they have the responsibility to perform VMs and volume data 
+backups. 
+
+.. warning:: 
+
+  Currently snapshots and backups of resources are stored in the same HPC Cloud infrastructure. 
+
+From the project management perspective, CINECA will interact only with *âUser Admins"*. 
+At the end of the project validity, the *âUser Adminsâ* will receive communication from CINECA 
+staff that the project as expired with the date by when the resources will be removed. 
+It is *âUser Adminsâ* responsibility to make copy of the necessary VMs or data before that date.

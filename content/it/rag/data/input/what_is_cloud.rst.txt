@@ -1,0 +1,60 @@
+.. _what_is_cloud_card:
+
+What is Cloud Computing
+=======================
+
+**Cloud computing** is a crucial paradigm in today's digital era. 
+It encompasses the delivery of diverse services and resources, including computing power, 
+storage, databases, networking, software, and more, via the internet. 
+
+Cloud computing is a **virtualization-based technology** that allows users remote access 
+to a pool of virtual resources (typically CPUs, memory and storage) completely isolated one 
+from another that can be used to create and operate one or more virtual machines depending on the needs.
+
+**HPC cloud**, or High-Performance Computing cloud, integrates high-performance 
+computing resources and capabilities with cloud computing infrastructure. 
+It combines the computational power and scalability of traditional HPC systems with the flexibility and on-demand nature of cloud services.
+
+Features of HPC Cloud
+-----------------------
+
+HPC Cloud users are able to exploit the computational power of HPC machines with the added benefit of extreme flexibility. Users can organize their pool of computational resources how they see fit for their personal workflow, creating a single virtual machine that harnesses the full capability of all the resources at once, or smaller virtual machines that can communicate and interact with each other.
+
+More in details, within HPC Cloud the users can:
+
+- decide how to exploit computational and storage resources, creating their personal virtual infrastructure (**flexibility**)
+- manage their virtual machines, for example by deciding the operative system and software environments (**flexibility**)
+- scale the computational resources based on their needs allowing to handle varying workloads efficiently (**scalability**)
+- optimize the use of the resources without idle time (**resources optimization**)
+- access the resources remotely (**accessibility**)
+
+What to apply for: HPC or Cloud computing?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. csv-table::
+  :header: " ", "HPC", "Cloud Computing"
+  :widths: 5 5 5
+  :class: tight-table   
+
+  "**Performance**", "Target the highest possible.", "Depends on workload, but generally, virtualization has a small impact."
+  "**User access**", "HPC site staff authorization.", "Once a project is granted, it is managed by the user."
+  "**Operating System**", "It is chosen by HPC site staff given the HW constraints. Security updates are managed by HPC site.", "Selected by the user. Security patches and updates are managed by the user."
+  "**Software Stack**", "Mostly installed by HPC site staff. Users can install their own without *root* privilege. The environment is provided *as is*.", "The user is root on the VMs and can install all the required software stack. Users can modify the environment to suit their needs."
+  "**Snapshots of the environment**", "Cannot be done", "User can save snapshot images of the VMs."
+  "**Running simulations**", "Users are provided with a job scheduler (SLURM) and have to wait for resources to free in order for their job to run", "Users are able to run serial or parallel jobs how/when they need."
+  "**Very large simulations**", "Users are provided with a job scheduler and have to wait for resources to free in order for their job to run.", "Users can plan their workloads execution."
+
+Service Models
+^^^^^^^^^^^^^^
+
+Cloud computing resources can be provided using different service models:
+
+-  **Infrastructure as a Service (IaaS)**: Provides virtualized computing resources 
+   over the internet. Users are able to deploy those resources how they see fit.
+-  **Platform as a Service (PaaS)**: Offers a platform allowing developers to build, 
+   deploy, and manage applications without worrying about the underlying infrastructure.
+-  **Software as a Service (SaaS)**: Delivers software applications over the internet, 
+   accessible via a web browser, without the need for local installation or maintenance.
+
+In CINECA, we provide resources using the IaaS model (see section :ref:`cloud/general/cineca_cloud_model:cineca hpc cloud model` for more 
+information).

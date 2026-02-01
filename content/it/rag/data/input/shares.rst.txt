@@ -1,0 +1,20 @@
+.. _shares_card:
+
+Shares
+======
+
+The `OpenStack Manila service <https://docs.openstack.org/manila/latest/>`_ allows the creation of a filesystem that can be shared 
+among virtual machines in the same tenant (intra-tenant) or in different tenants (extra-tenant).
+This setup is particularly useful for applications that require consistent and 
+simultaneous access to data across different instances.
+
+In CINECA HPC Cloud infrastructure, it is possible to create shares of the following types:
+
+- Generic type (NFS protocol)
+- Cephfs type (CEPHFS protocol)
+
+We suggest the users that need a shared filesystem to use the **generic type**.
+
+.. note:: 
+  
+  **Only intra-tenant** shares are allowed on CINECA HPC Cloud infrastructures.

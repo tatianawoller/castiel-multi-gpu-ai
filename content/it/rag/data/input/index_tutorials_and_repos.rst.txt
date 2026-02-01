@@ -1,0 +1,35 @@
+Tutorials and Gitlab repositories
+=================================
+
+Tutorials for OpenStack dashboard
+---------------------------------
+
+This section provides you with a list of guides for basic operations. 
+
+.. grid:: 2
+
+  .. grid-item-card:: |tutorial|  **Creation of a VM (step-by-step)**
+    
+    :download:`Download the pdf </files/ADA_getting_started.pdf>`
+
+  .. grid-item-card:: |tutorial|  **Deletion of resources (step-by-step)**
+    
+    :download:`Download the pdf </files/ADA_getting_started_cancel_resources.pdf>`
+ 
+Terraform/OpenTofu/Ansible repositories 
+----------------------------------------
+
+This section provides you with links to CINECA Gitlab repositories that contain tutorials or modules as examples for the use of :ref:`cloud/os_overview/management_tools/infrastructure_as_code:infrastructure as a code` tools. 
+
+.. warning:: The GitLab repositories are accessible only if you have an HPC user account
+
+- `Infrastructure as Code (IaC) modules <https://gitlab.hpc.cineca.it/adacloud/tf-modules>`_
+- `Infrastructure as Code (IaC) tutorial <https://gitlab.hpc.cineca.it/adacloud/tf-tutorial>`_
+- `Customized ansible-scripts for OpenStack <https://gitlab.hpc.cineca.it/adacloud/openstack-ansible-repo>`_
+- `Slurm mini-hpc cluster on ADA Cloud <https://gitlab.hpc.cineca.it/adacloud/ada-slurm-mini-hpc>`_
+- `Graphics on HPC Cloud <https://gitlab.hpc.cineca.it/adacloud/graphics-on-hpc-cloud>`_
+- `RKE2 kubernetes deploy guide <https://gitlab.hpc.cineca.it/adacloud/k8s-guide>`_
+
+.. |tutorial| image:: /cloud/_img/tutorial_icon.png
+   :width: 35px
+   :class: no-scaled-link

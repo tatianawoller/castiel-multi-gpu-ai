@@ -1,0 +1,25 @@
+.. _shares_ops_card:
+
+Shares operations
+=================
+
+For general information on the Shares component, visit the :ref:`cloud/os_overview/os_components/shares:shares` page. 
+
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   
+   cephfs_share_create
+   generic_share_create
+
+.. card:: |osmanila| **CEPHFS shares: create**
+      :link: shares_cephfs_create_card
+      :link-type: ref
+
+.. card:: |osmanila| **Generic shares: create**
+      :link: shares_generic_create_card
+      :link-type: ref
+
+.. |osmanila| image:: /cloud/_img/manila_logo.png
+   :width: 35px
+   :class: no-scaled-link

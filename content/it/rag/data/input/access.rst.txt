@@ -1,0 +1,822 @@
+.. _access_card:
+
+Access to the Systems
+=====================
+
+Accessing any section of the Cineca HPC systems requires activating two-factor authentication (**2FA**) for each user account. 
+This enhanced security measure verifies a user's identity by requiring a second, independent factor in addition to the account password. 
+Even if the correct account password is used, **2FA** ensures that unauthorized access is prevented, significantly improving the system's overall security.
+
+This access modality operates seamlessly for users, who continue to utilize standard protocols such as the SSH client. Before connecting to the cluster, users must request an SSH certificate from our Identity Provider (IP) via the *smallstep* client. 
+Upon making the request, a web page will automatically open in the browser, prompting users to authenticate with our IP by entering a one-time password (**OTP**). 
+Following successful authentication, the server will issue a time-limited certificate valid for **12 hours**. 
+This certificate allows users to connect to CINECA systems via *SSH client*.
+
+
+.. important::
+
+   For the **First-time Access** and the activation of **2FA**, a user must complete the following steps:
+	* Registration on :ref:`general/users_account:UserDB`.
+	* Correct configuration of 2FA and OTP (:ref:`general/access:How to activate the **2FA** and the **OTP** generator`).
+
+.. important::
+
+   * If you are a **Cloud** user only, *smallstep* installation is not required.
+   * For **HPC Resources** you must use *smallstep* client to allow  **ssh** protocol (:ref:`general/access:How to configure *smallstep* client`).
+
+How to activate the **2FA** and the **OTP** generator
+-----------------------------------------------------
+
+Follow the instructions below to activate the 2FA authenticator method and configure the OTP generator.
+
+.. dropdown:: 2FA activation and OTP configuration, step-by-step guide
+   :animate: fade-in-slide-down
+   :color: light
+
+      * Step 1 - Activate the **2FA**
+         * point the website https://sso.hpc.cineca.it 
+         * Sign in using your CINECA cluster username and password (received by email). 
+            * **At first login**, you'll be prompted to verify your email, change your password, and configure your OTP (One-Time Password).
+
+      .. figure:: img/2fa_1.png 
+
+      .. important::
+            New users will automatically receive the link. Once it is set up, you'll use the OTP alongside your password for logging into the cluster.
+
+            If it's your first time logging in and you haven't received a valid access link, contact superc@cineca.it.
+
+             if you already have access to the cluster via username and password but you haven't yet done your first login on the new sso portal and you haven't configured the 2FA, you need to write at superc@cineca.it to receive a valid link for the access.   
+
+      * Step 2
+         * After your first login, you will receive an email from CINECA with the subject "CINECA HPC Single Sign-On: Verify Your Email." This email will be sent to the address you registered with on the UserDB portal.
+
+         * The email contains a verification link labeled ``Click on the link to proceed``. Once you click it, you will be prompted to define a new *password*. Please ensure that your chosen password complies with the :ref:`general/users_account:Policy for HPC password definition`.
+
+      .. figure:: img/2fa_2.png
+
+      * Step 3
+         After the definition of a new valid password (that will replace the password used to login to CINECA clusters), you will be asked to configure the 2FA following few simple steps.
+
+      .. figure:: img/2fa_3.png
+
+      * Step 4 - OTP Applications
+
+         * Authentication codes can be generated using either *FreeOTP* or *Google Authenticator*, or other compatible apps. If you don't already have one of these apps, download it onto your smartphone.
+         * Once the app is installed, use it to scan the QR code displayed on the setup page. The OTP will be automatically configured on your authenticator.
+         * As a final step, enter the **6-digit** code that appears in the app to verify the correct configuration. If you have multiple OTPs in the app, the correct one will be labeled **"CINECA HPC: <your username>"**.
+         * After verifying the correct configuration, the following page will display your **Recovery codes**. Save these codes by downloading, printing, or copying them into a text file.
+
+      .. figure:: img/2fa_4.png
+
+      .. warning::
+          **Recovery codes** are requested to the user in case of problems with your management of the OTP codes (for example, issues with the app or smartphone lost), so saving them somewhere is very important.
+
+         * Step 5
+      
+            * At this point, your 2FA is active and your OTP configuration is done. In case you are a user of HPC resources (not Cloud), you can follow the guide below to setup the smallstep client for the authentication certificate and to connect to the HPC clusters via ssh protocol.
+
+.. important::
+
+   If you need to regenerate the OTP, please refer to the procedure outlined in the :ref:`general/users_account:Manage your HPC credentials`.
+
+   Users that want to get access *only* to **Cloud** resources can skip the next steps.
+
+
+
+How to configure *smallstep* client
+-----------------------------------
+
+Once 2FA is enabled as authentication method for CINECA clusters, 
+you will need to install and configure a 2FA-compatible program on your PC, to download the temporary certificate 
+locally. At CINECA, we recommend using the **Smallstep** client.
+
+.. note::
+   **smallstep** client is not required to access to cloud resources.
+
+To obtain and install the Smallstep executable, visit the Smallstep `website <https://smallstep.com/docs/step-cli/installation/index.html>`_ and follow the installation instructions for your operating system. 
+Alternatively, you can download the executable directly from the `GitHub repository <https://github.com/smallstep/cli/releases/tag/v0.26.1>`_.
+
+After installation, you must configure Smallstep according to your operating system's requirements. 
+If you encounter any issues or need further assistance, please contact superc@cineca.it.
+
+.. dropdown:: Linux/MacOS Systems
+   :animate: fade-in-slide-down
+   :color: light
+
+      .. warning::
+       Users with **Ubuntu Linux** operating systems (also for other Linux distributions) should not run the command `sudo apt install step` because this will install a different software that will give errors when following the rest of the instructions.
+
+
+      * **Step 1**  
+        
+       Configure *smallstep* on your system by running the following command line instructions in your shell:
+
+       .. code-block:: bash
+
+           step ca bootstrap --ca-url=https://sshproxy.hpc.cineca.it --fingerprint 2ae1543202304d3f434bdc1a2c92eff2cd2b02110206ef06317e70c1c1735ecd 
+ 
+      the command output should be the following:
+
+       .. code-block:: bash
+
+            The root certificate has been saved in <path-to>/.step/certs/root_ca.crt.
+ 
+            The authority configuration has been saved in <path-to>/.step/config/defaults.json.
+      
+       .. note::
+           If you have a previous version of smallstep installed and configured on your system, the client will ask if you want to overwrite the existing configuration.
+           To save a copy of a previous version of smallstep installed and configured on your system, make a copy of the directory *.step*. 
+
+
+      * **Step 2**
+
+       To use the certificate created in **Step 1**, the user should activate the **ssh-agent running** with the following command:
+
+       .. code-block:: bash
+
+            eval $(ssh-agent)
+
+       .. note::
+            If the agent is already active, this step is not required.
+
+      * **Step 3**
+
+        To use the certificate for the authentication, use the command:
+
+        .. code-block:: bash
+
+            step ssh login '<user-email>' --provisioner cineca-hpc
+
+        The command will prompt an output as in this figure:
+
+        .. figure:: img/ca_linux.png
+
+      * **Step 4**
+
+        Once the certificate is created, a webpage will automatically open in your default browser.
+        You will need to **sign in** using your cluster credentials (username and password). Afterwards, you will be prompted to enter a temporary code generated by your OTP application to complete the process.
+
+        .. figure:: img/otp.png
+
+        Once authenticated, you will see a **Success message** on your browser, meaning that the certificate has been generated and it is available on your PC.
+
+        .. figure:: img/success_ca.png
+
+        .. note:: 
+          the certificate is valid for **12 hours** !!!  If you reboot your PC, the certificate is lost and you need to download a new one (repeating step 3 step ssh login ... ) !
+
+Windows users have multiple options:
+
+.. dropdown:: Windows Powershell
+   :animate: fade-in-slide-down
+   :color: light
+
+   * **Step 1** 
+      * Open the ``Powershell``. Windows O.S will show the standard prompt
+
+      .. figure:: img/powershell_1.png
+
+   * **Step 2** - Download and install `scoop`
+      * From the ``Powershell`` prompt type the command:
+
+      .. code-block:: shell
+         
+         iwr -useb get.scoop.sh | iex 
+
+   * **Step 3** - Test 'scoop'
+
+      .. code-block:: shell
+
+         scoop help            
+
+   * **Step 4** - Install ``git`` support for `scoop`
+
+      .. code-block:: shell
+
+         scoop install git
+
+   * **Step 5** - Install and verify `smallstep`
+
+      .. code-block:: shell
+
+         scoop bucket add smallstep https://github.com/smallstep/scoop-bucket.git
+ 
+         scoop install smallstep/step
+
+          step
+
+   * **Step 6** - Configure `smallstep` client
+      * Initialize `smallstep` client with the command:
+
+      .. code-block:: shell
+
+         step ca bootstrap --ca-url=https://sshproxy.hpc.cineca.it --fingerprint 2ae1543202304d3f434bdc1a2c92eff2cd2b02110206ef06317e70c1c1735ecd
+
+      A successful configuration will show the message:
+
+      .. code-block:: shell
+
+         The authority configuration has been saved in C:\Users\m.rossi\.step\config\default.json.
+
+         PS C:\Users\m.rossi> Get-Service --Name ssh-agent
+
+   * **Step 7** - Activation of the ``ssh-agent``
+      * On the O.S. Windows 11, the ``ssh-agent`` is active by default. You can verify the activation status with the command:
+
+      .. code-block:: shell
+
+         Get-Service -Name ssh-agent
+
+      The output on ``Powershell`` should be:
+
+      .. code-block:: shell
+
+         Status   Name           Display Name
+         ------   ----           -------------
+         Running  ssh-agent      OpenSSH Authentication Agent 
+
+      * If the service is not in ``running status``, it can be activated with:
+
+      .. code-block:: shell
+
+         Start-Service -Name ssh-agent
+      
+      .. note::
+
+         If the service will not start after the comamnd ``Start-Service -Name ssh-agent``, the user can force the activation by opening 
+         a ``Powershell`` with administration privileges (from the control panel of Windows) and use the following commands:
+
+         .. code-block:: shell
+      
+            Set-Service -Name ssh-agent -StartupType Auto
+      
+            Start-Service ssh-agent  
+
+      * **Step 7** - Check the certificate
+         * Run the following command to get the timed certificate:
+
+         .. code-block:: shell
+
+            step ssh login <your-email> --provisioner cineca-hpc 
+
+         * Please, refer to the :ref:`general/access:How to manage authentication *certificates*` section for furter information.
+      
+
+.. dropdown:: Windows Subsystem Linux (**WSL**)
+   :animate: fade-in-slide-down
+   :color: light
+
+   To proceed, open a shell and install ``Step`` by carefully following the installation instructions for the Linux environment.
+
+   **WSL** does not support separate tabs, and any new window will not recognize a previously issued Step certificate by default.
+   To avoid generating a new timed certificate for each session, we recommend adding an automatic certificate verification process in your WSL .bashrc file. 
+   This process can utilize variables initialized by the ``eval $(ssh-agent)`` command and redirect them to an appropriate text file. 
+
+   For example:
+   
+   .. code-block:: bash
+
+      if [ -f ~/.bash_agent ]; then
+ 
+      . ~/.bash_agent
+ 
+      fi
+ 
+      steptest=$(step ssh list --raw '<user-email>'| step ssh inspect | grep "Valid")
+ 
+      if [ -z "$steptest" ]
+ 
+      then
+ 
+        eval $(ssh-agent)
+ 
+        echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" > ~/.bash_agent
+ 
+        echo "export SSH_AGENT_PID=$SSH_AGENT_PID" >> ~/.bash_agent
+ 
+        step ssh login '<user-email>' --provisioner cineca-hpc
+ 
+      fi
+
+
+.. dropdown:: Clients SSH/SFTP under Windows
+   :animate: fade-in-slide-down
+   :color: light
+
+   There are many SSH or SFTP Clients available for Windows, that are of common usage but are not automatically configured for working with the new 2FA system. 
+   It is possible to login with them by exploiting the OpenSSH agent forwarding that can be set by taking advantage of another tool installable on Powershell, 
+   that is `WinSSH-Pageant <https://github.com/ndbeals/winssh-pageant>`_.
+
+   * **Step 1** - as a prerequisite, complete the configuration for ``Powershell`` as explained in the dedicated paragraph above.
+
+   * **Step 2** Download WinSSH-Pegeant
+
+      .. code-block:: bash
+
+         winget install winssh-pageant
+      
+      after downloading, you should find a new executable in the following path:
+
+      ``C:\Users\$Env:UserName\AppData\Local\Programs\WinSSH-Pageant\winssh-pageant.exe``
+
+      The variable ``$Env:UserName`` will be specific for your personal workstation. 
+
+      * Create an alias to simplify the execution of ``winssh-pageant.exe``
+
+      .. code-block:: bash
+
+         New-Alias winssh-pageant C:\Users\$Env:UserName\AppData\Local\Programs\WinSSH-Pageant\winssh-pageant.exe 
+
+      .. important::
+
+         Keep in mind though that Powershell keeps an alias alive only until the shell is closed. 
+         An easy permanent solution would be to copy the program winssh-pageant.exe to another folder, 
+         for example ``C:\Users\$Env:UserName\scoop\shims`` that has been already included permanently in the ``PATH`` 
+         variable by the previous installation of step and is therefore recognized by ``Powershell`` without the need of expliciting the full path. 
+
+   * **Step 3** 
+   
+      * Launch the WinSSH-pageant with the command: ``winssh-pageant --sshpipe``
+
+      * Check if ``winssh-pageant`` is active and works properly
+
+         .. code-block:: bash
+
+            Get-Process | Select-String pageant
+
+         You should expect an output like:
+
+         .. code-block:: bash
+
+            System.Diagnostic.Process (winssh-pageant)
+
+   * **Step 4** - Create a new certificate
+
+      .. code-block:: bash
+
+         step ssh login <your-email> --provisioner cineca-hpc 
+
+   
+   At this point you can **connect** via SSH/SFTP client by using your preferred client. In the following, we report the proper settings for the most popular clients (Putty, WinSCP, Filezilla, MobaXterm).
+
+   **Putty:**
+
+   In the login window, check the category âConnection --> SSH --> Authâ and be sure that the boxes âAttempt authentication using Pageantâ and âAllow agent forwardingâ are ticked.
+
+   .. figure:: img/putty_1.png
+
+   **WinSCP:**
+
+   In the login window, from the Advanced settings go to âSSH--> Authenticationâ and tick the boxes âAttempt authentication using Pageantâ and âAllow agent forwardingâ. Be sure that the file protocol is set to âSCPâ.
+
+   .. figure:: img/wscp_1.png
+
+   .. figure:: img/wscp_2.png
+
+   **Note**: It is possible that if you try to edit an already saved site, the ssh-agent wonât be recognized. If this is the case, we recommend to create a new site from scratch and configure it accordingly. The new site can then be saved and will keep working. 
+   
+   **Note**: In certain cases, we noted that the procedure may not work at first try, and you will get an error at login even if everything is in order. In most cases, a simple reboot of your workstation solves the problem and the issue will not occur again.
+
+   **FileZilla:**
+
+   In your site configuration, be sure that the Protocol is set to âSFTP - SSH File Transfer Protocolâ and the Logon type is set to âNormalâ. 
+
+   .. figure:: img/filezilla.png
+
+   **MobaXTerm:**
+
+   In the upper menu bar with the general options, make sure that in "Settings" â "Configuration" â "SSH" the box "Use external Pageant" is ticked (it should be by default).
+
+   .. figure:: img/moba_1.png
+
+   After that, opening a simple ssh session should be enough.
+
+   .. figure:: img/moba_2.png
+
+   Other SSH/SFTP clients donât seem to be working with this method and are currently not supported by CINECA (for example BitviseSSH), or havenât been tested yet. We will keep updating the Userguide when other clients will be proven compatible. 
+
+How to manage authentication *certificates*
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Managing authentication certificates in HPC environments involves ensuring secure access to resources. Users typically generate certificates via an Identity Provider or a local client, like *Smallstep*, for secure session authentication.
+
+Key operations include:
+
+ * Certificate generation: Performed during initial setup or when required by the system.
+ * Re-generating certificates: Necessary if the current certificate expires or becomes invalid. Users typically log in to the portal or use a client tool to request a new certificate.
+ * Certificate renewal: Ensures continued access without disruptions, often automated if supported by the system.
+
+For issues or detailed procedures, users should consult the documentation or contact: superc@cineca.it.
+
+.. dropdown:: How to re-generate the certificate
+   :animate: fade-in-slide-down
+   :color: light
+
+    .. code-block:: bash
+
+            $ step ssh login '<user-email>' --provisioner cineca-hpc
+
+.. dropdown:: How to check the presence of a valid certificate
+   :animate: fade-in-slide-down
+   :color: light
+
+    It is possible to check for the presence of a valid certificate either via ssh-agent or via step with one of the following commands:
+
+    .. code-block:: bash
+
+            $ ssh-add -L
+            ecdsa-sha2-nistp256-cert-v01@openssh.com AAAAKGVjZHNhLXNoYTItbmlzdHAyNTYtY2VydC12MDFAb3BlbnNzaC5jb20AAAAgYjJfSnpeTTNrMHB4Lm9yX3YjZWNxXyRxcHM9blRzU1gAAAAIbmlzdHAyNTYAAABBBAJRZ11/PIo0VJknlFMDa5BIaJp/w0OWd95ueZbWlQ4uG92aSZ+K8aKgkyDiOGla3x7l+saVT/pIR+x3zBgvwgkLrbmYufPPVAAAAA 
+            EAAAAUbS5tb3Jnb3R0aUBjaW5lY2EuaXQAAAAMAAAACG1tb3Jnb3R0AAAAAGILhpwAAAAAYgv3HAAAAAAAAACCAAAAFXBlcm1pdC1YMTEtZm9yd2FyZGluZwAAAAAAAAAXcGVybWl0LWFnZW50LWZvcndhcmRpbmcAAAAAAAAAFnBlcm1pdC1wb3J0LWZvcndhcmRpbmcAAAAAAAAACnBlcm1pdC1wdHkAAAAAAAAADnBlcm1pdC11c2VyLXJjAAAAAAAAAAAAAABoA 
+            AAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAE3K7f5piMLWXDm9c6kd+VAJmBClKXkQ9i/8E1UA9DcBFofX+r9JyBOULZSDkGtr84oqpNX0fa5DMCar3AQp1YAAABkAAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAABJAAAAIDg33ohPQ6BgzV1ATGsSVSbRwrbYa8LprV2EEHk4mMgWAAAAIQCkd8QKYS+zbeyD1nXeuRAXVWJXJeoxMScgDVx2 
+            qqu2Mg== <user-email> 
+
+            $ step ssh list 
+            256 SHA256:x+QEW8xmDBtRjVRtAukc7v7zKEHef/9joyFP9n/gZtk <user_email> (ECDSA-CERT)  
+
+
+.. dropdown:: How to examine the validity of the current certificate
+   :animate: fade-in-slide-down
+   :color: light
+
+    .. code-block:: bash
+
+      $ step ssh list --raw  '<user_email>' | step ssh inspect  
+ 
+      -:  
+       Type: ecdsa-sha2-nistp256-cert-v01@openssh.com user certificate  
+       Public key: ECDSA-CERT SHA256:TdhIpD5KFZD37roGYcDstS7180TruOnNgNJeS8eJJPk  
+       Signing CA: ECDSA SHA256:e0ZF6AnnUzi0g7Db9nOaXxkEjRq9D6Ka4tV04XqiIgM  
+       Key ID: "<user_email>"  
+       Serial: 841532770994081620  
+       Valid: from 2025-05-12T11:55:24 to 2025-05-12T19:55:24  
+       Principals:   
+                <username>  
+       Critical Options: (none)  
+       Extensions:   
+                permit-X11-forwarding  
+                permit-port-forwarding   
+                permit-pty
+
+.. dropdown:: How to create a certificate in file format
+   :animate: fade-in-slide-down
+   :color: light
+
+   If it is necessary to avoid using ssh-agent, you can download your certificate launching the following command in any path of your local PC (we suggest using the ~/.ssh folder):
+
+   .. code-block:: bash
+
+      step ssh certificate 'user-email' --provisioner cineca-hpc my_key
+
+   You can change **my_key** with the name you prefer.
+   
+   A passphrase to encrypt the private key is request as input in the shell command line:
+
+   .. code-block:: bash
+
+      Please enter the passphrase to encrypt the private key:
+
+   .. note::
+       **Three keys** will be generated in the path where you executed the above command.
+
+   To use the keys to access the cluster you can place the three files in the ``~/.ssh folder`` (default path), 
+   or you can specify ``-i <path-to-keys>`` within the ssh command, and enter the passphrase you selected in the previous step:
+
+   .. code-block:: bash
+
+      $ ssh -i /path/my_key <username>@login.<cluster>.cineca.it
+ 
+      Enter passphrase for key ``my_key``
+       
+
+Access via Secure Shell (**SSH**)
+---------------------------------
+
+SSH is commonly employed for remote access to a machine, allowing users to execute commands (remote console), run programs, and transfer files securely. On Linux and Mac systems, the SSH client is typically pre-installed. However, on Windows systems, users need to download and install an SSH client. 
+Some popular SSH clients for Windows include  `Powershell <https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/powershell>`_, `openSSH <https://docs.microsoft.com/en-gb/windows-server/administration/openssh/openssh_install_firstuse>`_, `Putty <https://www.putty.org/>`_ or `Tectia <https://www.ssh.com/products/tectia-ssh>`_. 
+Connection adopting 2FA procedure does not require to provide password.
+
+The access is done via one of the following commands:
+
+.. code-block:: bash
+
+   $ ssh <username>@login.marconi.cineca.it
+   $ ssh <username>@login.g100.cineca.it
+   $ ssh <username>@login.leonardo.cineca.it
+   $ ssh <username>@login.pitagora.cineca.it
+
+You can use the option ``-X`` to enable **X11** display forwarding.
+
+.. important::
+
+   * After **12 hours**, a new certificate must be generated using the smallstep client (:ref:`general/access:How to manage authentication *certificates*`).
+   * You will login to our systems with one of the two shells: **bash** or **tcsh**. Contact the HPC support (superc@cineca.it) if you want to change your default login shell.
+   * Login is prevented on systems in which you don't have a budget account.
+   * We have identified a potential issue for local PC with openssh 8.6 (check with the command ``ssh -V``). The solution can be found here in our :ref:`faq:FAQ` page.
+
+.. dropdown:: Troubleshooting - WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+   :animate: fade-in-slide-down
+   :color: warning
+   :chevron: down-up
+
+   The DNS listed above to access our clusters are aliases pointing at different login nodes. When accessing multiple times on the same cluster, if you end-up on a different login node than the previous session you may get the following error:
+   **"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"**
+   the reason is a possible mismatch between the DNS and the node's fingerprint saved in your known_hosts file.
+
+   To solve this issue, we sugget the following steps.
+   
+   .. tab-set::
+
+      .. tab-item:: Linux/MacOS and Windows WSL
+
+         Open your terminal, get the 2FA certificate, and run the following command:
+         
+         .. code-block:: bash
+         
+            ssh-keygen -f ~/.ssh/known_hosts -R <cluster_dns>; for keyal in ssh-rsa ecdsa-sha2-nistp256; do for address in <clustes_explicit_dns>; do ssh-keyscan -t ${keyal} ${address} | sed "s/\b${address}/<cluster_generic_dns>/g" >> ~/.ssh/known_hosts; done; done
+
+         where ``<cluster_dns>`` is  the domain name system of the cluster, and ``<cluster_generic_dns>`` is a wildcard pattern derived from the cluster DNS used to generalize host entries in the known_hosts file.
+
+         An example for Leonardo cluster:
+
+         .. code-block:: bash
+
+            ssh-keygen -f ~/.ssh/known_hosts -R login.leonardo.cineca.it; for keyal in ssh-rsa ecdsa-sha2-nistp256; do for address in login01-ext.leonardo.cineca.it login02-ext.leonardo.cineca.it login05-ext.leonardo.cineca.it login07-ext.leonardo.cineca.it; do ssh-keyscan -t  ${keyal} ${address} | sed "s/\b${address}/login*.leonardo.cineca.it/g" >> ~/.ssh/known_hosts; done; done
+
+         .. Note::
+            You can find the previously configured one-line command for each cluster in our :ref:`faq:FAQ`.
+
+         To generalize you can use the following:
+         
+         .. code-block:: bash
+
+            # Define the main cluster DNS name
+            cluster_dns=login.leonardo.cineca.it
+
+            # Define an array of explicit DNS names for each login node
+            clustes_explicit_dns=(
+               login01-ext.leonardo.cineca.it 
+               login02-ext.leonardo.cineca.it 
+               login05-ext.leonardo.cineca.it 
+               login07-ext.leonardo.cineca.it
+            )
+
+            # Generate a generic DNS pattern by replacing the first '.' with '*.' 
+            # (e.g., "login.leonardo.cineca.it" â "login*.leonardo.cineca.it")
+            cluster_generic_dns="${cluster_dns/./*.}"
+
+            # Remove any existing SSH key entries for the main cluster DNS from known_hosts
+            if [ -f ~/.ssh/known_hosts ]
+            then
+               ssh-keygen -f ~/.ssh/known_hosts -R ${cluster_dns}
+            fi
+
+            # Loop over the key algorithms to scan (e.g., ssh-rsa, ecdsa-sha2-nistp256)
+            for keyal in ssh-rsa ecdsa-sha2-nistp256
+            do 
+               # Loop over all explicit login node DNS entries
+               for address in ${clustes_explicit_dns[@]}
+               do 
+                  # Retrieve the SSH public key for the node using ssh-keyscan
+                  # Replace the explicit node address with the generic pattern in the output
+                  # Append the result to the known_hosts file
+                  ssh-keyscan -t ${keyal} ${address} | sed "s/\b${address}/${cluster_generic_dns}/g" >> ~/.ssh/known_hosts
+               done
+            done
+   
+      .. tab-item:: Windows Powershell and other SSH clients
+
+         Open your **Powershell** terminal, get the 2FA certificate, and run the following command:
+         
+         .. code-block:: powershell
+
+            ssh-keygen -f "$HOME\.ssh\known_hosts" -R "<cluster_dns>"; foreach ($keyal in "ssh-rsa", "ecdsa-sha2-nistp256") { foreach ($address in <clusters_explicit_dns>) { ssh-keyscan -t $keyal $address | ForEach-Object { $_ -replace "\b$address\b", "<cluster_generic_dns>" } >> "$HOME\.ssh\known_hosts" } }
+
+         where ``<cluster_dns>`` is  the domain name system of the cluster, and ``<clustes_explicit_dns>`` is the list of the explicit DNS of the login nodes.
+
+         An example for Leonardo cluster:
+
+         .. code-block:: powershell
+            
+            ssh-keygen -f "$HOME\.ssh\known_hosts" -R "login.leonardo.cineca.it"; foreach ($keyal in "ssh-rsa", "ecdsa-sha2-nistp256") { foreach ($address in "login01-ext.leonardo.cineca.it", "login02-ext.leonardo.cineca.it", "login05-ext.leonardo.cineca.it", "login07-ext.leonardo.cineca.it") { ssh-keyscan -t $keyal $address | ForEach-Object { $_ -replace "$address", "login*.leonardo.cineca.it" } >> "$HOME\.ssh\known_hosts" } }
+
+         .. Note::
+            You can find the previously configured one-line command for each cluster in our :ref:`faq:FAQ`.
+
+         To generalize you can use the following:
+         
+         .. code-block:: powershell
+
+            # Define the main cluster DNS name
+            $cluster_dns = "login.leonardo.cineca.it"
+
+            # Define an array of explicit DNS names for each login node
+            $clusters_explicit_dns = @(
+               "login01-ext.leonardo.cineca.it",
+               "login02-ext.leonardo.cineca.it",
+               "login05-ext.leonardo.cineca.it",
+               "login07-ext.leonardo.cineca.it"
+            )
+
+            # Generate a generic DNS pattern by replacing the first '.' with '*.'
+            # (e.g., "login.leonardo.cineca.it" â "login*.leonardo.cineca.it")
+            $cluster_generic_dns = $cluster_dns -replace '\.', '*.', 1
+
+            # Path to known_hosts
+            $known_hosts_path = "$HOME\.ssh\known_hosts"
+
+            # Remove any existing SSH key entries for the main cluster DNS from known_hosts
+            if (Test-Path $known_hosts_path) {
+               ssh-keygen -f $known_hosts_path -R $cluster_dns | Out-Null
+            }
+
+            # Loop over the key algorithms to scan
+            $keyal_list = @("ssh-rsa", "ecdsa-sha2-nistp256")
+            foreach ($keyal in $keyal_list) {
+               foreach ($address in $clusters_explicit_dns) {
+                  # Retrieve the SSH public key for the node
+                  $keyscan_output = ssh-keyscan -t $keyal $address 2>$null
+
+                  # Replace the explicit node address with the generic pattern
+                  $updated_output = $keyscan_output -replace [regex]::Escape($address), $cluster_generic_dns
+
+                  # Append the result to the known_hosts file
+                  Add-Content -Path $known_hosts_path -Value $updated_output
+               }
+            }
+
+
+Access via Remote Visualization (**RCM**)
+-----------------------------------------
+
+Remote visualization has become popular as an HPC service since it allows to:
+
+* **visualize** the data produced on HPC infrastructure (scientific visualization)
+* **analize** and **inspect** data directy on the HPC infrastructure.
+* **debug** and **optmization** of codes via GUI tools directly on the HPC infrastructure.
+
+All the aforementioned use cases can take advantage of use applications on the **server side**. The requirements to access to this service are the same for the access to HPC infrastructure.
+The remote visualization service at Cineca is provided through the Remote Connection Manager (**RCM**) application. Using this tool you can graphically inspect your data without moving them to your local work station.
+
+.. important::
+
+   It can be used by any user with valid credentials to access CINECA clusters.
+
+
+.. toctree::
+   :maxdepth: 1
+
+   ../rcm/rcm
+
+Continuous Integration (**CI/CD**) at CINECA
+--------------------------------------------
+
+Continuous Integration, continuous delivery and deployment, also known as **CI/CD**, is the practice of a constant monitoring of the code development through the activation of an automatic pipeline. Every time a developer applies a change to the code, the automatic pipeline validates it by building the code and running some simple tests (typically unit tests). 
+
+CINECA has activated a new service where to run your Continuous Integration (CI/CD) pipelines on CINECA clusters, based on CINECA GitLab service. On `Gitlab website <https://docs.gitlab.com/ee/ci/>`_ there is a detailed documentation about CI/CD.
+This service is active on Galileo100, and is at the moment in an experimental phase.
+
+.. dropdown:: How to use it
+   :animate: fade-in-slide-down
+   :color: light
+
+   You can activate our CI/CD service in projects defined into our `GitLab instance <https://gitlab.hpc.cineca.it/>`_. If you are already a CINECA HPC user, you can access the CINECA GitLab using the same credentials. If you are interested and you are still not an HPC User you can find `here <https://docs.hpc.cineca.it/general/users_account.html#how-to-become-a-user>`_ the instructions on how to get access.
+
+   Once logged to CINECA GitLab, you can activate the CI/CD service by enabling shared runners that pick up and execute your CI/CD pipeline on our cluster.
+   They can be enabled as in the following:
+
+      1. From your project's web page, select "*Settings*" and then on "*CI/CD*", from the menu on the left;
+
+      2. Once in the web page, expand the section "*Runners*";
+
+      3. Activate the switch under "*Enable shared runners for this project*" on the right, in the "*Shared Runners*" right column. The *shared runners* are listed in that section along with blue labels specifying the *tags* associated to them. 
+   
+   Now shared runners are available to your CI/CD pipeline.
+   The CI/CD pipeline has to be specified inside the ``.gitlab-ci.yml`` file through tags (see `Gitlab documentation <https://docs.gitlab.com/ee/ci/>`_ for how to create and manage pipelines).
+
+   **IMPORTANT**: There are **two different kind of runners**. You have to identify **which runner** you would like to run your pipeline by **specifying one or more tags** summarized in the table at the bottom of the page.
+   
+   **IMPORTANT**: If you do not select any tag, the pipeline **will never start**.
+
+   We set a **time limit** for the execution of each single job of a given pipeline that cannot last for more than **10 minutes**.
+
+.. dropdown:: Runners description
+   :animate: fade-in-slide-down
+   :color: light
+
+   All shared runners are based on `docker images <https://docs.gitlab.com/runner/install/docker.html>`_, so in your CI/CD pipeline you can optionally choose in which **container image** your pipeline job will run.
+
+   You will find 4 distinct shared runners, consisting of:
+    - **2 CPU-only** runners, with access to up to 24 CPUs each. Jobs are executed in concurrent execution. (specific tags: **x86_64, cpu, docker**)
+    - **2 CPU+GPU** runners, limited to run 1 CI job each at the time. Each runner has access to a dedicated GPU. **No concurrent execution** is allowed on these runners. (specific tags: **x86_64, docker, nvidia-sm70, nvidia-volta, nvidia-cuda**)
+   
+   All shared runners run on a dedicated node of Galileo100 with **Intel x86_64 architectures** (2 x CPU Intel CascadeLake 8260 processors with 24 cores each, 2.4 GHz, 384GB RAM).
+   GPU runners make use of **Nvidia** V100 GPUs.
+
+.. dropdown:: Summary
+   :animate: fade-in-slide-down
+   :color: light
+
+   Below we summarize the runners and the tags needed to select the correct one.
+
+   .. list-table:: 
+            :widths: 30 45 45
+            :header-rows: 1
+
+            * - **Runners**
+              - **Tags**
+              - **Notes**
+            * - 2 CPU-only
+              - x86_64,cpu,docker
+              - Up to 24 cpus each. Concurrent execution
+            * - 2 CPU+GPU
+              - x86_64, docker, nvidia-sm70, nvidia-volta, nvidia-cuda
+              - Each runner has a dedicated GPU. No concurrent execution.
+            
+   **IMPORTANT**: **If you do not select any tag**, the pipeline **will never start**.
+
+Access via X.509 certificate
+----------------------------
+
+An X.509 certificate is issued by a trusted Certificate Authority (CA), which verifies the user's identity and ensures the certificate is both valid and associated with a real individual.
+It is used as an authentication mechanism, serving as an alternative to traditional username/password credentials, and helps avoid the need to replicate user accounts across systems.
+When connecting to a service, the user's certificate is mapped to a local account, under which all commands and operations are executed.
+
+.. important::
+   **Access to CINECA clusters no longer requires or supports X.509 certificates for authentication.**
+   
+   However, X.509 certificates may still be necessary for accessing certain external services or resources, such as data repositories, collaboration platforms, or grid computing infrastructures.
+
+The following describes the procedure for obtaining an X.509 certificate and generating a proxy certificate for temporary use.
+
+**How to get your X.509 certificate**
+
+- Users in need of an X.509 certificate can visit the `HARICA website <https://cm.harica.gr>`_. Academic users can select *Academic Login* and authenticate using their institutional credentials.
+- In the dashboard's left-hand menu, click on *IGTF Certificate*, then select *GÃANT Personal Authentication*. 
+- Review and accept the terms and conditions, then click *Submit Request*.
+.. figure:: img/X509_1.png
+- Under *Ready Certificates*, click *Enroll your Certificate*. Choose your preferred algorithm (RSA or ECDF), then click *Enroll Certificate* again. After enrollment, click *Download*.
+.. figure:: img/X509_2.png
+- A ``.p12`` file (containing your personal certificate and private key) will be downloaded.
+
+**How to Use Your X.509 Certificate (Browser and Command Line)**
+
+Once you have downloaded your ``.p12`` certificate file, you can either:
+
+- Import it into your browser for web-based authentication.
+
+- Convert it into PEM format (``cert.pem`` and ``key.pem``) to use it with command-line tools such as ``grid-proxy-init``, ``voms-proxy-init``, or ``globus-url-copy``.
+
+.. dropdown:: Using the .p12 Certificate in Your Browser
+   :animate: fade-in-slide-down
+   :color: light
+  
+         *Firefox*:
+      
+            - Go to Settings â Privacy & Security â Certificates â View Certificates.
+
+            - Open the Your Certificates tab.
+
+            - Click Import, then select your .p12 file.
+
+            - Enter the password used to protect the certificate.
+
+            Your certificate is now ready for web authentication.
+
+         *Chrome / Edge / Safari*:
+
+            These browsers use the system certificate store.
+
+            - On Linux (GNOME): Use the Passwords and Keys application (Seahorse) â Import your .p12 file.
+
+            - On macOS: Double-click the .p12 file to open Keychain Access â import it into the login or system keychain.
+
+            - On Windows: Double-click the .p12 file â follow the Certificate Import Wizard, choose "Current User", and confirm the installation.
+
+
+.. dropdown:: Converting .p12 to cert.pem and key.pem for Command-Line Use
+   :animate: fade-in-slide-down
+   :color: light
+  
+         To use your certificate with command-line tools, youâll need to copy the ``cert.p12`` file in your ``$HOME``, create the directory ``$HOME/.globus`` and finally extract the certificate and private key from the ``.p12`` file using OpenSSL:
+         
+         **Extract the private key:**
+
+            .. code-block:: bash
+
+               $ mkdir $HOME/.globus
+               $ openssl pkcs12 -nocerts -in cert.p12 -out $HOME/.globus/userkey.pem
+
+
+         **Extract the User certificate:**
+
+            .. code-block:: bash
+         
+               $ openssl pkcs12 -clcerts -nokeys -in cert.p12 -out $HOME/.globus/usercert.pem
+
+
+         **Protect your keys:**
+
+            .. code-block:: bash
+         
+               $ chmod 600 $HOME/.globus/userkey.pem $HOME/.globus/usercert.pem
+               

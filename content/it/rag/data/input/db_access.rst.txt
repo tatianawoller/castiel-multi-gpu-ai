@@ -1,0 +1,100 @@
+.. _db_access_card:
+
+Database: access
+================
+
+Accessing the Database instance
+-------------------------------
+To access the database instance, the typical SQL command (depending on the datastore you chose for your database instance) can be used.
+In the below example of a MySQL database instance, it is shown how to access the database. After you successfully install the MySQL client, use the following commands to access the database:
+
+.. code-block:: bash
+
+    $ mysql -h <ip-address-of-db-instance> -u<user-name> -p<password>
+    
+    ------------------------------------------------------------------------------------
+    
+    mysql: [Warning] Using a password on the command line interface can be insecure.
+    Welcome to the MySQL monitor. Commands end with ; or \g.
+    Your MySQL connection id is 16
+    Server version: 5.7.29 MySQL Community Server (GPL)
+    
+    Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+    
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+    
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+    
+    mysql>
+
+
+Once you accessed the database, a mysql prompt will be available. You can check the list of databases using the following command:
+
+.. code-block:: bash
+
+    mysql> show databases;
+    
+    --------------
+    show databases
+    --------------
+    
+    +--------------------+
+    | Database           |
+    +--------------------+
+    | information_schema |
+    | test               |
+    +--------------------+
+    2 rows in set (0,02 sec)
+
+
+How to list the available datastore and their version using OpenStack CLI
+-------------------------------------------------------------------------
+A datastore is a database engine that is supported by Trove and it is used to create the database instance. 
+On CINECA HPC Cloud the following datastores namely MySQL, MariaDB, PostgreSQL are available.
+
+- You can check the available datastores with the command ``openstack datastore list``. The ID and Name of the datastores supported will be shown.
+
+.. code-block:: bash
+
+    $ openstack datastore list  # shows all datastores available in Cloud infrastructure
+    
+    +--------------------------------------+------------+
+    | ID                                   | Name       |
+    +--------------------------------------+------------+
+    | b2103dff-9331-4be2-8193-170f2a509e16 | mariadb    |
+    | ed541d5a-d260-4b6b-ac80-74ac38167d70 | mysql      |
+    | e8d12fef-3c54-4e83-818c-4a89a104780d | postgresql |
+    +--------------------------------------+------------+
+
+
+- With the command ``openstack datastore version list <name of the datastore>``, you can check the list of datastores with their version. Below we show an example for mysql datastore.
+
+.. code-block:: bash
+
+    $ openstack datastore version list mysql 
+    
+    +--------------------------------------+--------+---------+
+    | ID                                   | Name   | Version |
+    +--------------------------------------+--------+---------+
+    | a6ee8255-2d71-4e22-b68d-1d0e5919e74a | 5.7.29 | 5.7.29  |
+    | 434292f3-2074-4033-8f19-07874cbe5b7d | 8.0.29 | 8.0.29  |
+    +--------------------------------------+--------+---------+
+
+You will find Version, Name, and ID of the mysql datastores available in HPC Cloud.
+
+**Note**: The Version is important, as we have to specify the version of the datastore while creating the database instance. For more information about the version, use the following command:
+
+.. code-block:: bash
+
+    $ openstack datastore version show a6ee8255-2d71-4e22-b68d-1d0e5919e74a # shows details of a version
+    
+    +-----------+--------------------------------------+
+    | Field     | Value                                |
+    +-----------+--------------------------------------+
+    | datastore | ed541d5a-d260-4b6b-ac80-74ac38167d70 |
+    | id        | a6ee8255-2d71-4e22-b68d-1d0e5919e74a |
+    | name      | 5.7.29                               |
+    | version   | 5.7.29                               |
+    +-----------+--------------------------------------+

@@ -1,0 +1,103 @@
+Software
+========
+
+| On CINECA clusters, several softwares are already available through the :ref:`hpc/hpc_enviroment:The module command`.
+| Please check our `Software Catalog <https://www.hpc.cineca.it/systems/software/>`_ page that indicates which softwares and version are available on each specific cluster.
+| It is also possible to install software by yourself using the available compilers or using the Spack package manager.
+
+Many softwares are free of use, but some are covered by a license. CINECA already provides licenses for several softwares available via module, but in some cases the access to these softwares is not automatic and additional actions are requested to the user.
+
+For other softwares for which CINECA does not provide licenses, it is possible to configure a connection with your own license server following the procedure described below.
+
+Software available with CINECA license
+--------------------------------------
+
+| Here we provide the list of softwares directly available using CINECA license.
+| No additional actions are requested. User just needs to load the corresponding module.
+
+  * Amber24
+  * AMS
+  * IDL
+  * Molcas
+  * Molpro
+  * Q-Chem
+  * Totalview
+
+
+Software available using your own license
+-----------------------------------------
+
+Here we describe the additional actions requested to the user in order to make use of the following licensed softwares:
+
+Gaussian
+^^^^^^^^
+
+| CINECA provides its own license.
+| If you would like to use Gaussian, you need to write to superc@cineca.it asking to be enabled to load the corresponding module.
+
+VASP
+^^^^
+
+| CINECA does not provide license for VASP. User needs to make use of his/her own license.
+| Please write to superc@cineca.it stating that you possess a VASP license indicating also for which software version.
+| If you are a collaborator of a research group with a license, please provide the license responsible name and the email you are registered on the VASP portal.
+| After a check with VASP developer we will enable you to load the corresponding module.
+
+MATLAB
+^^^^^^
+
+| Thanks to an agreement with MathWorks, **CINECA provides several MATLAB licenses** through its internal license server that can be used on CINECA clusters.
+| Usage of the CINECA MATLAB licenses is allowed **exclusively for Open Science** (non-commercial) activities.
+| In case you are interested in using those licenses and you declare us that your activity is devoted to Open Science, please write to superc@cineca.it to be enabled to use CINECA licenses.
+
+
+Crystal
+^^^^^^^
+
+| CINECA does not provide a license for Crystal. User needs to make use of his/her own license.
+| Please write to superc@cineca.it declaring the you or your responsible have a crystal license specifying the type (Basic or Basic+MPP). In the email you have to add in CC the responsible and info@crystalsolutions.eu
+| After a check with Crystal developers we will enable you to load the corresponding module.
+
+How to connect your license server
+----------------------------------
+
+In case you are entitled of a software FlexLM license and you would like to use it on CINECA clusters, we need to connect our compute nodes with your license server.
+Please write to CINECA's staff at superc@cineca.it and provide us the following information:
+
+  *  the port and host (IP or alias) of the license server where the license is installed.
+  *  the license holder needs to sign a document (:download:`template <../files/License_request.odt>`) in which the holder declares to have a valid license and relieves CINECA of future responsibilities for the usage of that license on CINECA's cluster.
+  *  We will provide the IPs of CINECA'S cluster so that the license server administrators can open their firewall to them.
+
+When the aforementioned steps have been completed, your usernames and account(s) will be authorized to use your license running your jobs on CINECA infrastructure.
+In case you would like to use an academic license, you will also have to indicate us a representative (not necessarily the license holder but with his/her approval) to be contacted by CINECA HPC User Support to allow future requests to use the same license.
+
+
+Advanced Software Specific details
+----------------------------------
+
+.. |ico1| image:: img/matlab.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. |ico2| image:: img/qe_logo.png
+   :height: 45px
+   :class: no-scaled-link
+
+.. grid:: 2
+
+   .. grid-item-card:: |ico1| **Matlab**
+      :link: matlab_card
+      :link-type: ref
+
+
+   .. grid-item-card:: |ico2| **QuantumESPRESSO**
+      :link: quantum_espresso_card
+      :link-type: ref
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   software/matlab
+   software/qe

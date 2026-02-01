@@ -1,0 +1,76 @@
+Operative Manual
+================
+
+This section collects all the operative guidelines on how to perform the most common operations. 
+
+The operations are grouped whenever possible according to the respective Components.
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   compute_ops/index_compute_ops
+   storage_ops/index_storage_ops
+   network_ops/index_network_ops
+   shares_ops/index_shares_ops
+   db_ops/index_db_ops
+   lb_ops/index_lb_ops
+
+
+.. grid:: 3
+
+    .. grid-item-card:: |osnova| **Compute operations**
+      :link: compute_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |oscinder| **Storage operations**
+      :link: storage_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |osneutron| **Network operations**
+      :link: network_ops_card
+      :link-type: ref
+
+.. grid:: 3
+
+    .. grid-item-card:: |osmanila| **Shares operations**
+      :link: shares_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |ostrove| **Database operations**
+      :link: database_ops_card
+      :link-type: ref
+
+    .. grid-item-card:: |osoctavia| **Load Balancer operations**
+      :link: load_balancer_ops_card
+      :link-type: ref
+
+
+
+.. |oslogo| image:: /cloud/_img/openstack_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osnova| image:: /cloud/_img/nova_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osneutron| image:: /cloud/_img/neutron_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |oscinder| image:: /cloud/_img/cinder_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osmanila| image:: /cloud/_img/manila_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |ostrove| image:: /cloud/_img/trove_logo.png
+   :width: 35px
+   :class: no-scaled-link
+
+.. |osoctavia| image:: /cloud/_img/octavia_logo.png
+   :width: 35px
+   :class: no-scaled-link

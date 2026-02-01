@@ -1,0 +1,34 @@
+.. _load_balancers_card:
+
+Load Balancer
+=============
+
+`OpenStack Octavia service <https://docs.openstack.org/octavia/latest/reference/introduction.html>`_ 
+enables the deployment of load balancing solutions in 
+OpenStack projects. 
+
+A **load balancer** functions as a traffic intermediary, directing network or application 
+traffic to multiple server endpoints. It helps manage capacity during high traffic 
+periods and enhances the reliability of applications. The main components of a load 
+balancer are the following: 
+
+- **Listener**: The listener is a component that defines how incoming traffic is 
+  received. It listens for connection requests on a specific port and protocol 
+  (e.g., HTTP, HTTPS), and directs this traffic to the appropriate backend pool
+- **Pool**: The pool is a collection of backend servers (also known as members) 
+  that receive and process the incoming traffic distributed by the load balancer. 
+  The pool determines the load balancing algorithm and health check policies to manage 
+  traffic distribution effectively
+- **Members**: Members are the individual servers within a pool that handle the 
+  actual processing of the traffic. Each member represents a single endpoint (server) 
+  that performs the required tasks or services requested by the client.
+
+A load balancer determines which server to send a request to based on a desired 
+algorithms (e.g., Round Robin, Least Connections, Random). The choice among the load 
+balancing algorithms depends on the requirements of the specific use case.
+
+.. note:: 
+
+  The Octavia service is available but it is not enabled by default to all HPC Cloud 
+  projects. If you want to use it please ask access sending an email to 
+  superc@cineca.it. 

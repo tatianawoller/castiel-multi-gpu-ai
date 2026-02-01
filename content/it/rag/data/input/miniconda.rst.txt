@@ -1,0 +1,169 @@
+.. _miniconda_card:
+
+Miniconda 
+=========
+
+Miniconda is a minimal installer for Conda, a popular package manager for Python and other languages. Unlike the full Anaconda distribution, which includes hundreds of preinstalled packages and tools, Miniconda provides only the Conda package manager and Python. This lightweight installer allows users to create customized environments by installing only the packages they need.
+
+Miniconda is ideal for:
+
+- Users who want a smaller installation footprint.
+- Environments where storage space or bandwidth is limited.
+- Developers and researchers who prefer full control over package versions and dependencies.
+
+With Miniconda, users can:
+
+- Create and manage isolated environments with different Python versions.
+- Install packages from multiple channels such as conda-forge or bioconda.
+- Ensure reproducibility and compatibility across systems.
+
+
+How to Install Miniconda
+------------------------
+
+.. important:: **Cleaning Up Anaconda3 previous Configuration from the Home Directory**
+
+        Sometimes, previous Anaconda installations may interfere with the correct installation of Miniconda.  
+        For this reason, it is recommended to perform the following cleanup steps before proceeding with the installation:
+
+            - **Delete the Conda configuration file**::
+
+                rm -f $HOME/.condarc
+
+            - **Delete the Conda data directory**::
+
+                rm -rf $HOME/.conda
+
+            - **Remove Anaconda initialization from your shell configuration file**:
+
+                Open your ``$HOME/.bashrc`` and remove all lines related to Anaconda3. These lines are usually located at the end of the file and enclosed between the following markers:
+
+                .. code-block:: bash
+                
+                  # >>> conda initialize >>>
+                  ...
+                  # <<< conda initialize <<<
+
+             You can safely delete this entire block.
+
+
+To `install Miniconda3 <https://docs.anaconda.com/miniconda/install/#quick-command-line-install>`_, you have to download the installation script by running:
+
+.. code-block:: bash
+
+   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh 
+
+Execute the downloaded script with:
+
+.. code-block:: bash
+
+   bash $HOME/Miniconda3-latest-Linux-x86_64.sh
+
+During the installation, reply **"yes"** or **"ENTER"** to all prompts.
+
+At the end of the installation, reload the bash session to apply the modifications introduced by the installer:
+
+.. code-block:: bash
+
+   exec bash
+
+This command will start a new bash session in which the ``(base)`` Conda environment will be automatically activated.
+
+
+Configure Channels
+^^^^^^^^^^^^^^^^^^
+
+Conda channels are configured at multiple levels:
+
+- Global configuration: ``~/.condarc``
+- Environment-specific configuration: ``<env_path>/conda-meta/.condarc``
+
+To configure Conda to work correctly:
+
+- Disable automatic activation of the base environment:
+
+  .. code-block:: bash
+
+     conda config --set auto_activate_base false
+
+- Reload the bash session again:
+
+  .. code-block:: bash
+
+     exec bash
+
+  This will start a new session where the ``(base)`` environment will no longer be automatically activated.
+
+- Enable strict channel priority:
+
+  .. code-block:: bash
+
+     conda config --set channel_priority strict
+
+- Add the `conda-forge` channel:
+
+  .. code-block:: bash
+
+     conda config --add channels conda-forge
+
+- Edit the following configuration files:
+
+  - ``$HOME/.condarc``
+  - ``$HOME/miniconda3/.condarc``
+
+  In both files, comment out (by adding a ``#`` at the beginning of the line) any lines containing:
+
+  .. code-block:: yaml
+
+     - https://repo.anaconda.com/pkgs/main
+     - https://repo.anaconda.com/pkgs/r
+
+  .. note::
+
+     In some versions of Conda, you may instead see:
+
+     .. code-block:: yaml
+
+        - defaults
+
+     In that case, comment out the ``- defaults`` line.
+
+These last three steps ensure that only the `conda-forge` channel is used, and disable the default Anaconda channels which may cause timeout errors when downloading packages on our HPC sustems.
+
+Create a New Environment
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To create a new environment:
+
+.. code-block:: bash
+
+   conda create -n new_env
+
+Activate the environment:
+
+.. code-block:: bash
+
+   conda activate new_env
+
+
+Install Packages from Conda-Forge
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the desired package is available in the `conda-forge` channel, install it *inside* the environment:
+
+.. code-block:: bash
+
+   conda install -n new_env <package-name>
+
+Example:
+
+.. code-block:: bash
+
+   conda install -n new_env pytorch
+
+To check availability:
+
+.. code-block:: bash
+
+   conda search pytorch
+

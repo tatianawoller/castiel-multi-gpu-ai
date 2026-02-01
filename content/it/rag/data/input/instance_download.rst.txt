@@ -1,0 +1,111 @@
+.. _compute_inst_download_card:
+
+Instance: snapshot download
+===========================
+
+Prepare local system for download
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To avoid errors due to not enough disk space to accommodate the snapshot, check the available disk space on your system 
+
+.. code-block:: bash
+
+   df -h / 
+
+   Filesystem        Size  Used  Avail  Use%  Mounted on 
+   /dev/<disk-name>  466G  93G   349G   22%   / 
+
+In case an external drive is mounted on your system, or another partition is meant to be used, replace the *â/â* character with the */dev* path of the drive. 
+
+In case there is not enough disk space on your local system to store snapshots, it is possible to mount locally a remote host directory using the *sshfs* utility.  
+
+.. code-block:: bash
+   
+   sshfs <remote-host>:/path/to/remote/directory /path/to/local/directory 
+
+For CINECA users which have access to HPC Clusters, it is strongly suggested to mount the remote directory via the *datamover* nodes (see :ref:`hpc/hpc_data_storage:data transfer`). 
+
+.. code-block:: bash
+
+   sshfs <username>@data.<cluster>.cineca.it:/path/to/remote/directory /path/to/local/directory 
+
+Using *datamover* nodes avoid process being killed by surpassing the CPU-time characteristic of long download processes. 
+Also in this case, please check to have enough space to store the snapshot before starting the download. 
+CINECA HPC Cluster users are strongly encouraged to use the *cinQuota* command instead of *du* to get information about the occupancy 
+of a specific path to avoid stressing the Lustre filesystem: 
+
+.. code-block:: bash
+
+        cinQuota 
+
+        ---------------------------------------------------------------------- 
+        Filesystem       used    quota  grace  files 
+        ---------------------------------------------------------------------- 
+        <home-path>      <used>  50G    -      <number-of-files> 
+        <work1-path>     <used>  1T     -      <number-of-files> 
+        <fast1-path>     <used>  1T     -      <number-of-files> 
+
+ 
+HPC Cloud users without access to HPC Clusters can write an email to superc@cineca.it asking for information about how to obtain a budget and storage on HPC Clusters. 
+
+Search and download snapshots
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To download an instance, it is necessary to create a snapshot of it (see :ref:`cloud/operative/compute_ops/instance_snap_create:instance: snapshot create`), 
+and then save it locally. 
+
+The download of a snapshot can be performed only via the :ref:`cloud/os_overview/management_tools/command_line:command line interface`.
+Here are the steps to be followed.
+
+- The first step is obtaining the complete tabular list of all the images available on the tenant
+
+.. code-block:: bash
+
+        openstack image list 
+        +---------------+-----------------+--------+ 
+        | ID            | Name            | Status | 
+        +---------------+-----------------+--------+ 
+        | <Image-ID-01> | <Image-Name-01> | active | 
+        | <Image-ID-02> | <Image-Name-02> | active | 
+        | <Image-ID-03> | <Image-Name-03> | active | 
+        ... 
+        | <Image-ID>    | <Image-Name>    | active | 
+        +---------------+-----------------+--------+ 
+
+- Use the ID corresponding to the image snapshot name to start the download procedure using the following command: 
+
+.. code-block:: bash
+
+        openstack image save --file /path/to/local/directory/<snapshot-name> <Image-ID> 
+
+The OpenStack CLI does not show a progress bar for the download so the shell in which the last openstack command has been launched will hung until the download terminates. 
+You can append to the previous command the â&â character to send the download in background: remember to not close the shell in which the command has been launched since the download process will be killed. 
+
+It is possible to monitor the procedure by using the following watch command: 
+
+.. code-block:: bash
+
+        watch -n 1 ls -lrth /path/to/local/directory/ 
+
+        Every 1,0s: ls -lrth /path/to/local/directory/ ... 
+ 
+        total <directory-size> 
+        -rw-rw-r-- 1 <local-user> <local-group> <size> <date> <snapshot-name> 
+
+The screen will refresh every second showing an increase in both <size> and <directory-size>. 
+
+- Check the downloaded image info to be sure the process has been executed correctly
+
+.. code-block:: bash
+
+        qemu-img info <snapshot-name>
+
+Limits of the procedure
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The time needed to complete the download of the snapshot is strongly influenced by both the size of the snapshot itself and the bandwidth of internet connection.  
+
+These are some examples of possible download times from OpenStack infrastructure to local server (ex. CINECA-PDL) for a 30 GigaBytes snapshot image:  
+
+- ~ 60 minutes with nominal ~ 50 Mbps download speed connection: speed characteristics of a mobile hotspot 4G connection. 
+- ~ 10 minutes with nominal ~ 300 Mbps download speed connection: speed characteristics of the wired optic fiber connection like the one available in CINECA (ex. Sede CINECA Casalecchio).  

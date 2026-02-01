@@ -1,0 +1,365 @@
+.. _interactive_computing_card:
+
+Interactive Computing
+---------------------
+
+Basic concepts
+^^^^^^^^^^^^^^
+
+The interactive computing service provides an alternative approach to computational resources. The service is accessible via a web browser, with an extended JupyterLab interface based on the `ICE4HPC suite <https://www.e4company.com/ice4hpc/>`_ developed by E4 analytics.
+
+The resources requested through the browser interface are allocated on a dedicated set of nodes, all of which are equipped with GPUs. These GPUs are not shared among users, and their allocation is exclusively granted upon request. On the other hand, the allocated CPUs can be shared if the system is fully utilized. This allows for near-immediate access to the system without waiting time. Once the resources are allocated, the browser session can be closed and quickly restored by accessing the service URL.
+
+At the moment the service is available on Galileo100.
+
+.. preproduction phase warning
+   .. warning::
+      The service is in pre-production phase, meaning all the resources are provided with no warranty. In such a pre-production phase the accounting is disabled.
+
+
+How to get access
+^^^^^^^^^^^^^^^^^
+
+Every user with computational resources on the cluster hosting the service can access to it. The service can be reached thought the following web address: https://jupyter.g100.cineca.it
+
+
+Requested resources and releases
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+At the opening page, the user will be asked to login with the CINECA cluster credentials. After the login, the system prompts the user to a form where he/she can request the resources needed during the interactive session. The form appears as follow:
+
+.. image:: img/iac-form.png
+   :alt: Form to submit resources requests on the cluster
+   :width: 600px
+   :align: center
+
+
+In the form, in analogy to a sbatch SLURM script on cluster login nodes, the user has to select:
+
+.. list-table:: Form
+    :widths: 20 80
+    :header-rows: 1
+    :class: tight-table
+ 
+    * - Field
+      - How to fill
+ 
+    * - **Slurm reservation**
+      - you can leave it to "None" unless you are assigned to some specific reservation;
+ 
+    * - **Slurm account**
+      - the active account you want to be billed for the session; please note that during the pre-production phase, the accounting is inactive.
+ 
+    * - **Number of cores**
+      - the number of cores requested for the interactive computing session; please note that cores are assigned in over-subscription, which means that in the unlucky scenario in which all the cores of the system are allocated, the user may share the same core with other users (currently maximum five users on the same CPU);
+ 
+    * - **Memory**
+      - the amount of RAM memory requested for the session;
+ 
+    * - **GPU configuration**
+      - the number of GPUs which the user requests; differently from CPUs, they are not shared among users and are assigned exclusively; the number of GPUs is limited, thus please be careful to release the resources you requested when you finish your work (see the session "Logout vs Session shutdown" here below) to let the other users to use them. You can check the availability of resources, in particular GPU ones, by looking at the table at the bottom of the page, wherein each row is displayed the number of nodes with no free GPUs, the ones with a single free GPU and the ones with both the GPUs available;
+ 
+    * - **Time**
+      - the wall time of your interactive session; during this time, you can close and reopen your browser tab/windows with no issues: the session will stay active, and you can re-attach it simply by accessing to the Interactive Computing web url once again;
+ 
+    * - **ICE4HPC Backend environment**
+      - the suite of tools you expect to find during the session execution; see "`Tools and functionalities`_" section for details;
+ 
+    * - **User interface**
+      - only the JupyterLab interface is available so far, so please ignore this menu for now;
+
+Once you have filled out the form with your preferred parameters, click the :bdg-black-line:`Start` button at the bottom. This action will redirect you to the JupyterLab interface, which runs on the cluster's compute nodes where the user can select the tool or functionality among the available.
+
+
+Tools and functionalities
+^^^^^^^^^^^^^^^^^^^^^^^^^
+The tools you will see in the JupyterLab interface are "packed" in releases: each tool in each release is pinned at the same version to guarantee compatibility. It is possible to choose the release in the initial form displayed after the login phase: in the drop-down menu, they are labelled with a release date, thus the more the date is recent, the more the tool versions are updated, so as a rule of thumb, you might want to test the most recent release with your code.
+
+Currently, the following services are up and running on the interface displayed after your session starts:
+
+.. image:: img/iac-launcher.png
+   :alt: JupyterLab launcher
+   :width: 600px
+   :align: center
+
+depending on the release you chose at the login phase.
+
+Default kernels
+~~~~~~~~~~~~~~~
+Some default Python/Julia/R/C/C++ environments are provided by default in each release; the packages versions in each release are fixed, in order to guarantee retrocompatibility; updated versions of the environments will be added in new releases. 
+
+Here below you can find the default kernels provided in the current releases:
+
+.. here below I open by default the latest release, and keep close by default the older (still availiable for retrocompatibility) ones
+.. dropdown:: Release 2024.04
+   :animate: fade-in-slide-down
+   :color: primary
+   :open:
+
+   .. card:: Python
+
+      Several Python environments are provided by default. You can click here below to their name if you need to check the versions of the main packages contained in each of them:
+
+      .. tab-set::
+
+         .. tab-item:: Python 3.11
+            
+            | python 3.11
+         
+         .. tab-item:: Ray
+
+            | ray 2.21.0
+
+         .. tab-item:: Dask
+
+            | python 3.11
+            | dask 2024.04
+
+         .. tab-item:: Tensorflow
+
+            | python 3.11
+            | tensorflow 2.12
+
+         .. tab-item:: Pytorch
+
+            | python 3.11
+            | pytorch 2.3.0
+
+         .. tab-item:: Rapids
+
+            | python 3.11
+            | rapids 24.04
+
+         .. tab-item:: Transformers
+
+            | python 3.11
+            | huggingface_hub 0.24.0
+            | transformers 4.40.2
+
+         .. tab-item:: MDAnalysis
+
+            | python 3.11
+            | mdanalysis 2.7
+
+      You can obtain the complete list inside the environment by running ``!mamba list`` in a Jupyter notebook (after selecting the corresponding kernel in the top-right menu). You can also add your custom environments, as described in the section "`User custom Python environments`_".
+
+   .. card:: Julia
+
+      | Julia kernel version 1.9.4 is automatically installed in the user's home directory (in the hidden path ``~/.julia``) in background at the first login to the service, thus it won't be visible in the very first login. If you need Julia in the very first login of the service please wait some minutes and refresh the page to make it visible.
+      | Being installed in your home directory, you can freely install your packages and in general manage your Julia environment as usual via Pkg package manager: check `Pkg documentation <https://docs.julialang.org/en/v1/stdlib/Pkg/>`_ for the details.
+
+   .. card:: C/C++
+
+      C/C++ kernel implementation is based on `Xeus <https://github.com/jupyter-xeus/xeus>`_; you can use C/C++ instructions inline, like with Jupyter notebooks. You can check the Xeus documentation `here <https://xeus.readthedocs.io/en/stable/>`_.
+
+      .. image:: img/iac-xeus.png
+         :alt: Xeus C/C++ Jupyter kernel example
+         :width: 300px
+         :align: center
+
+   .. card:: R
+      
+      R version 4.3.3 is currently provided via `rlang <https://github.com/r-lib/rlang>`_ v1.1.4 package.
+
+Visual Studio Code
+~~~~~~~~~~~~~~~~~~
+Visual Studio Code (VSCode) is a very common code editor developed by Microsoft, which offers many advanced features for programming. You can find some tutorials for beginners in the `official documentation <https://code.visualstudio.com/docs/introvideos/basics>`_.
+From the interactive Computing interface, you can see a VSCode entry in the launcher after you have started the session; clicking on :bdg-black-line:`Visual Studio Code`, a new tab/window (depending on your browser settings) will be opened with a web interface containing the VSCode. You can work with VSCode as long as your JupyterLab session is running and your resources are allocated; to stop your session in advance and release the resources, you need to stop the JupyterLab session in the original tab: see "Logout vs Session Shutdown" section for details.
+
+Monitoring tools
+~~~~~~~~~~~~~~~~
+On the (very) left side of your dashboard there is a vertical menu, which allows the user to access some additional functions; one of the buttons is called "GPU Dashboards". From here, you can monitor your resources usage in real-time; in particular:
+
+- in the "Machine Resources" section, you can monitor CPUs, memory utilization, and network and I/O bandwidth.
+- if you requested GPUs from the initial form, you would see several additional menu to monitor, for instance, GPUs utilization, memory bandwidth and occupation, PCI throughput.
+
+    .. image:: img/iac-gpu_monitoring.png
+       :alt: Resources monitoring dashboard example
+       :width: 700px
+       :align: center
+
+The dashboard is developed by nVidia with the `jupyterlab-nvdashboard <https://github.com/rapidsai/jupyterlab-nvdashboard>`_ plugin.
+
+
+User custom Python environments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+You can create your own customized Python environment and display them on the Jupyter launcher.
+
+You can proceed as follows:
+
+- open a terminal **from your launcher**
+
+  .. warning::
+
+     Be careful to run the following commands from the terminal in the launcher, i.e. clicking on :bdg-black-line:`Terminal` in the Jupyter web interface) and not via ssh, in order not to have versions mismatches and/or errors in some cases.
+
+..
+     .. note::
+   
+        Unless specifically reasons, it is suggested not to have others conda environments activated (e.g. the *base* environments from
+
+- in this terminal a conda instance is already active, specific for the release you chose at the login phase (see section "`Requested resources and releases`_"), thus you can run the commands below:
+
+  .. code-block:: bash
+  
+     source $CONDA_PREFIX/etc/profile.d/conda.sh
+     conda init bash
+     conda create -n <your_environment_name> ipykernel -c conda-forge --override-channels
+     conda activate <your_environment_name>
+     conda install <python_packages_to_be_installed> -c conda-forge --override-channels
+     python -m ipykernel install --user --name <your_environment_name> --display-name <name_to_be_displayed_in_the_launcher>
+
+After you will refresh the page, a new environment will appear in the launcher of the dashboard; the new kernel is also listed in the drop-down menu of every new Jupyter notebook so that you can use the packages you installed when you created the environment.
+
+.. note::
+
+   In case you need to delete the environment from your launcher, you can click on :bdg-black-line:`Terminal` in your Jupyter launcher and run the following commands (**N.B. from the terminal in the Jupyter launcher**):
+
+   .. code:: bash
+
+      # optional: delete the environment from your home directory
+      source $CONDA_PREFIX/etc/profile.d/conda.sh
+      conda remove --name <your_environment_name> --all
+
+      # remove kernel from Jupyter launcher
+      jupyter kernelspec uninstall <your_environment_name>
+
+You can also further customize your kernels running specific bash script along with your custom Python environments; for instance, after the procedure described so far, a new json file is created in your home in the following path:
+
+.. code:: bash
+
+   $HOME/.local/share/jupyter/kernels/<your_environment_name>/kernel.json
+
+whose content is similar to the following:
+
+.. code:: json
+
+   {
+    "argv": [
+     "<your_home_directory_path>/.conda/envs/<your_environment_name>/bin/python",
+     "-m",
+     "ipykernel_launcher",
+     "-f",
+     "{connection_file}"
+    ],
+    "display_name": "<name_to_be_displayed_in_the_launcher>",
+    "language": "python",
+    "metadata": {
+     "debugger": true
+    }
+   }
+
+This JSON file describes what Jupyterlab runs when clicking on the related button in the launcher page; you can create a bash script to be added in this JSON file to be properly run before your environment execution; this allows for instance, to load any module from the cluster and make it visible during your Python environment execution.
+For instance, in the following example, we create a file called ``wrapper.sh`` in the same folder of the JSON file (you can choose the path and the name you prefer):
+
+- click on :bdg-black-line:`Terminal` on your launcher;
+- move inside the folder you want and open a new file with your favorite text editor (e.g. ``wrapper.sh`` using vim or nano or emacs);
+- write a bash script as the following:
+
+  .. code:: bash 
+  
+     #!/bin/bash
+     ### You can add here whatever bash commands you like, like for example, "module load" commands
+      
+     module load <your_first_module>
+     module load <your_second_module>
+      
+     ### Remember the next line!
+     exec "$@"
+
+- Make this file executable:
+
+  .. code:: bash 
+
+     chmod +x wrapper.sh
+
+- Edit your ``kernel.json`` file (e.g. ``nano kernel.json``) by adding the following line:
+
+  .. code:: bash 
+
+     "<your_home_directory_path>/.local/share/jupyter/kernels/<your_environment_name>/wrapper.sh",
+
+  as the first entry in your argv JSON field. Thus, in the end, your file should look like the following:
+
+  .. code:: json
+
+     {
+      "argv": [
+       "<your_home_directory_path>/.local/share/jupyter/kernels/<your_environment_name>/wrapper.sh",
+       "<your_home_directory_path>/.conda/envs/<your_environment_name>/bin/python",
+       "-m",
+       "ipykernel_launcher",
+       "-f",
+       "{connection_file}"
+      ],
+      "display_name": "<name_to_be_displayed_in_the_launcher>",
+      "language": "python",
+      "metadata": {
+       "debugger": true
+      }
+     }
+
+  .. warning::
+
+     You need to replace ``<your_home_directory_path>``, ``<your_environment_name>`` and ``<name_to_be_displayed_in_the_launcher>`` with your specific paths, without using environment variables (e.g. you cannot replace ``<your_home_directory_path>`` with ``$HOME`` since environment variables won't be expanded in the json file, thus you need to write the full path explicitely).
+
+- Now all the bash commands (and variables) you added inside ``wrapper.sh`` are visible by the Python kernel of your environment. You can check it by running bash commands directly from your Python environment in Jupyter notebooks using your kernel.
+
+  .. note::
+
+     Bash commands can be run from Jupyter notebooks/consoles using "!" at the beginning of the line.
+
+
+Access to work and scratch areas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the left column of the principal page, you can see the content of your **home** area on the cluster.
+
+Your **work** and **scratch** areas are not visible from your default Interactive Computing interface. To make them visible and reachable, you need to create a symbolic link in your HOME directory pointing those areas. In the following example, we are creating a link to the **scratch area** and a link to the **work** area inside our home directory by launching the following commands in a terminal on the cluster:
+
+.. code:: bash
+
+   ln -s $CINECA_SCRATCH $HOME/scratch
+   ln -s $WORK $HOME/work
+   
+Thus now you can see a work and a scratch icons in the file manager on the left side of our interface, and you can access them.
+
+.. note::
+   It is strongly suggested to creating such links to make all the storage available to the Interactive computing sessions (and not just the home storage).
+   
+   Please remember that the $WORK variable refers to the work area of your current default account, so you should create different links for different accounts and keep them updated over time.
+
+
+Logout vs Session shutdown
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, your session is not shut down when you close your browser window (or tab); as long as the session is active (until the walltime is reached), the requested resources are not released to other users. In this way, by opening a new browser, the user can restore a still active session simply by re-accessing the `Interactive Computing URL <https://jupyter.g100.cineca.it>`_.
+.. commented so far since accounting is still disabled on IAC
+.. Until the session is finished by reaching the walltime or closed manually by the user, the requested resources will be billed on the budget account indicated by the user in the form.
+If you have finished and you want to close your session manually you need to click on :bdg-black-line:`File`, then select :bdg-black-line:`Hub Control Panel` and finally :bdg-black-line:`Stop my server`.
+
+    .. image:: img/iac-shutdown_01.png
+       :alt: Hub control panel from "File" dropdown menu
+       :width: 500px
+       :align: center
+
+    .. image:: img/iac-shutdown_02.png
+       :alt: "Stop my server" button
+       :width: 500px
+       :align: center
+
+
+
+Troubleshooting
+^^^^^^^^^^^^^^^
+
+.. dropdown:: "Kernel died unexpectedly" error message.
+   :animate: fade-in-slide-down
+   :color: warning
+
+   Unfortunately, Jupyter kernels are not very verbose, but in many cases, this error can be related to a buffer overflow; please consider testing the code once again in a new session (see "Logout vs Session shutdown") requesting a larger amount of memory.
+
+.. dropdown:: Spawning job message hangs after requesting resources.
+   :animate: fade-in-slide-down
+   :color: warning
+
+   The problem might occur when requesting an unavailable amount of resources, which might be the case of jobs requesting GPUs; you can take a look to the table in the bottom of the form for resources allocation, which lists all the nodes available with zero, one or two GPUs; if you requested, for instance, a session with 2 GPUs but there are no nodes with 2 GPUs currently available, then this issue might occur. Please consider to fit your requests to the available resources to have the session starts in short time.
