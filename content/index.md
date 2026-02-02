@@ -39,6 +39,7 @@ nl/index.md
 hu/index.md
 se_day_3/lightning.md
 be/fine_tuning/README.md
+it/accelerate_fsdp/README.md
 ```
 
 ```{toctree}
@@ -98,4 +99,3 @@ Scientists, engineers, and PhD students who need to scale AI models efficiently 
 ## Credits
 
 ...
-
