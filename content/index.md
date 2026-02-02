@@ -8,9 +8,9 @@ You are familiar with AI frameworks.
 
 The course will run across 5 days with a morning and afternoon session each day. Times in CET:
 
-- 📅 Dates: 30th January - 5th February, 2026
-- 🕘 Time: 9:30 AM – 5:30 PM daily
-- 🍴 Lunch Break: 1:00 PM – 2:00 PM
+- � Dates: 30th January - 5th February, 2026
+- � Time: 9:30 AM – 5:30 PM daily
+- � Lunch Break: 1:00 PM – 2:00 PM
 
 ```{csv-table}
 :delim: ;
@@ -38,6 +38,7 @@ se/deep-learning-intro/index.md
 nl/index.md
 hu/index.md
 se_day_3/lightning.md
+be/fine_tuning/README.md
 ```
 
 ```{toctree}
