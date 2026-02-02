@@ -10,6 +10,11 @@ You can find general documentation for
 The project account on Leonardo Booster partition is `tra26_castiel2`. Two shared areas are available to all project collaborators: `$WORK` and `$FAST`, accessible via the corresponding commands `$WORK` and `$FAST`.
 Compute nodes do not have internet access. Any required models or data should therefore be downloaded in advance using the `lrd_all_serial` partition. The `$FAST` area provides faster I/O and already contains two folders, data and models. We recommend storing preloaded datasets and models there so they can be accessed directly by students.
 
+## Slides
+
+- {download}`Jupyter on CINECA HPC <../IntroductionJupyter.pdf>`
+- {download}`Introduction to CINECA HPC infrastructure and Leonardo <../IntroductionLeonardo.pdf>`
+
 (jupyter)=
 ## Jupyter
 
