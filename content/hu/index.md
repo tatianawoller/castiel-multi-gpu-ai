@@ -3,7 +3,7 @@
 ## Code
 
 ```{note}
-{{repo}}/hu/exercise
+{repo}`hu/exercise`
 ```
 
 ## Slides

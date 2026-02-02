@@ -3,7 +3,7 @@
 ## Code
 
 ```{note}
-{{repo}}/nl/exercises
+{repo}`nl/exercises`
 ```
 
 ```{include} exercises/README.md

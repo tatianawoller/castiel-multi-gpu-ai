@@ -15,7 +15,7 @@ setup
 
 ````{note}
 The files are added here
-{{repo}}/se/deep-learning-intro/notebooks
+{repo}`se/deep-learning-intro/notebooks`
 
 Access them by doing:
 ```sh
