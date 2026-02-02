@@ -37,6 +37,7 @@ it/leonardo/README.md
 se/deep-learning-intro/index.md
 nl/index.md
 hu/index.md
+se_day_3/lightning.md
 ```
 
 ```{toctree}
