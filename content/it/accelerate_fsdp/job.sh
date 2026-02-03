@@ -7,7 +7,6 @@
 #SBATCH --time 01:30:00
 #SBATCH --cpus-per-task=32
 #SBATCH --tasks-per-node=1
-#SBATCH --exclude=lrdn[1090-3456]
 #SBATCH --gres=gpu:... ## put the number of gpus
 #SBATCH --exclusive
 ##SBATCH --qos=boost_qos_dbg
