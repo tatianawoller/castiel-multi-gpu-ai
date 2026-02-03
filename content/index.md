@@ -21,7 +21,7 @@ The course will run across 5 days with a morning and afternoon session each day.
 1 ; Afternoon; Introduction to deep learning
 2 ;  Morning; Pytorch Distributed Data Parallel
 2 ; Afternoon; Model parallelism with Pytorch
-3 ;  Morning; Pytorch Lightning 
+3 ;  Morning; Pytorch Lightning
 3 ; Afternoon; LLM, Finetuning & HuggingFace Accelerate, Deepspeed
 4 ;  Morning; Computer Vision
 4 ; Afternoon; MLops
@@ -35,6 +35,11 @@ The course will run across 5 days with a morning and afternoon session each day.
 
 it/leonardo/README.md
 se/deep-learning-intro/index.md
+nl/index.md
+hu/index.md
+se_day_3/lightning.md
+be/fine_tuning/README.md
+it/accelerate_fsdp/README.md
 ```
 
 ```{toctree}
@@ -86,7 +91,6 @@ Scientists, engineers, and PhD students who need to scale AI models efficiently 
 
 - <https://hpc-portal.eu/training/short-courses/castiel2-multi-gpu-ai-train-the-trainer-workshop>
 - <https://www.hlrs.de/training/2026/castiel2-multigpu-ai-ttt>
-
 
 ## See also
 

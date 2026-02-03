@@ -25,6 +25,11 @@ github_repo_name = ""  # auto-detected from dirname if blank
 github_version = "main"
 conf_py_path = "/content/"  # with leading and trailing slash
 
+# GitHub repository configuration for the repo role
+github_repo_url = "https://github.com/ENCCS/castiel-multi-gpu-ai"
+github_branch = "main"
+github_root_dir = "content"
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -54,7 +59,7 @@ myst_enable_extensions = [
 ]
 myst_dmath_double_inline = True
 myst_fence_as_directive = {"mermaid"}
-myst_substitutions = {"author": author, "repo": f"https://github.com/{github_user}/castiel-multi-gpu-ai/blob/main/content"}
+myst_substitutions = {"author": author}
 myst_heading_anchors = 4
 
 # Settings for sphinx-copybutton
@@ -92,7 +97,7 @@ html_static_path = ["_static"]
 html_css_files = ["overrides.css"]
 
 # HTML context:
-from os.path import basename, dirname, realpath
+from os.path import basename, dirname, realpath, join
 
 html_context = {
     "display_github": True,
@@ -159,6 +164,37 @@ DIRECTIVES = [
     InstructorDirective,
     SpoilerDirective,
 ]
+
+
+# Custom role for GitHub repository links
+from docutils import nodes
+from docutils.parsers.rst import roles
+
+
+def repo_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    """Custom role to create GitHub repository links."""
+    # Split the text into path and optional custom text
+    parts = text.split("|", 1)
+    path = parts[0].strip()
+    
+    # Use custom text if provided, otherwise use the path
+    if len(parts) > 1:
+        link_text = parts[1].strip()
+    else:
+        link_text = path
+    
+    # Construct the GitHub URL
+    github_url = f"{github_repo_url}/tree/{github_branch}/{github_root_dir}/{path}"
+    
+    # Create a reference node with the link
+    node = nodes.reference(rawtext, join(github_root_dir, link_text), refuri=github_url, **options)
+    return [node], []
+
+
+def setup_repo_role(app):
+    """Setup the repo role."""
+    # Add the role to the Sphinx registry
+    app.add_role("repo", repo_role)
 
 # pdfembed directive is part of the sphinx-evita project (MIT License)
 # Copyright (c) 2025 EVITA project
@@ -271,5 +307,8 @@ def setup(app):
     )
     app.add_directive("pdfembed", PDFEmbedDirective)
     app.add_config_value("pdfembed_html_tag", "object", "html")
+
+    # Setup the repo role
+    setup_repo_role(app)
 
     return {"version": "0.0.1", "parallel_read_safe": True, "parallel_write_safe": True}

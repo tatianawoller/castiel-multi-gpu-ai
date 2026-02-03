@@ -1,0 +1,5 @@
+torch
+torchinfo
+torchsummary
+torchvision
+transformers

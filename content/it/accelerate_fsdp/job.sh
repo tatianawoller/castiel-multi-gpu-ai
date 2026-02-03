@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --out=%j.out
 #SBATCH --err=%j.err
-#SBATCH --account=...  ## put the account
+#SBATCH --account=tra26_castiel2
 #SBATCH --nodes=... ## put the number of nodes
 #SBATCH -p boost_usr_prod
 #SBATCH --time 01:30:00
