@@ -9,3 +9,6 @@ frameworks.
 1. `dvc`: illustration of a workflow using git + DVC for data versioning
    and defining a pipeline.
 1. `r-yaml-parse`: illustration of how to read YAML files in R.
+
+```{include} ./dvc/README.md
+```

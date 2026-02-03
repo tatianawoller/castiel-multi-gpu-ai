@@ -14,3 +14,11 @@ See {repo}`be/mlops`
 1. `mlops_on_hpc.pptx`: Powerpoint presentation for the training.
 1. `source-code`: source code samples for the training.
 1. `tools`: instructions on tools used in the training.
+
+```{toctree}
+:caption: Contents
+:maxdepth: 1
+
+Source code <./source-code/README.md>
+./tools/README.md
+```

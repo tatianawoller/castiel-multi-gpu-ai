@@ -8,3 +8,6 @@ tool stack required for this training session.
 
 1. `pipx_install.md`: instructions to install `dvc` using `pipx` (includes
    instructions to install `pipx`).
+
+```{include} pipx_install.md
+```
