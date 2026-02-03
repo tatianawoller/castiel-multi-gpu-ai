@@ -40,6 +40,11 @@ hu/index.md
 se_day_3/lightning.md
 be/fine_tuning/README.md
 it/accelerate_fsdp/README.md
+ro/index.md
+be/mlops/README.md
+it/intro_to_ray/index.md
+it/rag/index.md
+fi/index.md
 ```
 
 ```{toctree}
