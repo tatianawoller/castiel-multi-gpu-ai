@@ -15,13 +15,11 @@ This directory contains materials for learning Ray, a distributed computing fram
 - {download}`config.json`: Configuration file for Ray setup
 - {download}`requirements_ray.txt`: Python dependencies for Ray
 
-## Notebooks
-
 ```{toctree}
 :maxdepth: 1
-:caption: Ray Tutorials
+:caption: Notebooks
 
-notebooks/01_ray_core.ipynb
+notebooks/index.md
 ```
 
 ## Additional Resources
