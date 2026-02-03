@@ -11,6 +11,7 @@
 #SBATCH --gres=gpu:... ## put the number of gpus
 #SBATCH --exclusive
 ##SBATCH --qos=boost_qos_dbg
+#SBATCH --reservation=s_tra_cast4
 
 ### Set environment ###
 
