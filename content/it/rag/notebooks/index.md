@@ -6,33 +6,31 @@
 
 These notebooks guide you through implementing Retrieval Augmented Generation (RAG) pipelines.
 
-## Available Notebooks
+1. {download}`0_download_data.ipynb`: Download and prepare data for RAG pipelines
+2. {download}`1_chunking_indexing_data.ipynb`: Data chunking, embedding, and vector index creation
+3. {download}`2_creating_a_chatbot.ipynb`: Build a complete RAG-powered chatbot
+
+
+## Notebooks
 
 ```{toctree}
 :maxdepth: 1
-:caption: RAG Tutorials
+:caption: Download Data
 
 0_download_data.ipynb
-1_chunking_indexing_data.ipynb
-2_creating_a_chatbot.ipynb
 ```
 
-## Learning Path
 
-1. **0_download_data.ipynb**: Download and prepare data for RAG pipelines
-2. **1_chunking_indexing_data.ipynb**: Data chunking, embedding, and vector index creation
-3. **2_creating_a_chatbot.ipynb**: Build a complete RAG-powered chatbot
+```{toctree}
+:maxdepth: 1
+:caption: Chunking and indexing data
 
-## Key Techniques Covered
+1_chunking_indexing_data.ipynb
+```
 
-- Document chunking strategies
-- Vector embeddings with sentence transformers
-- ChromaDB vector storage
-- Retrieval-augmented generation with LLMs
-- Chatbot interface development
+```{toctree}
+:maxdepth: 1
+:caption: Creating a chatbot
 
-## Prerequisites
-
-- Python and Jupyter notebook experience
-- Basic understanding of NLP concepts
-- RAG environment set up (see parent directory for instructions)
+2_creating_a_chatbot.ipynb
+```
