@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import Adam
 import pytorch_lightning as L
-from pytorch_ligthning.callbacks import Callback
+from pytorch_lightning.callbacks import Callback
 
 
 class TrainingLogger(Callback):
