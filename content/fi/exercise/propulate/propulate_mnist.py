@@ -9,8 +9,6 @@ from torchvision import datasets
 from torchvision.transforms import ToTensor
 from mpi4py import MPI
 
-from tqdm import tqdm
-
 from propulate import Propulator
 from propulate.utils import get_default_propagator, set_logger_config
 
@@ -43,7 +41,7 @@ class Model(nn.Module):
 def train(dl, model, loss_fn, optimizer, device=torch.device("cuda:0")):
     model = model.to(device)
     model.train()
-    for step, batch in (enumerate(pbar:=tqdm(dl))):
+    for step, batch in (enumerate(dl)):
         x, y = batch
         x = x.to(device)
         y = y.to(device)
@@ -51,7 +49,6 @@ def train(dl, model, loss_fn, optimizer, device=torch.device("cuda:0")):
         optimizer.zero_grad()
         pred = model(x)
         loss = loss_fn(pred, y)
-        pbar.set_description(f"Loss: {(loss.item()):>7f}")
         loss.backward()
         optimizer.step()
 
