@@ -19,7 +19,7 @@ Some lines are missing.
 You task is to use the trial to generate new candidate parameters.
 
 There is a multi node [example](https://github.com/AaltoRSE/hpo-on-hpc/tree/main/on-triton) from Aalto University.
-The official documentation is less HPC focused.
+The [official documentation](https://optuna.readthedocs.io/en/stable/index.html) is less HPC focused.
 
 ## Parallel Evolutionary Search with Propulate
 There is a python script using Propulate using multiple GPUs.
@@ -28,10 +28,9 @@ Your task is to set up the needed objects and run the search.
 
 There are more examples at the [project github](https://github.com/Helmholtz-AI-Energy/propulate/tree/main/tutorials)
 
-
 ## Notes on Environment Setup
 
-The environment on Leonardo was created this way:
+The environment on Leonardo was created the following way:
 ```bash
 module load profile/deeplrn
 module load cineca-ai/4.3.0
