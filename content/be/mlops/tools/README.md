@@ -12,3 +12,6 @@ tool stack required for this training session.
    installed.
 1. `ollama.recipe`: Singularity/Apptainer recipe to build a container with
    `ollama` installed.
+
+```{include} pipx_install.md
+```
