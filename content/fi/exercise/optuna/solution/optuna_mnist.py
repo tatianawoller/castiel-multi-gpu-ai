@@ -1,5 +1,4 @@
 import os
-import argparse
 import random
 
 import torch
@@ -7,16 +6,15 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from mpi4py import MPI
+
+import optuna
+from optuna.storages import JournalStorage
+from optuna.storages.journal import JournalFileBackend
 
 from tqdm import tqdm
 
-from propulate import Propulator
-from propulate.utils import get_default_propagator, set_logger_config
-
 
 data_root = f"{os.environ['FAST']}/data/"
-
 
 class Model(nn.Module):
     def __init__(self, hidden_dim, activation):
@@ -29,18 +27,19 @@ class Model(nn.Module):
             raise ValueError()
 
         self.f = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(28*28, hidden_dim),
-            af(),
-            nn.Linear(hidden_dim, hidden_dim),
-            af(),
-            nn.Linear(hidden_dim, 10),
-        )
+                nn.Flatten(),
+                nn.Linear(28*28, hidden_dim),
+                af(),
+                nn.Linear(hidden_dim, hidden_dim),
+                af(),
+                nn.Linear(hidden_dim, 10),
+                )
+
     def forward(self, x):
         return self.f(x)
 
 
-def train(dl, model, loss_fn, optimizer, device=torch.device("cuda:0")):
+def train(dl, model, loss_fn, optimizer, device):
     model = model.to(device)
     model.train()
     for step, batch in (enumerate(pbar:=tqdm(dl))):
@@ -56,7 +55,7 @@ def train(dl, model, loss_fn, optimizer, device=torch.device("cuda:0")):
         optimizer.step()
 
 
-def test(dl, model, loss_fn, device=torch.device("cuda:0")):
+def test(dl, model, loss_fn, device):
     model = model.to(device)
     model.eval()
     loss, correct = 0.0, 0.0
@@ -71,30 +70,28 @@ def test(dl, model, loss_fn, device=torch.device("cuda:0")):
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
     loss /= len(dl)
     correct /= (len(dl.dataset))
-    print(f"Test accuracy: {(100 * correct):>0.1f}%, Avg loss: {loss:>8f}")
+    return correct
 
 
-def ind_loss(params):
-
-    learning_rate = params["learning_rate"]
-    activation = params["activation_function"]
-    hidden_dim = params["hidden_dim"]
-    batch_size = params["batch_size"]
-
+def objective(trial):
     epochs = 5
+    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
+    hidden_dim = trial.suggest_int("hidden_dim", 8, 512)
+    learning_rate = trial.suggest_float("learning_rate", 1e-6, 1e-2)
+    activation = trial.suggest_categorical("activation_function", ["relu", "sigmoid"])
 
     train_ds = datasets.MNIST(
-        root=data_root,
-        train=True,
-        download=False,
-        transform=ToTensor(),
-    )
+            root=data_root,
+            train=True,
+            download=False,
+            transform=ToTensor(),
+            )
     test_ds = datasets.MNIST(
-        root=data_root,
-        train=False,
-        download=False,
-        transform=ToTensor(),
-    )
+            root=data_root,
+            train=False,
+            download=False,
+            transform=ToTensor(),
+            )
 
 
     train_dl = DataLoader(train_ds, batch_size=batch_size)
@@ -105,19 +102,21 @@ def ind_loss(params):
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+    best_acc = 0.
     for epoch in range(epochs):
-        train(train_dl, model, loss_fn, optimizer)
-        test(train_dl, model, loss_fn)
+        device = torch.device(f"cuda:{os.environ['SLURM_LOCALID']}")
+        train(train_dl, model, loss_fn, optimizer, device)
+        acc = test(train_dl, model, loss_fn, device)
+        if acc > best_acc:
+            best_acc = acc
+
+    return best_acc
+
 
 if __name__ == "__main__":
-    num_generations = 10
-    pop_size = 4
-    comm = MPI.COMM_WORLD
-    rng = random.Random(comm.rank)
-    limits = {"learning_rate": (1e-6, 1e-2),
-              "activation_function": ("relu", "sigmoid", "tanh"),
-              "hidden_dim": (8, 512),
-              "batch_size": [16, 32, 64, 128, 256]}
-
-    set_logger_config()
-    # TODO set up a propagator, a Propulator, and then let it propulate the ind_loss
+    study = optuna.create_study(
+	    study_name="mnist",
+	    storage=JournalStorage(JournalFileBackend(file_path="./journal.log")),
+	    load_if_exists=True,
+	    )
+    study.optimize(objective, n_trials=3)

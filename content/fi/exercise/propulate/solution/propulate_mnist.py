@@ -119,5 +119,7 @@ if __name__ == "__main__":
               "hidden_dim": (8, 512),
               "batch_size": [16, 32, 64, 128, 256]}
 
+    propagator = get_default_propagator(pop_size=pop_size, limits=limits, rng=rng)
     set_logger_config()
-    # TODO set up a propagator, a Propulator, and then let it propulate the ind_loss
+    propulator = Propulator(loss_fn=ind_loss, propagator=propagator, rng=rng, generations=num_generations)
+    propulator.propulate()

@@ -75,10 +75,7 @@ def test(dl, model, loss_fn, device):
 
 def objective(trial):
     epochs = 5
-    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
-    hidden_dim = trial.suggest_int("hidden_dim", 8, 512)
-    learning_rate = trial.suggest_float("learning_rate", 1e-6, 1e-2)
-    activation = trial.suggest_categorical("activation_function", ["relu", "sigmoid"])
+    # TODO get the candidate values to explore by using the trial.sugest_x functions
 
     train_ds = datasets.MNIST(
             root=data_root,
@@ -114,9 +111,5 @@ def objective(trial):
 
 
 if __name__ == "__main__":
-    study = optuna.create_study(
-	    study_name="mnist",
-	    storage=JournalStorage(JournalFileBackend(file_path="./journal.log")),
-	    load_if_exists=True,
-	    )
-    study.optimize(objective, n_trials=3)
+    # TODO create a study, set the name, and storage
+    # TODO optimize the study
