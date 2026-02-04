@@ -71,7 +71,8 @@ def test(dl, model, loss_fn, device=torch.device("cuda:0")):
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
     loss /= len(dl)
     correct /= (len(dl.dataset))
-    print(f"Test accuracy: {(100 * correct):>0.1f}%, Avg loss: {loss:>8f}")
+
+    return correct
 
 
 def ind_loss(params):
@@ -82,6 +83,7 @@ def ind_loss(params):
     batch_size = params["batch_size"]
 
     epochs = 5
+    best_acc = 0.
 
     train_ds = datasets.MNIST(
         root=data_root,
@@ -107,7 +109,11 @@ def ind_loss(params):
 
     for epoch in range(epochs):
         train(train_dl, model, loss_fn, optimizer)
-        test(train_dl, model, loss_fn)
+        acc = test(train_dl, model, loss_fn)
+        if acc > best_acc:
+            best_acc = acc
+    # NOTE minimization
+    return -acc
 
 if __name__ == "__main__":
     num_generations = 10
