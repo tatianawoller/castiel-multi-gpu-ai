@@ -23,7 +23,8 @@ The official documentation is less HPC focused.
 
 ## Parallel Evolutionary Search with Propulate
 There is a python script using Propulate using multiple GPUs.
-The code for setting the devices for each worker correctly is missing.
+The initialization of the `Propulator` is missing.
+Your task is to set up the needed objects and run the search.
 
 There are more examples at the [project github](https://github.com/Helmholtz-AI-Energy/propulate/tree/main/tutorials)
 
