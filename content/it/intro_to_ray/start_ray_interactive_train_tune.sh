@@ -4,7 +4,7 @@
 #SBATCH --time=04:00:00
 #SBATCH --account=tra26_castiel2
 #SBATCH --partition=boost_usr_prod
-##SBATCH --reservation=s_tra_bbs5
+#SBATCH --reservation=s_tra_cast7
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
 #SBATCH --cpus-per-task=16 # Use a number of cpus appropriate to the partition you are in
